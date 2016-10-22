@@ -1,6 +1,8 @@
-centos6: gcc upgrade
-2016年8月10日
-9:59
+---
+title: centos6: gcc upgrade
+date: 2016年8月10日
+categories: 9:59
+---
  
 ---
 title: centos6升级gcc版本-devtoolset

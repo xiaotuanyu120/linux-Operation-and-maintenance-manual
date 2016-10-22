@@ -1,6 +1,8 @@
-word2markdown
-2016年6月30日
-21:31
+---
+title: word2markdown
+date: 2016年6月30日
+categories: 21:31
+---
  
 # yum install epel-release -y
 # yum install unoconv pandoc -y

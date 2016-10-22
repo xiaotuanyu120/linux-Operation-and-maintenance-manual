@@ -1,6 +1,8 @@
-PXE+KICKSTART安装系统
-Wednesday, 15 April 2015
-1:31 PM
+---
+title: PXE+KICKSTART安装系统
+date: Wednesday, 15 April 2015
+categories: 1:31 PM
+---
  
 1)PXE
  

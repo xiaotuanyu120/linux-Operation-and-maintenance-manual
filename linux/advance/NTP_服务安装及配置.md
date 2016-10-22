@@ -1,6 +1,8 @@
-NTP: 服务安装及配置
-2016年1月17日
-19:08
+---
+title: NTP: 服务安装及配置
+date: 2016年1月17日
+categories: 19:08
+---
  
 ## 安装ntp
 # yum install ntp -y

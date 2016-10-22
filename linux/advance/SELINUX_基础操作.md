@@ -1,6 +1,8 @@
-SELINUX: 基础操作
-2016年3月29日
-9:50
+---
+title: SELINUX: 基础操作
+date: 2016年3月29日
+categories: 9:50
+---
  
 semanage命令安装：
 yum install -y policycoreutils-python

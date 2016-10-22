@@ -1,6 +1,8 @@
 ---
-title: how to change encode with iconv
-date: 2016-10-22 23:01:00
+title: ---
+date: title: how to change encode with iconv
+categories: date: 2016-10-22 23:01:00
+---
 categories: linux/advance
 ---
 ### when we need change encode

@@ -1,6 +1,8 @@
-时间同步: centos7-ntp-chrony
-2016年4月6日
-16:14
+---
+title: 时间同步: centos7-ntp-chrony
+date: 2016年4月6日
+categories: 16:14
+---
  
 一、CHRONY
 ===============================================

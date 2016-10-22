@@ -1,6 +1,8 @@
-对mtime n的验证
-2014年12月31日
-23:00
+---
+title: 对mtime n的验证
+date: 2014年12月31日
+categories: 23:00
+---
  
 先提前看一下三个实验文件的日期，及分析它们之间的关系
 [root@web01 mtime.d]# ll

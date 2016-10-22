@@ -1,6 +1,8 @@
-博客: hexo的next主题加友链
-Thursday, 25 August 2016
-5:34 PM
+---
+title: 博客: hexo的next主题加友链
+date: Thursday, 25 August 2016
+categories: 5:34 PM
+---
  
 ---
 title: hexo博客友情链接配置

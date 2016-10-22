@@ -1,6 +1,8 @@
-yum: 报错汇总
-2016年6月17日
-9:43
+---
+title: yum: 报错汇总
+date: 2016年6月17日
+categories: 9:43
+---
  
 错误信息：
 # yum install ntp 
