@@ -1,10 +1,0 @@
-安全
-2016年6月24日
-19:31
- 
-## 密码生成命令
-# openssl rand -hex 10
- 
-## 各服务需要的密码及其含义
-Password nameDescriptionDatabase password (no variable used)Root password for the databaseADMIN_PASSPassword of user adminCEILOMETER_DBPASSDatabase password for the Telemetry serviceCEILOMETER_PASSPassword of Telemetry service userceilometerCINDER_DBPASSDatabase password for the Block Storage serviceCINDER_PASSPassword of Block Storage service user cinderDASH_DBPASSDatabase password for the dashboardDEMO_PASSPassword of user demoGLANCE_DBPASSDatabase password for Image serviceGLANCE_PASSPassword of Image service userglanceHEAT_DBPASSDatabase password for the Orchestration serviceHEAT_DOMAIN_PASSPassword of Orchestration domainHEAT_PASSPassword of Orchestration service user heatKEYSTONE_DBPASSDatabase password of Identity serviceNEUTRON_DBPASSDatabase password for the Networking serviceNEUTRON_PASSPassword of Networking service userneutronNOVA_DBPASSDatabase password for Compute serviceNOVA_PASSPassword of Compute service usernovaRABBIT_PASSPassword of user guest of RabbitMQSWIFT_PASSPassword of Object Storage service user swift 
- 

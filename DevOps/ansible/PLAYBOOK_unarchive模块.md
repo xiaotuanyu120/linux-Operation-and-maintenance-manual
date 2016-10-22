@@ -1,0 +1,26 @@
+PLAYBOOK: unarchive模块
+2016年4月20日
+15:35
+ 
+## 模块简介
+unarchive - 从本机拷贝文件（可选），然后在远程服务器解压
+ 
+## 主要参数
+copy 
+- 默认是yes，会拷贝文件到远程服务器，然后解压，如果是no，则不拷贝，直接解压
+dest - 解压文件路径
+src 
+- 若copy为yes(默认)，本地压缩包位置，可为相对路径，需拷贝文件，若copy为no，此参数为远程服务器上的位置，直接解压
+ 
+## 可通过copy=no来与copy模块(force=no)搭配使用，这样会一定程度提升效率
+http://docs.ansible.com/ansible/copy_module.html
+ 
+## 实例
+**************************************************
+---
+- hosts: java
+  remote_user: root
+  tasks:
+  - name: unarchive jdk file to remote server
+    unarchive: src=files/jdk-7u79-linux-x64.tar.gz dest=/usr/local/
+**************************************************

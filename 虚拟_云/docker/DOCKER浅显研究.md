@@ -1,0 +1,51 @@
+DOCKER浅显研究
+2015年9月24日
+16:49
+ 
+安装
+======================================
+# wget -qO- https://get.docker.com | sh
+ 
+检查安装结果
+======================================
+# rpm -qa |grep docker
+docker-engine-1.8.2-1.el7.centos.x86_64
+docker-selinux-1.7.1-115.el7.x86_64
+ 
+启动服务（centos 7 ）
+======================================
+# systemctl enable docker.service
+# systemctl start docker.service
+# 刚安装完死活打不开，重启之后就好了
+ 
+hello world测试
+=====================================
+# docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+535020c3e8ad: Pull complete
+af340544ed62: Pull complete
+library/hello-world:latest: The image you are pulling has been verified. Important: image verification is a tech preview feature and should not be relied on to provide security.
+Digest: sha256:02fee8c3220ba806531f606525eceb83f4feb654f62b207191b1c9209188dedd
+Status: Downloaded newer image for hello-world:latest
+ 
+Hello from Docker.
+This message shows that your installation appears to be working correctly.
+ 
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+ 
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+ 
+Share images, automate workflows, and more with a free Docker Hub account:
+ https://hub.docker.com
+ 
+For more examples and ideas, visit:
+ https://docs.docker.com/userguide/
+ 

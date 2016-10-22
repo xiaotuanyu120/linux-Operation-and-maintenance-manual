@@ -1,31 +1,0 @@
-项目1: 环境准备
-2016年3月7日
-15:14
- 
-## 环境介绍
-系统： centos 7.1
-python： 2.7.5
-django： 1.9.4 
- 
-## virtualenv创建
-# mkdir -p /root/python-project/ig_pm
-# cd /root/python-project/ig_pm/
-# virtualenv .
-# . ./bin/activate 
- 
-## 安装django
-# pip install Django 
- 
-## django project创建
-# django-admin startproject ig_pm
-# mv ig_pm/ src 
- 
-## git创建
-# cd src
-## 去github网站新建个repo，按照提示，进行如下操作
-# echo "# ig_pm" >> README.md
-# git init
-# git add ./*
-# git commit -m "first commit"
-# git remote add origin https://github.com/xiaotuanyu120/office_routine_django.git 
-# git push -u origin master

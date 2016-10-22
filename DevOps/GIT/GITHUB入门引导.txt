@@ -1,70 +1,0 @@
-GITHUB入门引导
-2015年8月23日
-22:35
- 
-1、INSTALLATION
-# yum install git 
-2、INITALIZATION
-# git init
-Initialized empty Git repository in /root/python/homework/.git/ 
-3、ADD FILE TO TRACK
-# git add ./*
-## 查看status
-# git status 
-4、MAKE FILE TO STATUS COMMITED
-# git commit -m "first commit"
-[master (root-commit) 428c777] first commit
- 44 files changed, 11264 insertions(+)
- create mode 100644 _3rd/is_num.py
- ......
- create mode 100644 _7th_1/get_tree_dir2.py
- create mode 100644 _7th_1/walk/this_is_file_test_walk 
-# git remote add origin https://github.com/xiaotuanyu120/py_homework.git
-# git push -u origin master
-Username for 'https://github.com': xiaotuanyu120
-Password for 'https://xiaotuanyu120@github.com':
-Counting objects: 54, done.
-Compressing objects: 100% (50/50), done.
-Writing objects: 100% (54/54), 267.01 KiB | 0 bytes/s, done.
-Total 54 (delta 8), reused 0 (delta 0)
-To https://github.com/xiaotuanyu120/py_homework.git
- * [new branch]      master -> master
-Branch master set up to track remote branch master from origin. 
-增加coding.net遇到的问题
-问题：
-# git commit -m 'modified stu_mgr'
-# On branch master
-# Changes not staged for commit:
-#   (use "git add/rm <file>..." to update what will be committed)
-#   (use "git checkout -- <file>..." to discard changes in working directory)
-#
-#       modified:   stu_db.py
-#       modified:   stu_mgr.py
-#       deleted:    student_db.py
-#       deleted:    student_info_db_v1.py
-#       deleted:    test.py
-#
-no changes added to commit (use "git add" and/or "git commit -a")
-# git push upstream master
-Username for 'https://git.coding.net': xiaotuanyu
-Password for 'https://xiaotuanyu@git.coding.net':
-Everything up-to-date 
-解决方案：
-# git commit -am 'modified stu_mgr'
-[master 13de2d9] modified stu_mgr
- 5 files changed, 30 insertions(+), 287 deletions(-)
- rewrite _9th_2/stu_mgr.py (67%)
- delete mode 100644 _9th_2/student_db.py
- delete mode 100644 _9th_2/student_info_db_v1.py
- delete mode 100644 _9th_2/test.py
-# git push upstream master
-Username for 'https://git.coding.net': xiaotuanyu
-Password for 'https://xiaotuanyu@git.coding.net':
-Counting objects: 9, done.
-Compressing objects: 100% (5/5), done.
-Writing objects: 100% (5/5), 648 bytes | 0 bytes/s, done.
-Total 5 (delta 3), reused 0 (delta 0)
-To https://git.coding.net/xiaotuanyu/python_homework.git
-   f69e8ed..13de2d9  master -> master 
-HOW TO CLONE A REPO THAT IDENTIFY BRANCH
-# git clone -b webserver https://git.coding.net/the5fire/PyCode.git## 指定clone到webserver这个分支
