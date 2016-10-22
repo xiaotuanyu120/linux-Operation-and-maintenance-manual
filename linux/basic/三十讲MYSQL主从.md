@@ -1,6 +1,8 @@
-三十讲MYSQL主从
-2015年1月30日
-20:33
+---
+title: 三十讲MYSQL主从
+date: 2015年1月30日
+categories: 20:33
+---
  
 本节内容:MYSQL主从配置
  

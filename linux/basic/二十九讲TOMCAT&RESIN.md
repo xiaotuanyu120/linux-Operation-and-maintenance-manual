@@ -1,6 +1,8 @@
-二十九讲TOMCAT&RESIN
-2015年1月28日
-下午 12:22
+---
+title: 二十九讲TOMCAT&RESIN
+date: 2015年1月28日
+categories: 下午 12:22
+---
  
 本节内容：TOMCAT&RESIN
  
