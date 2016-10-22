@@ -1,0 +1,31 @@
+19.4: 日志管理-日志介绍
+2014年12月31日
+19:37
+ 
+重要日志:
+/var/log/messages：记录系统的错误信息，是非常核心的系统日志文件 
+/var/log/wtmp：记录正确登录的帐号信息，last命令就是查看这个文件
+/var/log/btmp：记录错误登录的帐号信息，lastb命令就是查看这个文件
+/var/log/maillog：记录mail软件产生的信息，例如sendmail(SMTP)和dovecot(POP3)
+/var/log/secure：记录软件输入密码时产生的信息（正确和错误），例如su、sudo、login、ssh等
+/var/log/dmesg：记录内核在开机时检测的信息，可用来排除硬件故障
+ 
+日志服务和程序:
+rsyslogd - 统一管理系统日志的服务
+logrotate - 自动化切割系统日志
+ 
+## rsyslogd维护系统日志
+# ps aux | grep 'rsyslogd'|grep -v "grep"
+root      1000  0.0  0.1  36160  1676 ?        Sl    2014   0:01 /sbin/rsyslogd -i /var/run/syslogd.pid -c 5
+ 
+## 就是它来帮我们切割日志的
+# which logrotate
+/usr/sbin/logrotate 
+配置文件:
+/etc/rsyslog.conf
+配置rsyslogd，记录了"1、什么服务;2、什么等级；3、记录在什么文件中"
+/etc/logrotate.conf
+配置logrotate切割messages(关键字weekly),目录/etc/logrotate.d/下很多
+ 
+PS：
+messages由syslogd这个守护进程产生的，如果停掉这个服务则系统不会产生/var/log/messages

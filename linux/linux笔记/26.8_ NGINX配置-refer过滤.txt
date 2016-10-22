@@ -1,0 +1,38 @@
+26.8: NGINX配置-refer过滤
+2015年12月3日 星期四
+11:48
+ 
+用if判断refer，并采取措施
+问题描述：
+查看网站访问日志，发现refer中有一个caww的网站，不断的导流量refer过来，量不大，但刚好对我们网站的访问造成了影响
+解决办法：
+在跟业务沟通过这个网站caww确实不是我们的合作业务后，采取以下措施
+## 打开vhost配置文件，在server块中添加以下代码
+**************************************
+location / {
+        if ($http_referer ~* (caww|another_one))
+                {
+                        return 403;
+                }
+}
+**************************************
+## 检查下配置语法错误 && 平滑重启服务
+# nginx -t
+# nginx -s reload扩展思维：
+如果我们需要禁用某些爬虫访问，也可以用refer来控制
+常用的爬虫refer有如下几个，
+http://www.google.com;
+http://www.google.cn;
+http://www.sogou.com;
+http://so.163.com;
+http://www.iask.com;
+http://www.yahoo.com;
+http://www.baidu.com;
+http://www.3721.com;
+http://www.soso.com;
+http://www.zhongsou.com;
+http://www.alexa.com;
+http://www.search.com;
+http://www.lycos.com;
+http://www.aol.com;
+http://www.haosou.com/

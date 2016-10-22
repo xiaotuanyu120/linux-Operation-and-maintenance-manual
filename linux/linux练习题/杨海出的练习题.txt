@@ -1,0 +1,126 @@
+杨海出的练习题
+2014年11月28日
+上午 9:40
+ 
+linux习题：
+1.使用putty远程连接时,默认情况是使用的22端口，如何自定义链接端口号；
+答：
+编辑/etc/ssh/sshd_conf，添加"port 端口号"，可添加多个端口
+ 
+2.如何修改网卡的ip地址；
+答：
+可以修改/etc/sysconfig/network-scripts/ifcfg-eth0或相应网卡配置文件
+ 
+3.查看，启动，关闭服务（例如：sshd,iptables）的命令是什么；
+答：
+service --status-all 查看服务
+service sshd start 启动服务
+service sshd stop 关闭服务
+ 
+4.在根目录下级联创建/aa/bb/cc三个目录；
+答：
+mkdir -p /aa/bb/cc
+ 
+5.使用rm删除文件或目录时，可以携带-r f参数，这些参数什么意思？
+答：
+-r "recursive"递归删除目录下所有文件，删除目录用
+-f "force"强制删除，跳过询问过程
+ 
+6.如何查看命令的环境变量以及怎样配置环境变量？
+答：
+echo $PATH
+PATH=PATH:目标目录 临时修改PATH
+修改/etc/profile
+ 
+7.在家目录下，创建一个test文件，向里面写上任意一段文字，然后，
+ 修改其所属组权限为6，所属主权限为7，而其他修改为2权限；
+答：
+cd ~
+touch test
+echo "fjdksjagjsag" > test
+chmod 762 test
+ 
+8.创建一个文件，只能向该文件中添加数据，同时，非root用户不能删除该文件；
+答：
+chattr +a 文件名称
+ 
+9.理解atime,ctime,mtime三个时间的意思！
+答：
+atime "access time"访问时间，类似于cat、more、head等命令会影响到atime
+ctime "change time"改变时间，改变文件名称、大小、权限，类似于chmod、chown、touch等命令会影响到ctime
+mtime "modify time"修改时间，修改文件的内容，类似于vi、echo 内容进文件等命令会影响到mtime
+另外mtime改变，ctime一定会改变。
+ 
+10.查找10天之内在当前用户的家目录下有访问的的文件
+答：
+find ~ -atime -10
+ 
+11.使用find通过文件类型查找文件；例如：在你的/tmp/目录下查找文件类型为d的文件
+答：
+find /tmp/ -type d
+ 
+12.软硬链接的格式及它们的区别；
+答：
+软连接 ln -s 文件
+硬链接 ln 文件
+软连接可以跨分区，硬链接不可以
+软连接可以链接目录，硬链接不可以
+做硬链接不增加inode消耗，软连接会增加inode
+删除原文件，软连接的内容也会消失，而硬链接仍然可以访问原来内容
+ 
+13.创建3个用户user1 ,user2,user3
+答：
+useradd user1
+useradd user2
+useradd user3
+ 
+14，创建一个用户组group1，并且将上题中的的用户添加到该用户组
+答：
+groupadd group1
+usermod -G group1 user1
+usermod -G group1 user2
+usermod -G group1 user3
+ 
+15.创建一个目录，在该目录下创建test1.txt,text2.txt,test3.txt三个文件，
+  然后将其所属组修改为group1
+答：
+mkdir testdir
+touch ./testdir test1.txt
+touch ./testdir test2.txt
+touch ./testdir test3.txt
+chown :group1 testdir
+ 
+16.删除用户user1和用户组group1
+答：
+userdel user1
+groupdel group1
+ 
+17.安装哪个包后才能使用mkpasswd命令，使用该命令的作用是什么；
+答：
+yum install -y expect
+按照一定规则随机生成密码串
+ 
+18.使用su和sudo之间的区别和联系
+答：
+su 是用来切换effective user的
+sudo是在root的允许范围内临时获取root权限的
+ 
+19.禁止root远程登陆
+答：
+配置/etc/ssh/sshd_config
+将PermitRootLogin项改为no
+ 
+20.挂载一个磁盘，创建一个2G大的主分区挂载到/root/aming下； 
+答：
+fdisk /dev/sda
+n
+p
+1
+按下"Enter"键，默认从最开始的cylinder
++2G
+w
+ 
+mke2fs -t ext4 /dev/sda1
+ 
+mount /dev/sda1 /root/aming
+ 

@@ -1,0 +1,69 @@
+26.9: NGINX配置-原地rewrite
+2016年6月2日
+16:23
+ 
+0，环境介绍
+=========================================
+需求：
+一般的rewrite是跳转后url会改变，现在需要url实际发生了跳转，但url不发生改变。
+ 
+nginx版本：1.8.0
+web目录：/data/test,其中包含一个test子目录，子目录下有个test.html文件
+  
+1，原地跳转配置及效果
+==========================================
+## 两种配置对比
+## 配置常规rewrite test2.conf
+******************************
+server {
+    listen       80;
+    server_name  www.test2.com;
+    root           /data/test;
+    location / {
+        rewrite "(http://)?www.test2.com/(.*)" www.test2.com/test/$1.html last;
+    }
+}
+******************************
+ 
+## 配置原地跳转 test.conf
+******************************
+server {
+    listen       80;
+    server_name  www.test.com;
+    root           /data/test;
+    location / {
+        rewrite "^/(.*)" /test/$1.html break;
+    }
+}
+******************************
+ 
+## 最大的区别就是rewrite时是否包含"http://"这块，因为如果含有https://和http://，匹配过程会停止，同时跳转到目标域名上去。
+ 
+ 
+## 效果检查
+## 常规配置的rewrite效果
+# curl -x localhost:80 www.test2.com/test -I
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.8.0
+Date: Wed, 01 Jun 2016 23:27:55 GMT
+Content-Type: text/html
+Content-Length: 184
+Location: http://www.test2.com/test/
+Connection: keep-alive
+ 
+## 原地rewrite的效果
+# curl -x localhost:80 www.test.com/test -I
+HTTP/1.1 200 OK
+Server: nginx/1.8.0
+Date: Wed, 01 Jun 2016 23:28:01 GMT
+Content-Type: text/html
+Content-Length: 20
+Last-Modified: Wed, 01 Jun 2016 23:01:01 GMT
+Connection: keep-alive
+ETag: "574f692d-14"
+Accept-Ranges: bytes
+ 
+## 参考链接：http://stackoverflow.com/questions/15322826/nginx-rewrite-without-change-url 
+ 
+ 
+ 

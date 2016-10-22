@@ -1,0 +1,37 @@
+10.2.1: 扩展-WGET命令
+2015年9月24日
+14:11
+ 
+命令：wget
+作用：无交互的网络文件下载器
+语法：wget [参数] URL
+参数：
+-0 filename/-，前者是重定向到filename中，后者是直接重定向到stdout
+-q，等同于--quiet，关闭wget的输出信息
+ 
+用法举例：
+# -O 直接指定文件
+# wget -O image http://global.mifile.cn/webfile/globalimg/sg/banner/mi4i_pricedrop.png
+# file image
+image: PNG image data, 2240 x 550, 8-bit/color RGB, non-interlaced
+ 
+# -O 后面不跟文件跟'-'
+# wget -qO- https://get.docker.com 
+# 下载下来的文件会以系统stdout的方式显示出来
+ 
+# docker的安装示例
+# wget -qO- https://get.docker.com |sh
++ sh -c 'sleep 3; yum -y -q install docker-engine'
+warning: /var/cache/yum/x86_64/7/docker-main-repo/packages/docker-engine-1.8.2-1.el7.centos.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 2c52609d: NOKEY
+Public key for docker-engine-1.8.2-1.el7.centos.x86_64.rpm is not installed
+Importing GPG key 0x2C52609D:
+ Userid     : "Docker Release Tool (releasedocker) <docker@docker.com>"
+ Fingerprint: 5811 8e89 f3a9 1289 7c07 0adb f762 2157 2c52 609d
+ From       : https://yum.dockerproject.org/gpg
+ 
+If you would like to use Docker as a non-root user, you should now consider
+adding your user to the "docker" group with something like:
+ 
+  sudo usermod -aG docker your-user
+ 
+Remember that you will have to log out and back in for this to take effect!

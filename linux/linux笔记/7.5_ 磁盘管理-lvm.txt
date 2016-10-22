@@ -1,0 +1,177 @@
+7.5: 磁盘管理-lvm
+2014年11月24日
+22:46
+ 
+lvm磁盘创建
+===========================================
+1、准备物理分区(可跨磁盘)
+使用fdisk
+## 磁盘分区准备
+# fdisk -l |grep -E "sdb|sdc"
+Disk /dev/sdb: 10.7 GB, 10737418240 bytes
+/dev/sdb1               1         654     5253223+  83  Linux
+/dev/sdb2             655         974     2570400   83  Linux
+/dev/sdb3             975        1305     2658757+  83  Linux
+Disk /dev/sdc: 3221 MB, 3221225472 bytes
+/dev/sdc1               1         391     3140676   83  Linux
+ 
+## 提前将分区类型调整为8e(for lvm)
+# fdisk /dev/sdb
+Command (m for help): t
+Partition number (1-4): 3
+Hex code (type L to list codes): 8e
+Changed system type of partition 3 to 8e (Linux LVM)
+ 
+Command (m for help): p
+ 
+Disk /dev/sdb: 10.7 GB, 10737418240 bytes
+255 heads, 63 sectors/track, 1305 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0xd6b2d026
+ 
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1               1         654     5253223+  8e  Linux LVM
+/dev/sdb2             655         974     2570400   8e  Linux LVM
+/dev/sdb3             975        1305     2658757+  8e  Linux LVM
+ 
+Command (m for help): w
+The partition table has been altered!
+ 
+Calling ioctl() to re-read partition table.
+Syncing disks.
+ 
+使用parted
+## 修改partition type为lvm，并启用
+# parted /dev/sdc set 1 lvm on
+# parted /dev/sdc print
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sdc: 3221MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+ 
+Number  Start   End     Size    Type     File system  Flags
+ 1      32.3kB  3216MB  3216MB  primary               lvm 
+2、准备物理卷(physical volume)
+## 可用命令
+# pv [TAB] [TAB]
+pvchange   pvcreate   pvmove     pvresize   pvscan
+pvck       pvdisplay  pvremove   pvs
+ 
+## 创建物理卷
+# pvcreate /dev/sdb1
+  Physical volume "/dev/sdb1" successfully created
+# pvcreate /dev/sdb2
+  Physical volume "/dev/sdb2" successfully created
+# pvcreate /dev/sdc1
+  Physical volume "/dev/sdc1" successfully created
+ 
+## 查看物理卷信息
+# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb1       lvm2 ---  5.01g 5.01g
+  /dev/sdb2       lvm2 ---  2.45g 2.45g
+  /dev/sdc1       lvm2 ---  3.00g 3.00g
+ 
+# pvdisplay /dev/sdb1
+  "/dev/sdb1" is a new physical volume of "5.01 GiB"
+  --- NEW Physical volume ---
+  PV Name               /dev/sdb1
+  VG Name
+  PV Size               5.01 GiB
+  Allocatable           NO
+  PE Size               0
+  Total PE              0
+  Free PE               0
+  Allocated PE          0
+  PV UUID               oJ6gdr-1PFL-fTZ0-a6BQ-dy9M-uu2G-xXqsdA 
+3、准备卷组(volume group)
+## 可用卷组命令
+# vg  [TAB] [TAB]
+vgcfgbackup    vgconvert      vgextend       vgmknodes      vgs
+vgcfgrestore   vgcreate       vgimport       vgreduce       vgscan
+vgchange       vgdisplay      vgimportclone  vgremove       vgsplit
+vgck           vgexport       vgmerge        vgrename
+ 
+## 创建卷组
+# vgcreate vg1 /dev/sdb1 /dev/sdb2
+  Volume group "vg1" successfully created
+ 
+## 卷组扩容
+# vgextend vg1 /dev/sdc1
+  Volume group "vg1" successfully extended
+ 
+## 检查卷组状态
+# vgs
+  VG   #PV #LV #SN Attr   VSize  VFree
+  vg1    3   0   0 wz--n- 10.45g 10.45g
+ 
+# vgdisplay vg1
+  --- Volume group ---
+  VG Name               vg1
+  System ID
+  Format                lvm2
+  Metadata Areas        3
+  Metadata Sequence No  2
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                0
+  Open LV               0
+  Max PV                0
+  Cur PV                3
+  Act PV                3
+  VG Size               10.45 GiB
+  PE Size               4.00 MiB
+  Total PE              2675
+  Alloc PE / Size       0 / 0
+  Free  PE / Size       2675 / 10.45 GiB
+  VG UUID               YP3qey-wLFx-m0ZX-Fbkf-B1oG-UqdH-7Qr6Gi 
+4、准备逻辑卷(logical volumes)
+## 可用命令
+# lv  [TAB] [TAB]
+lvchange     lvextend     lvmdiskscan  lvmsar       lvresize
+lvconvert    lvm          lvmdump      lvreduce     lvs
+lvcreate     lvmchange    lvmetad      lvremove     lvscan
+lvdisplay    lvmconf      lvmsadc      lvrename
+ 
+## vg1上创建一个3G的lv
+# lvcreate -L 3G -n lv01 vg1
+  Logical volume "lv01" created.
+ 
+## vg1上创建占vg1容量50%的lv02
+# lvcreate -l 50%VG -n lv02 vg1
+  Logical volume "lv02" created.
+ 
+## 剩余空间全部分配给lv03
+# lvcreate -l 100%FREE -n lv03 vg1
+  Logical volume "lv03" created.
+ 
+## 检查lv状态
+# lvscan
+  ACTIVE            '/dev/vg1/lv01' [3.00 GiB] inherit
+  ACTIVE            '/dev/vg1/lv02' [5.22 GiB] inherit
+  ACTIVE            '/dev/vg1/lv03' [2.23 GiB] inherit 
+5、扩展lv03
+## 准备pv和vg
+# pvcreate /dev/sdb3
+  Physical volume "/dev/sdb3" successfully created
+# vgextend vg1 /dev/sdb3
+  Volume group "vg1" successfully extended
+ 
+## 指定容量扩展空间
+# lvextend -L +500M /dev/vg1/lv03
+  Size of logical volume vg1/lv03 changed from 2.23 GiB (570 extents) to 2.71 GiB (695 extents).
+  Logical volume lv03 successfully resized
+ 
+## 扩展剩余所有空间
+# lvextend -l +100%FREE /dev/vg1/lv03
+  Size of logical volume vg1/lv03 changed from 2.71 GiB (695 extents) to 4.76 GiB (1218 extents).
+  Logical volume lv03 successfully resized
+ 
+## 查看状态
+# lvscan
+  ACTIVE            '/dev/vg1/lv01' [3.00 GiB] inherit
+  ACTIVE            '/dev/vg1/lv02' [5.22 GiB] inherit
+  ACTIVE            '/dev/vg1/lv03' [4.76 GiB] inherit 

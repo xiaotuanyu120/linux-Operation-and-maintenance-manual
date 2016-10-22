@@ -1,0 +1,48 @@
+22.4: 访问控制-SetEnvIf
+2015年1月9日
+20:16
+ 
+0，配置加载模块
+===============================================
+## 主配文件中确认加载以下两个模块
+LoadModule setenvif_module modules/mod_setenvif.so
+ 
+## 重载配置，查看模块是否加载
+# apachectl -M | grep "setenvif"
+ setenvif_module (shared) 
+1，SetEnvIf用法
+===============================================
+作用: Sets environment variables based on attributes of the request
+语法: 
+SetEnvIf attribute regex [!]env-variable[=value] [[!]env-variable[=value]] ...
+其他：
+Context:server config, virtual host, directory, .htaccessOverride:FileInfoStatus:BaseModule:mod_setenvif 
+## 语法各字段含义
+1. attribute - 可能是以下内容
+a. request 的header，例如Host, User-Agent, Referer, and Accept-Language
+b. request的信息:
+Remote_Host - hostname
+Remote_Addr - ip地址
+Server_Addr - 接受此reqest的服务器地址 
+only with versions later than 2.0.43
+Request_Method - 使用的方法 (GET, POST, et cetera)
+Request_Protocol - request使用的协议 
+e.g., "HTTP/0.9", "HTTP/1.1", etc.
+Request_URI - hostname:port之后，qerry string之前的内容
+c. 变量 - 其他SetEnvIf[NoCase]的变量，需在此语句之前或之上声明的
+2. 正则表达字符串
+用来匹配attribute，若匹配成功，后面的动作则执行
+3. 其余部分是变量设定
+格式为
+a. varname - 会默认把此变量设为1
+b. !varname - 若变量存在，取消它
+c. varname=varlue - 把变量设为value的值
+ 
+  
+2，SetEnvIf扩展
+===============================================
+## SetEnvIfNoCase
+和SetEnvIf一样，只是匹配时忽略了大小写
+ 
+## 详细介绍： 
+http://httpd.apache.org/docs/2.2/mod/mod_setenvif.html#setenvif

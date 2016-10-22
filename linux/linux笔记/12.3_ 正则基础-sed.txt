@@ -1,0 +1,247 @@
+12.3: 正则基础-sed
+2014年12月10日
+20:00
+ 
+命令：sed 
+作用：主要用于编辑字符串的字符串处理工具
+参数：
+-r 使sed支持扩展正规表示法语系，意即可使用"+"、"|"等，另外不需要脱意
+-n 
+使用slient模式，一般模式中sed会把所有内容都输出
+但加上"-n"后只会输出符合条件的行内容
+-e 可以实现单条命令多任务输出，也可以用"；"间隔
+-i 直接改动源文件，而不是只输出到显示器
+ 
+语法及举例：
+ 
+## 查询语法
+sed [参数] '/查询关键字/ 功能符号' file
+## 功能符号
+p,打印;
+d,删除;
+## -n参数演示
+ 
+## nl意为给输出加上行号，因为没有-n，所以匹配的第7行重复输出
+# sed '/god/ p' regep.txt |nl
+     1  ,./;':[]{}\|1`
+     2  port
+     3  export
+     4  sports
+     5  good gooood
+     6  gooood
+     7  god
+     8  god
+     9  gd
+## -n参数没有输出原文件内容
+# sed -n '/god/ p' regep.txt |nl
+     1  god
+ 
+ 
+## 使用-r参数来让sed支持"+"等扩展正规表示法符号
+# sed -nr '/go+d/ p' regep.txt |nl
+     1  good gooood
+     2  gooood
+     3  god
+# sed -nr '/go?d/ p' regep.txt |nl
+     1  god
+     2  gd 
+## 删除行语法
+sed [参数] '[n,[m]] d' file
+n是起始行
+m是末尾行
+d是delete 删除
+## 删除2-3行
+ 
+# grep -n '[[:alnum:]]' regep.txt |sed '2,3d'
+1:,./;':[]{}\|1`
+4:sports
+5:good gooood
+6:gooood
+7:god
+8:gd
+ 
+ 
+## 删除第2行
+ 
+# grep -n '[[:alnum:]]' regep.txt |sed '2 d'
+1:,./;':[]{}\|1`
+3:export
+4:sports
+5:good gooood
+6:gooood
+7:god
+8:gd
+ 
+ 
+## 删除2到最后一行
+ 
+# grep -n '[[:alnum:]]' regep.txt |sed '2,$d'
+1:,./;':[]{}\|1` 
+## 替换语法
+sed [参数] 's///g 功能符号' file
+## 全部小写转大写
+# sed 's/[a-z]/\u&/g' regep.txt
+,./;':[]{}\|1`
+PORT
+EXPORT
+SPORTS
+GOOD GOOOOD
+GOOOOD
+GOD
+GD
+# sed 's/[[:lower:]]/\U&/g' regep.txt
+,./;':[]{}\|1`
+PORT
+EXPORT
+SPORTS
+GOOD GOOOOD
+GOOOOD
+GOD
+GD
+ 
+ 
+## \u和\U都可以把小写字母变成大写字母，
+## &代表的意义是s///g里第一个/后面所设定的区间，下面研究区别
+ 
+## 因为设定区间为头两个字符，U可以将其前两个字符全部变为大写
+# echo "abc def" | sed 's/^../\U&/g'
+ABc def
+## 而u只可以将其前两个字符里的第一个变为大写
+# echo "abc def" | sed 's/^../\u&/g'
+Abc def
+ 
+## 之所以最开始的例子u和U的效果一样，是因为适配范围定的太广，每一个字符都是单独的匹配项，所以u和U看起来效果就一样了，而如果给适配范围做下修改，就可以很明显看出区别：
+ 
+## 适配范围加上一个边界"\b"，另外通过后面的"\+"把适配宽度放宽
+# sed 's/\b[[:lower:]]\+/\U&/g' regep.txt
+,./;':[]{}\|1`
+PORT
+EXPORT
+SPORTS
+GOOD GOOOOD
+GOOOOD
+GOD
+GD
+# sed 's/\b[[:lower:]]\+/\u&/g' regep.txt
+,./;':[]{}\|1`
+Port
+Export
+Sports
+Good Gooood
+Gooood
+God
+Gd
+ 
+ 
+## s///g中的"g"也可以换成"i"，意为忽略搜索大小写限制
+ 
+## 匹配大小写的root
+# sed -n 's/ROOT/TOOR/i p' /etc/passwd
+TOOR:x:0:0:root:/root:/bin/bash
+operator:x:11:0:operator:/TOOR:/sbin/nologin 
+## 新增行语法
+sed '[[n],m]a 增加内容' file
+na - n行后增加
+n,ma - n-m行后增加
+n,$a - n到最后行增加
+n和m都不存在的时候，每行都会增加
+ 
+## 匹配到pattern，在它下面添加text行
+sed '/pattern/atext' file
+ 
+## 匹配到pattern，在它上面插入text行
+sed '/pattern/itext' file
+## 3-最后一行新增内容
+# sed '3,$a "new line"' sed.txt
+one
+two
+three
+"new line"
+four
+"new line"
+five
+"new line"
+ 
+## 在one行之后append一行
+# sed '/one/agood' sed.txt
+one
+good
+two
+three
+four
+five
+ 
+## 在one行之前append一行
+# sed '/one/igood' sed.txt
+good
+one
+two
+three
+four
+five 
+## 替代行语法
+sed 'n，mc 替换内容'file
+nc - n行被替换
+n,mc - n-m行整体被替换
+n,$c - n到最后行整体被替换
+n和m都不存在的时候，所有行每行单独被替换
+ 
+## 替换2-最后一行
+# sed '2,$c "new line"' sed.txt
+one
+"new line"
+ 
+## 替换1-3行为一行
+# sed '1,3c "new line"' sed.txt
+"new line"
+four
+five
+ 
+## 替换所有行
+# sed 'c "new line"' sed.txt
+"new line"
+"new line"
+"new line"
+"new line"
+"new line"
+ 
+## 注意明确指定区间的，基本是整体被替换，宽泛的所有行是单独替换 
+## 调换同行几段字符串位置
+## 第一个()会被标记成为1，以后依次类推标记为2,3...
+## 被转义的321已经不再代表数字321，而是代表前面的标记号
+# sed -r 's/(^.*)(:x.*:)(.*$)/\3\2\1/g' /etc/passwd | head -5
+/bin/bash:x:0:0:root:/root:root
+/sbin/nologin:x:1:1:bin:/bin:bin
+/sbin/nologin:x:2:2:daemon:/sbin:daemon
+/sbin/nologin:x:3:4:adm:/var/adm:adm
+/sbin/nologin:x:4:7:lp:/var/spool/lpd:lp
+ 
+## 为什么(:x.*:)匹配了最后一个:而不是中间的:？
+## 查一查贪婪匹配吧 
+## 直接修改文件内容
+## 将文件中的特殊符号全部替换成X
+# cat regep.txt
+,./;':[]{}\|1`
+......
+0912-345678
+192.168.0.1
+# sed -i 's/[[:punct:]]/X/g' regep.txt
+# cat regep.txt
+XXXXXXXXXXXX1X 
+......
+0912X345678
+192X168X0X1 
+sed练习题：
+把/etc/passwd 复制到/root/test.txt，用sed打印所有行
+打印test.txt的3到10行
+打印test.txt 中包含 'root' 的行
+删除test.txt 的15行以及以后所有行
+删除test.txt中包含 'bash' 的行
+替换test.txt 中 'root' 为 'toor'
+替换test.txt中 '/sbin/nologin' 为 '/bin/login'
+删除test.txt中5到10行中所有的数字
+删除test.txt 中所有特殊字符（除了数字以及大小写字母）
+把test.txt中第一个单词和最后一个单词调换位置
+把test.txt中出现的第一个数字和最后一个单词替换位置
+把test.txt 中第一个数字移动到行末尾
+在test.txt 20行到末行最前面加 'aaa:'

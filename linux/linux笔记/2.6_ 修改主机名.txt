@@ -1,0 +1,56 @@
+2.6: 修改主机名
+2015年11月6日 星期五
+10:27
+ 
+CENTOS6-主机名修改方式
+===============================
+## 临时修改
+# hostname name 
+## 运行后新会话生效，但是在系统重启后会丢失所做的修改
+ 
+# echo name > /proc/sys/kernel/hostname
+## 运行后立即生效（新会话生效），但是系统重启后会丢失所做的修改
+ 
+# sysctl kernel.hostname=name
+## 运行后立即生效（新会话生效），但是系统重启后会丢失所做的修改
+ 
+## 永久修改
+# vi /etc/sysconfig/network
+**************************
+HOSTNAME=yourhostname
+**************************
+## 需要重启生效，永久性修改。
+ 
+ps：实际生效的hostname值在/proc/sys/kernel/hostname 
+CENTOS7-主机名修改方式
+===============================
+## 查看当前主机名
+# hostnamectl
+   Static hostname: localhost.localdomain
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 7fef1ee62fa0474d9525976544475af4
+           Boot ID: 73b26f7b72dc438ead1e36e09014e5f3
+    Virtualization: vmware
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-229.el7.x86_64
+      Architecture: x86-64
+ 
+## 配置新主机名
+# hostnamectl set-hostname template
+ 
+## 检查结果
+# hostnamectl
+   Static hostname: template
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 7fef1ee62fa0474d9525976544475af4
+           Boot ID: 73b26f7b72dc438ead1e36e09014e5f3
+    Virtualization: vmware
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-229.el7.x86_64
+      Architecture: x86-64
+# hostname
+template

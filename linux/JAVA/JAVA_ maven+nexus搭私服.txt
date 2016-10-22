@@ -1,0 +1,28 @@
+JAVA: maven+nexus搭私服
+2015年12月24日 星期四
+9:26
+ 
+# cd /usr/local/src
+# wget https://sonatype-download.global.ssl.fastly.net/nexus/oss/nexus-2.11.4-01-bundle.tar.gz
+# wget http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.tar.gz
+# wget http://www.eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+ 
+# tar zxvf jdk-8u65-linux-x64.tar.gz 
+# mv jdk1.8.0_65/ /usr/local/
+# cd /usr/local/jdk1.8.0_65/
+# echo 'export JAVA_HOME=/usr/local/jdk1.8.0_65' >> /etc/profile
+# echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /etc/profile
+# echo 'export CLASSPATH=$JAVA_HOME/lib:.:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar' >> /etc/profile
+# source /etc/profile
+ 
+# cd /usr/local/src/
+# tar zxvf nexus-2.11.4-01-bundle.tar.gz 
+# mv nexus-2.11.4-01 /usr/local/
+# cd /usr/local/nexus-2.11.4-01/
+# useradd nexus
+# cp ./bin/nexus /etc/init.d/nexus
+# chmod 755 /etc/init.d/nexus
+# vim /etc/init.d/nexus
+NEXUS_HOME="/usr/local/nexus-2.11.4-01"
+RUN_AS_USER=nexus
+# service nexus start 

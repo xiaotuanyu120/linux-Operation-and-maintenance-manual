@@ -1,0 +1,45 @@
+第五期第十四讲笔记草稿
+2014年12月17日
+20:02
+ 
+ 
+for ((i=0;i<=100;i++))
+  {
+    expr ${a[$i]} + ${b[$i]}
+} 
+ 
+break跳出循环
+continue 跳出此次循环
+exit 退出循环程序
+ 
+
+
+函数可以反复使用
+ 
+#!/bin/bash
+#
+#
+if_nu() {
+    n1=`echo $1|sed 's/[0-9]//g'`
+    if [ -z $n1 ]
+    then
+        if [ $1 -gt 1 ]; then return 1; else return 0; fi
+    else
+        return 0
+    fi
+}
+read -p "Input a number: " n
+if_nu $n
+n2=`echo $?`
+if [ $n2 -eq 1 ]
+then
+    sum=0
+    for i in `seq 1 $n`
+    do
+        sum=$[$sum+$i]
+    done
+    echo $sum
+else
+    echo "The character you input is not a number."
+fi
+

@@ -1,0 +1,56 @@
+24.3: 扩展模块-memcache
+2015年1月12日
+下午 5:47
+ 
+0，memcache模块安装
+======================================
+## 下载memcache模块安装包
+# wget http://pecl.php.net/get/memcache-2.2.7.tgz
+# tar zxvf memcache-2.2.7.tgz
+# cd memcache-2.2.7
+ 
+## 初始化php模块安装环境
+# /usr/local/php/bin/phpize 
+Configuring for:
+PHP Api Version:         20131106
+Zend Module Api No:      20131226
+Zend Extension Api No:   220131226
+ 
+## 编译安装memcache模块
+# ./configure --with-php-config=/usr/local/php/bin/php-config
+# make
+# make install
+Installing shared extensions:     /usr/local/php/lib/php/extensions/no-debug-zts-20131226/
+ 
+## 检查模块文件
+# ls /usr/local/php/lib/php/extensions/no-debug-zts-20131226/
+memcache.so  opcache.so
+ 
+## 配置php.ini，添加安装的模块路径
+extension_dir = "/usr/local/php/lib/php/extensions/no-debug-zts-20131226/"
+extension = memcache.so
+或者
+extension = /usr/local/php/lib/php/extensions/no-debug-zts-20131226/memcache.so
+ 
+ 
+ 
+## 扩展：
+## 安装守护进程memcached
+# wget http://memcached.org/files/memcached-1.4.22.tar.gz
+# tar zxvf memcached-1.4.22.tar.gz
+# yum install -y libevent-devel      
+# cd memcached-1.4.22
+# ./configure --prefix=/usr/local/memcached
+# make
+# make install
+ 
+## 启动memcached
+## -d(作为daemon启动);-m(分配内存200M);-l(监听host);-p(端口);-u(执行user)
+# /usr/local/memcached/bin/memcached -d -m 200 -l localhost -p 11111 -u root
+# ps aux |grep 11111
+root      4119  0.0  0.1  56492  1100 ?        Ssl  20:34   0:00 /usr/local/memcached/bin/memcached -d -m 200 -l localhost -p 11111 -u root
+root      4126  0.0  0.0   4356   736 pts/0    S+   20:34   0:00 grep --color=auto 11111
+ 
+扩展（暂时了解即可）
+http://www.cnblogs.com/czh-liyu/archive/2010/04/27/1722084.html
+  

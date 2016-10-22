@@ -1,0 +1,165 @@
+11.1: shell基础-复习3-4节
+2014年12月8日
+20:10
+ 
+复习前面学过的shell相关内容
+=====================================
+命令：history
+作用：bash内建命令，管理命令历史
+语法：
+history [n] 不加数字默认列出内存中HISTSIZE参数设定条数的历史命令
+history [参数]
+参数：
+-c 清除目前内存中的命令记录
+"!"的用法：
+"!n" 执行命令历史中的第n条命令记录(ps:"！"与"n"之间没有空格）
+"!!" 执行命令历史中的最后一条命令
+"!$" 代表上一条命令里最后一个参数
+"!命令keywords" 执行以keywords开头最后一次执行的命令
+配置文件：
+## history记录存档文件
+## 每个用户家目录下拥有自己独立的记录文件
+~/.bash_history
+ 
+ 
+## HISTSIZE参数配置文件
+/etc/profile
+ 
+用法举例：
+## history是bash的内建命令
+ 
+# type history
+history is a shell builtin
+ 
+ 
+## history [n]的用法
+ 
+## 记录包含查询命令本身，要留意
+# history 3
+  645  ls
+  646  cat .bash_history |wc -l
+  647  history 3
+ 
+ 
+## "!$"代表最后一条命令里的最后一个参数
+ 
+# echo "fast" > f
+# echo !$
+echo f
+f
+ 
+ 
+## "!命令keywords"执行keywords开头最后一次执行的命令
+ 
+# history 5
+  650  echo "fast" > f
+  651  echo f
+  652  history 5
+  653  history 3
+  654  history 5
+# !e
+echo f
+f
+ 
+## "!!"快捷执行上一条命令
+ 
+# !!
+echo f
+f
+ 
+## history"-c"参数
+ 
+## 此参数只会清空内存中的history记录，并不会清空实际的.bash_history文件
+# history -c
+# history
+    1  history
+# cat .bash_history |wc -l
+645
+ 
+## ctrl+r，可查询history中的关键字来查找命令
+(reverse-i-search)`cat': cat .bash_history |wc -l
+## 操作步骤：
+按下ctrl+r进入搜索界面
+输入命令关键字，搜索出最近执行的命令
+按下enter键执行此命令
+按左右键可编辑此命令
+按上下键可查看此命令前后输入的命令历史 
+ 
+Tab键
+作用：命令及文档名称补全
+使用方法：
+输入命令或文档名称头几个字母
+按一次或两次Tab键即可补全或列出所有符合条件的命令、路径或文件
+## 命令补全
+ 
+## 连续按两次Tab，显示所有匹配结果
+# if[Tab][Tab]
+if         ifcfg      ifconfig   ifdown     ifenslave  ifnames    ifup
+## 此处依然保留原输入内容，以便继续输入
+# if
+ 
+ 
+## 路径及文件名称补全
+ 
+## 路径用Tab补全，最后文件名列出匹配结果
+# ls /etc/syscon[Tab]fig/net[Tab]work-s[Tab]cripts/ifcfg-[Tab][Tab]
+ifcfg-eth0  ifcfg-lo
+## 最后依然保留原输入内容
+# ls /etc/sysconfig/network-scripts/ifcfg-
+  
+ 
+命令：alias
+作用：为命令行设置别名
+语法：
+## 查询别名
+alias
+ 
+## 添加别名
+alias alias_cmd='command line'
+ 
+配置文件:
+## 每个用户有一个
+~/.bashrc
+ 
+用法举例：
+## 查询alias别名
+ 
+# alias
+alias cp='cp -i'
+alias l.='ls -d .* --color=auto'
+alias ll='ls -l --color=auto'
+alias ls='ls --color=auto'
+alias mv='mv -i'
+alias rm='rm -i'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+ 
+ 
+## 临时添加alias
+ 
+# alias vi='vim'
+# which vi
+alias vi='vim'
+        /usr/bin/vim
+ 
+ 
+## 配置文件~/.bashrc，可永久配置alias
+ 
+# vi ~/.bashrc
+******************************************************
+# User specific aliases and functions
+......
+alias mv='mv -i'
+## 新增alias，并保存退出
+alias vi='vim'
+......
+******************************************************
+  
+ 
+扩展知识
+## "source"或"."重新加载配置文件
+# source ~/.bashrc
+ 
+## /etc/profile.d/目录下可以放置需要开机启动的shell脚本文件
+# ls /etc/profile.d/
+colorls.csh  glib2.csh  lang.csh  less.csh  vim.csh  which2.sh
+colorls.sh   glib2.sh   lang.sh   less.sh   vim.sh

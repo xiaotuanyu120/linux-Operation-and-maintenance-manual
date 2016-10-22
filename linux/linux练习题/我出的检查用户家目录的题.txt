@@ -1,0 +1,8 @@
+我出的检查用户家目录的题
+2014年12月17日
+下午 6:01
+ 
+题目n：请系统自动检查普通用户的家目录是否存在，如存在，输出"该用户名's homedir is exist,very good";如不存在，输出"该用户名's homedir isn't exist,do you want to create one? y or n"接受用户输入信息，如果用户输入y，则在/home下创建新的家目录，并从/etc/skel下把所有文件拷贝到家目录下，并修改属组和属主；如果用户输入n，则输出ok，continue check。，如果用户输入的不是y和n，提示whats your input is not y or n ,ignore this user 
+ 
+肖强的答案
+

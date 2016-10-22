@@ -1,0 +1,179 @@
+13、网络编程
+2015年9月16日
+11:20
+ 
+13.1 网络基础
+概念：IP, PORT, DOMAIN, URL(uniform resource locator), API(application program interface)
+通讯协议：tcp, udp
+常用协议：
+http
+smtp
+ssh
+telnet
+          ...
+ 
+参考：http://blog.csdn.net/jmq_0000/article/details/7091142
+ 
+ 
+13.2 socket（原意孔、插座）编程
+13.2.1 先来一个c/s模式
+           # server.py
+# coding:utf-8
+ 
+import socket
+ 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 各项参数意义:AF_INET IPV4-Address Family(通信类型），AF_UNIX，SOCK_STREAM（TCP）
+# SOCK_DGRAM(UDP)
+# 参考：http://www.shenmeshi.com/Computer/Computer_20080922215014.html
+ 
+host = '127.0.0.1'
+port = 8881
+s.bind((host, port))
+ 
+print (host, port)
+s.listen(5)
+while True:
+    print 'wait'
+    c, addr = s.accept()
+    print 'Got connection from', addr
+    c.send('Thank you for connecting')
+    c.close()
+ 
+ 
+          #client.py
+         
+  # coding:utf-8
+ 
+import socket
+ 
+s = socket.socket()
+ 
+host = '127.0.0.1'
+port = 8881
+ 
+s.connect((host, port))
+print s.recv(1024)
+ 
+ 
+ 
+     13.2.2 先来实现一个简单的Web server，b/s模式
+          http协议是最常用，使用socket来实现一个简单的服务器
+ 
+          # simple_webserver.py
+# coding:utf-8
+ 
+import sys
+import socket
+ 
+HOST = '127.0.0.1'
+PORT = 10001
+ 
+CONTENT = """
+HTTP/1.1 200 OK
+Server: huyang/1.0
+Content-Type: text/html; charset=utf-8
+Content-Length: 1000
+ 
+<html>
+<head>
+<title>hello socket programming</title>
+</head>
+<body>
+I'm Body
+</body>
+</html>
+"""
+ 
+ 
+def main():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((HOST, PORT))
+    s.listen(10)
+    while 1:
+        try:
+            conn, addr = s.accept()
+        except KeyboardInterrupt:
+            conn.close()
+            s.close()
+            sys.exit()
+ 
+        print 'Connected by', addr
+        data = conn.recv(1024)
+        if not data:
+            break
+        print data
+        conn.send(CONTENT)
+ 
+    conn.close()
+    s.close()
+ 
+if __name__ == "__main__":
+    main()
+ 
+ 
+     13.2.3 AF_UNIX
+ 
+     本机通信协议
+ 
+ 
+13.3 使用内置的SocketServer编程
+ 
+# coding:utf-8
+ 
+from SocketServer import TCPServer, StreamRequestHandler
+ 
+ 
+class Handler(StreamRequestHandler):
+    def handle(self):
+        addr = self.request.getpeername()
+        print 'connection from', addr
+        self.wfile.write('Hi, Everyone')
+ 
+ 
+server = TCPServer(('', 10002), Handler)
+server.serve_forever()
+ 
+ 
+ 
+13.4 urllib的使用
+urllib vs urllib2
+# coding:utf-8
+ 
+import urllib
+ 
+ 
+page = urllib.urlopen('http://m.sohu.com')
+print page.read()
+ 
+ 
+url介绍：
+     https://www.baidu.com/s?wd=python%E6%95%99%E7%A8%8B
+ 
+ 
+http://news.baidu.com/ns?cl=2&rn=20&tn=news&word=%E6%B5%8B%E8%AF%95
+ 
+ 
+推荐：requests
+http://docs.python-requests.org/en/latest/
+ 
+ 
+13.5 处理并发的机制介绍
+三种：多进程（fork），多线程（Thread），异步IO（epoll/select)
+ 
+使用SocketServer提供的Fork， Thread机制
+ 
+http server:
+ 
+nginx 多进程模式  epoll
+apache  多线程
+ 
+ 
+ 
+13.6 手工fork和thread的使用
+ 
+ 
+Python提供多进程的包multiprocessing，可以像写线程一样写多进程代码。
+ 
+ 
+推荐书籍《Python网络编程基础》
+代码：https://coding.net/u/the5fire/p/PyCode/git/tree/webserver/21

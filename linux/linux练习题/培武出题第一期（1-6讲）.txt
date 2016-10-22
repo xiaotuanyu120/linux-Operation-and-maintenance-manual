@@ -1,0 +1,36 @@
+培武出题第一期（1-6讲）
+2014年11月24日
+22:47
+出操作题的童鞋有很多，我就出一些思考题吧。作为一个优秀的linux运维人员，技术很重要，但独立的思考能力和基本的知识储备还是特别重要的，有助于大家去理解各种linux工具的定位，废话不多说，看题：
+ 
+1、yum是什么？yum的制作团队和起源是什么？
+答：
+Yum (Yellow dog Updater, Modified)是一个RPM包管理器。
+由Duke University团队，修改Yellow Dog Linux（一个linux发行版）的Yellow Dog Updater开发而成。
+ 
+扩展资料：
+同样级别且流行的包管理器还有apt-get（ubuntu采用的就是这个）
+ 
+2、yum帮了我们什么？
+答：
+yum帮我们自动从服务器下载rpm；
+yum帮我们处理安装包需要的依赖环境，会将其一次性全部安装。
+ 
+3、/usr目录中的usr是什么的缩写？/usr下的bin和sbin与根目录下的bin和sbin有何区别？
+答：
+usr的缩写没有标准说法，查到的结果有unix system resource/unix shared resources
+ 
+网络资料：
+    /bin是系统的一些指令。bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等。
+    /sbin一般是指超级用户指令。主要放置一些系统管理的必备程式例如:cfdisk、dhcpcd、dump、e2fsck、fdisk、halt、ifconfig、ifup、 ifdown、init、insmod、lilo、lsmod、mke2fs、modprobe、quotacheck、reboot、rmmod、 runlevel、shutdown等。
+    /usr/bin　是你在后期安装的一些软件的运行脚本。主要放置一些应用软体工具的必备执行档例如c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome*、 gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb*、wget等。
+    /usr/sbin   放置一些用户安装的系统管理的必备程式例如:dhcpd、httpd、imap、in.*d、inetd、lpd、named、netconfig、nmbd、samba、sendmail、squid、swap、tcpd、tcpdump等。
+ 
+4、我们如何知道一个文件的inode号？这个inode号保存在哪里？
+答：
+ls -i filename
+此inode号保存在此文件所在目录的block里。
+ 
+5、同一个帐号，可以同时登录在linux上吗？
+答：
+可以，即使都是root账户，不同的session也是有不同的环境变量。可是，貌似一个账户同时登录两个终端毫无意义。

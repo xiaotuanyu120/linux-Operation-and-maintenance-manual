@@ -1,0 +1,148 @@
+2.5: openSSH-密钥登陆
+2015年9月14日
+9:37
+ 
+0、简介：
+====================================
+目前的linux distribution基本都会预装openssh，我们会使用openssh自带的ssh-keygen命令来生成密钥。
+密钥登陆除了方便不用输密码，还可以用于同时管理多台server。
+ 
+1、生成密钥
+====================================
+# ssh-keygen -b 1024 -t rsa          # '-b'指定key的字节数，'-t'指定key的类型(rsa、dsa等)
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):    # 配置key路径，默认即可
+# key路径如果不是默认，需要用"ssh -i /path/to/keyfile user@ip"来指定，否则会报错
+Enter passphrase (empty for no passphrase):                 # 配置密钥短语（重要），默认为空
+Enter same passphrase again:                                # 二次重复密钥短语
+Your identification has been saved in /root/.ssh/id_rsa.    # 认证文件
+Your public key has been saved in /root/.ssh/id_rsa.pub.    # key文件
+The key fingerprint is:                                     # key的指纹
+ed:bf:9b:32:3c:53:c8:b2:76:13:79:70:c6:29:48:38 root@localhost.localdomain
+The key's randomart image is:                               # key的随机图片验证
++--[ RSA 1024]----+
+|       .         |
+|      E .        |
+|       o . . .   |
+|        ..o =    |
+|        S..B     |
+|        ..= o    |
+|         +.+     |
+|        o O. .   |
+|       . . *=o   |
++-----------------+
+# ssh-keygen的具体语法可以man ssh-keygen查看
+# -b 指定的是key字节数，越长越安全，不过1024足够了
+# -t 指定的是key类型，详细可以看man ssh-keygen
+# passphrase最好指定，设定为空的话不安全。（passphrase > key > password 会增强安全度） 
+2、拷贝密钥到目标机器并修改储存目录与权限
+==================================
+手动拷贝
+# scp /root/.ssh/id_rsa.pub root@192.168.0.96:/root/.ssh/authorized_keys
+The authenticity of host '192.168.0.96 (192.168.0.96)' can't be established.
+ECDSA key fingerprint is b8:43:d6:5b:bd:32:07:94:02:8d:0d:0e:13:5c:42:73.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.0.96' (ECDSA) to the list of known hosts.
+root@192.168.0.96's password:
+sending incremental file list
+id_rsa.pub
+ 
+sent 318 bytes  received 31 bytes  33.24 bytes/sec
+total size is 240  speedup is 0.69
+ 
+# ssh root@192.168.0.96 chmod 600 /root/.ssh/authorized_keys
+root@192.168.0.96's password:
+ 
+## 记得关闭目标机器的selinux
+## 记得把目标机器的.ssh权限修改为700 
+ssh-copy-id命令拷贝
+# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.0.96
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@192.168.0.96's password:
+ 
+Number of key(s) added: 1
+ 
+Now try logging into the machine, with:   "ssh 'root@192.168.0.96'"
+and check to make sure that only the key(s) you wanted were added.
+ 
+# 登陆目标机器
+# ssh root@192.168.0.96
+Enter passphrase for key '/root/.ssh/id_rsa':        # 输入密码短语
+Last login: Mon Sep 14 11:01:57 2015 from 192.168.0.213
+# ll .ssh/
+total 12
+-rw------- 1 root root 240 Sep 14 11:01 authorized_keys
+-rw-r--r-- 1 root root 175 Aug 10 09:54 known_hosts
+ 
+# 新方法ssh-copy-id -i 公玥文件 username@domain/ip
+# 相当于用一个命令取代了上面的拷贝文件、修改名称、修改权限的操作 
+ps详细扩展文档
+https://wiki.archlinux.org/index.php/SSH_keys_%28%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%29
+ 
+3、ssh-agent代理输入passphrase
+==================================
+# eval $(ssh-agent)
+Agent pid 8865
+# ssh-add
+Enter passphrase for /root/.ssh/id_rsa:
+Identity added: /root/.ssh/id_rsa (/root/.ssh/id_rsa)
+# ssh root@192.168.0.96
+Last login: Mon Sep 14 11:03:11 2015 from 192.168.0.213
+ 
+# ssh-add 没有参数的时候会默认添加以下文件
+  ~/.ssh/id_rsa, ~/.ssh/id_dsa, ~/.ssh/id_ecdsa and ~/.ssh/identity.
+ 
+# 查看当前的agent 连接
+# ssh-add -l
+1024 ed:bf:9b:32:3c:53:c8:b2:76:13:79:70:c6:29:48:38 /root/.ssh/id_rsa (RSA)
+ 
+# 关闭agent 连接
+# ssh-agent -k
+unset SSH_AUTH_SOCK;
+unset SSH_AGENT_PID;
+echo Agent pid 8865 killed;
+# ssh-add -l
+Could not open a connection to your authentication agent. 
+4、ssh 配置文件
+==================================
+## 配置文件类型
+~/.ssh/config      :用户私有的配置文件，相应配置优先级高于全局文件中的配置
+/etc/ssh/ssh_config:全局配置文件
+ 
+## 禁用密码登陆
+# vim /etc/ssh/sshd_config
+**************************
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+**************************
+ 
+## 根据host分配认证文件
+# vim ~/.ssh/config
+**************************
+Host server1
+    HostName 172.16.2.3
+    User root
+    Port 22
+    IdentityFile /root/.ssh/172.16.2.3
+**************************
+Host:自定义字段，就是一个名称，用ssh匹配到此名称后使用此Host段的配置
+HostName: ip地址或域名
+User: 登陆用户名
+Port: 登陆端口
+IdentityFile: 指定私有key路径
+ 
+## 直接用server1关键字访问
+# ssh server1
+Last login: Thu Mar 24 23:30:24 2016 from 172.16.2.33
+# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 00:0c:29:67:9b:c1 brd ff:ff:ff:ff:ff:ff
+    inet 172.16.2.3/24 brd 172.16.2.255 scope global eth0
+    inet6 fe80::20c:29ff:fe67:9bc1/64 scope link
+       valid_lft forever preferred_lft forever 

@@ -1,0 +1,168 @@
+三十七讲监控软件
+2015年3月3日
+20:13
+ 
+1、nagios
+简介：一个流行的电脑系统和网络监控程序，它检测主机和服务，当异常发生和解除时能提醒用户。它是基于GPLv2开发的开源软件，可免费获得及使用。
+ 
+试验环境：
+监控server端HOSTNAME:san01
+IP：192.168.0.41监控client端HOSTNAME:filesbak
+IP：192.168.0.19 
+server端安装nagios
+=====================================================================
+[root@san01 ~]# wget http://softlayer-sng.dl.sourceforge.net/project/nagios/nagios-4.x/nagios-4.0.8/nagios-4.0.8.tar.gz
+[root@san01 ~]# tar zxvf nagios-4.0.8.tar.gz
+[root@san01 nagios-4.0.8]# useradd -m nagios
+[root@san01 nagios-4.0.8]# passwd nagios
+[root@san01 nagios-4.0.8]# usermod -a -G nagcmd nagios
+=====================================================================
+ 
+2、zabbix
+ 
+PREINSTALL
+=====================================================================
+1）安装程序
+#安装epel源
+[root@pure ~]# yum install -y epel-release
+ 
+#安装web服务器、mysql数据库、php及相关程序包
+[root@pure ~]# yum install -y httpd mysql mysql-libs php php-mysql mysql-server php-bcmath php-gd php-mbstring
+ 
+#安装zabbix服务端软件
+[root@pure ~]# yum install -y zabbix20 zabbix20-agent zabbix20-server  zabbix20-server-mysql zabbix20-web zabbix20-web-mysql net-snmp-devel
+ 
+2）启动服务
+#启动下面四个服务(httpd、mysql、zabbix-agent、zabbix-server)
+[root@pure ~]# ls /etc/init.d/{za*,httpd,mysqld}
+/etc/init.d/httpd   /etc/init.d/zabbix-agent
+/etc/init.d/mysqld  /etc/init.d/zabbix-server
+[root@pure ~]# ls /etc/init.d/{za*,httpd,mysqld}|cut -d"/" -f4|xargs -i service {} start
+Starting httpd: httpd: Could not reliably determine the server's fully qualified domain name, using pure.com for ServerName
+[  OK  ]
+Starting mysqld:  [  OK  ]
+Starting Zabbix agent: [  OK  ]
+Starting Zabbix server: [  OK  ]
+#相关端口
+[root@zabbix ~]# netstat -lnp |grep -E '80|3306|1005'
+tcp        0      0 0.0.0.0:10050               0.0.0.0:*                   LISTEN      30226/zabbix_agentd
+tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN      1334/mysqld
+tcp        0      0 :::10050                    :::*                        LISTEN      30226/zabbix_agentd
+tcp        0      0 :::80                       :::*                        LISTEN      30167/httpd
+ 
+ 
+3）数据库准备
+#mysql为zabbix开账户
+[root@pure ~]# mysql -u root                                                                    #用空密码进入mysql并设置root密码
+*************************************************************************
+mysql> update mysql.user set password=PASSWORD('yourpassword') where user='root';
+Query OK, 3 rows affected (0.00 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+ 
+mysql> flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+*************************************************************************
+#也可以用mysql初始化后提示的方法
+#[root@zabbix html]# mysqladmin -u root password 'your password'
+ 
+#创建zabbix数据库
+[root@pure ~]# mysql -uroot -p -e  "create database zabbix"      
+#导入zabbix官方文档的数据库数据  
+[root@pure ~]# mysql -uroot -p --default-character-set=utf8 zabbix < /usr/share/zabbix-mysql/schema.sql
+Enter password:
+[root@pure ~]# mysql -uroot -p --default-character-set=utf8 zabbix < /usr/share/zabbix-mysql/images.sql
+Enter password:
+[root@pure ~]# mysql -uroot -p --default-character-set=utf8  zabbix < /usr/share/zabbix-mysql/data.sql
+Enter password:
+ 
+#创建zabbix用户
+[root@zabbix ~]# mysql -uroot -p -e "grant all on zabbix.* to 'zabbix'@'localhost' identified by 'your_passwd'"
+Enter password:
+ 
+ 
+INSTALLATION
+==========================================================================
+4）网页安装zabbix
+#用浏览器通过访问"http://ip/zabbix"安装，提示修改timezone
+
+ 
+#修改timezone
+[root@zabbix ~]# vi /etc/php.ini
+******************************************
+date.timezone = "Asia/Shanghai"
+******************************************
+ 
+#点击"next"前进到第二步检查安装需求
+
+ 
+#修改"/etc/php.ini"相关项目以符合zabbix需求
+[root@zabbix ~]# apachectl -t
+Syntax OK
+[root@zabbix ~]# apachectl graceful
+#然后点击retry
+
+ 
+#输入相关mysql信息，用root用户登录，端口用默认，数据库选择zabbix，填写完成后记得test一下
+
+ 
+#host填写127.0.0.1
+
+ 
+#接下来是输入信息的汇总展示
+
+ 
+#最后是安装完成，并提示你安装过程的配置文件是在"/etc/zabbix/web/zabbix.conf.php"
+
+ 
+#登录界面，用默认的admin：zabbix登录
+
+ 
+#登录后提示"zabbix server is not running"，编辑/etc/zabbix/zabbix_server.conf
+[root@zabbix ~]# vim /etc/zabbix/zabbix_server.conf
+***********************************************************
+DBHost=localhost
+DBName=zabbix
+DBUser=zabbix
+DBPassword=your_password
+***********************************************************
+[root@zabbix ~]# service zabbix-server restart
+Shutting down Zabbix server:                               [  OK  ]
+Starting Zabbix server:                                    [  OK  ]
+[root@zabbix ~]# service zabbix-agent restart
+Shutting down Zabbix agent:                                [  OK  ]
+Starting Zabbix agent:                                     [  OK  ]
+#之后会看到zabbix已正常启动
+
+#至此zabbix安装过程全部完毕
+ 
+ 
+错误及排障过程
+===========================================================
+错误1
+安装时使用错了数据库用户，又不知道如何去更改，索性重新删掉数据库来重建，导入数据库时提示某个表以存在，还会列出行数；
+[root@zabbix ~]# mysql -uroot -p --default-character-set=utf8 zabbix < /usr/share/zabbix-mysql/schema.sql
+Enter password:
+ERROR 1050 (42S01) at line 1233: Table 'images' already exists
+解决办法：
+#按提示打开该数据库导入的文件，并在它之前做个表存在即删除的语句
+[root@zabbix ~]# vi /usr/share/zabbix-mysql/schema.sql
+*************************************************************
+DROP TABLE IF EXISTS `autoreg_host`;                           #此句意为，存在即删除
+CREATE TABLE `images` (
+        `imageid`                bigint unsigned                           NOT NULL,
+        `imagetype`              integer         DEFAULT '0'               NOT NULL,
+        `name`                   varchar(64)     DEFAULT '0'               NOT NULL,
+        `image`                  longblob                                  NOT NULL,
+        PRIMARY KEY (imageid)
+) ENGINE=InnoDB;
+*************************************************************
+重要提醒：
+#重建zabbix数据库时最好将相关程序(zabbix-agent\zabbix-server)关闭
+候补：
+#原来要修改连接数据库用户很简单，直接去安装过程提示的配置文件中修改重启server服务即可
+[root@zabbix ~]# vim /etc/zabbix/web/zabbix.conf.php
+[root@zabbix ~]# service zabbix-server restart
+Shutting down Zabbix server:                               [  OK  ]
+Starting Zabbix server:                                    [  OK  ]
+ 
+ 

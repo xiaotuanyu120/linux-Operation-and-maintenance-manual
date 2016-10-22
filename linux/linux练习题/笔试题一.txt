@@ -1,0 +1,99 @@
+笔试题一
+2015年1月23日
+上午 10:18
+ 
+BRISC面试题（30分钟）
+1 Networking
+****************************************************************************
+1.1.写一个shell脚本，批量添加20个用户，用户名形如BRISC1、BRISC2 ... BRISC20，并给用户设置
+密码，密码同用户名。如果系统中已经存在该用户，要给出提示，并取消创建该用户！
+ 
+#!/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+for ((i=1;i<=20;i++))
+do
+UN='BRISC$I'
+a=`cut -d: -f1 /etc/passwd|grep '$UN'|wc -l`
+if [ $a -eq 0 ] ;
+then
+useradd 'BRISC$i'
+else
+echo "user is existed, cancel to create it"
+fi
+done
+ 
+1.2.如果您有以下网络ID：192.115.103.64/27。那么您网络的IP范围是什么？
+ 
+192.115.103.65-192.115.103-94
+ 
+1.3.在/home/test目录下有10000个txt文件，你如何将文件中的字符"aaa"替换成"bbb"
+   How can you replace a text "aaa" with "bbb" in 10.000 txt documents
+   under /home/test?
+ 
+sed -i 's/aaa/bbb/g' /home/test/*.txt
+ 
+1.4.如何将/etc目录及其子目录下所有*.conf文件的修改日期，更改为当前时间？How can you
+   change the modification date to the current time for all *.conf files under /etc
+   and subdirectories?
+ 
+find /etc -name '*.conf'|xargs touch
+ 
+1.5.如果将Debian/Ubuntu 或者Redhat/Centos服务器上已安装的所有包列出，并写入一个
+   text文件？How to list the name of all packages installed on a Debian/Ubuntu
+   or Redhat/Centos server into a text file?
+ 
+rpm -qa > installed_package_date.txt
+dpkg -l > installed_package_date.txt
+ 
+1.6.你如何找出你的机器哪些端口是打开的？How can you find out what ports are open
+   on your machine?
+ 
+netstat -lnpt
+ 
+1.7.如何确定哪个程序使用一个特定端口？How can you tell what program users a 
+   specific port in your machine?
+ 
+？？
+lsof -i :portnumber
+ 
+1.8.如何备份MySQL数据库？How do you back up a MySQL databases?
+ 
+mysqldump -u root -p database > database.sql
+ 
+1.9.如果没有缺省网关，工作站能访问互联网吗？Can a workstation computer be
+   configured to browse the Internet and yet NOT have a default gateway?
+ 
+？？不能
+ 
+2 Web servers
+****************************************************************************
+2.1.如何配置多个HTTPS虚拟主机？是否需要一个特定的IP地址给所有的虚拟主机？是否需要一个
+   特定的SSL证书给所有的虚拟主机？How do you configure several HTTPS virtual
+   hosts for a server?Do you need a separate IP address for all of them?Do you 
+   need a separate SSL certificate for all of them?
+ 
+apache:增加<virtualhost>
+nginx:增加<server>
+ 
+不需要
+ 
+？？
+ 
+2.2.URL http://weblion.psu.edu/stuff.html文件被移动到URL
+   http://weblion.psu.edu/junk.html.有多少种方法可以使用老的URL继续访问？The
+   http://weblion.psu.edu/stuff.html used to exist,but now it's moved to
+   http://weblion.psu.edu/junk.html.Name as many ways as you can to get the 
+   old URL to still work.
+ 
+rewrite、server alias
+ 
+3 DNS
+****************************************************************************
+3.1.DNS记录是什么格式的？What does a DNS record look like?
+ 
+？？
+ 
+3.2."in-addr.arpa"区域是给谁用的？What is the "in-addr.arpa" zone used for?
+ 
+？？

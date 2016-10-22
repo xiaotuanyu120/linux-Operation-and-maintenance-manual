@@ -1,0 +1,202 @@
+11.8: shell基础-管道相关命令
+2014年12月8日
+20:10
+ 
+命令：cut
+作用：按列截取文档信息
+语法：cut [参数] file
+参数：
+-d 指定列分隔符，一般与-f连用
+-f 和-d一起用，指定分隔列后输出哪几行（cut -d "" -f n1，n2）
+-c 制定要输出的字符列数 
+ 
+PS:适用于管道"cmd | cut ..."
+ 
+用法举例：
+## "-d"、"-f"参数共同使用来截取passwd文件的1和3段内容
+# cut -d ":" -f 1,3 /etc/passwd | head -2
+root:0
+bin:1
+ 
+## "-c"参数的四种用法
+cut -c n，只取第n个字符输出
+cut -c -n，取首字符到第n个字符之间的内容输出
+cut -c n1-n2，只取第n1到第n2个字符之间的内容输出
+cut -c n-，只取第n1到最后一个字符之间的内容输出
+# cut -c 1 /etc/passwd | head -2
+r
+b
+# cut -c -4 /etc/passwd | head -2
+root
+bin:
+# cut -c 4-5 /etc/passwd | head -2
+t:
+:x
+# cut -c 15- /etc/passwd | head -2
+t:/root:/bin/bash
+/bin:/sbin/nologin 
+ 
+命令：sort
+作用：给文本信息排序
+语法：sort [参数] file
+参数：
+-n 以数字大小排序
+-t 指定分隔符，一般与-k合用
+-k 与-t合用，指定排序的列数
+-r 反序输出结果
+ 
+PS:适用于管道"cmd | sort..."
+ 
+用法举例：
+## 将passwd文件按照uid大小排序输出 
+ 
+## 严格按照：分割第三列数字大小排序
+# cat /etc/passwd|head|cut -d ":" -f 1,3,4|sort -n -t ":" -k 2
+root:0:0
+bin:1:1
+daemon:2:2
+adm:3:4
+lp:4:7
+sync:5:0
+shutdown:6:0
+halt:7:0
+mail:8:12
+uucp:10:14
+ 
+ 
+## 取消"-n"参数后的排序
+ 
+## 按照第三列首字符大小排序，然后在对比第二个字符
+# cat /etc/passwd|head|cut -d ":" -f 1,3,4|sort -t ":" -k 2
+root:0:0
+uucp:10:14
+bin:1:1
+operator:11:0
+games:12:100
+gopher:13:30
+ftp:14:50
+daemon:2:2
+adm:3:4
+lp:4:7 
+ 
+命令：uniq
+作用：把文本内容去重
+语法：uniq [参数] file
+参数：
+-c 统计重复数目
+-i 忽略大小写
+PS:
+适用于管道"cmd | uniq ..."
+一般需要先sort 后uniq，否则uniq不会统计不相邻的重复项
+ 
+用法举例：
+## 统计最近用户的登录情况
+# last | head |cut -c -36| sort
+essence  pts/0        192.168.0.101
+essence  pts/0        192.168.0.101
+essence  pts/0        192.168.0.101
+essence  pts/0        192.168.0.104
+essence  pts/0        192.168.0.104
+essence  pts/0        192.168.0.104
+essence  pts/0        192.168.0.104
+essence  pts/0        192.168.0.112
+essence  pts/0        192.168.0.50
+# last | head | cut -c -36| sort | uniq
+ 
+essence  pts/0        192.168.0.101
+essence  pts/0        192.168.0.104
+essence  pts/0        192.168.0.112
+essence  pts/0        192.168.0.50 
+ 
+命令：tee 
+作用：将标准输出做两份，一份重定向到文件中，一份可以输出到显示器
+语法：stdout | tee file
+## 把标准输入分成两份，一份到md.txt，一份到屏幕
+# cat sort.txt |tee md.txt
+1:3
+1:2
+2:3
+2:1
+3:3
+4:2 
+ 
+命令：tr 
+作用：用来替换字符 
+## 大小写转换
+# head -2 /etc/passwd | tr '[a-z]' '[A-Z]'
+ROOT:X:0:0:ROOT:/ROOT:/BIN/BASH
+BIN:X:1:1:BIN:/BIN:/SBIN/NOLOGIN
+# head -2 /etc/passwd | tr '[:lower:]' '[:upper:]'
+ROOT:X:0:0:ROOT:/ROOT:/BIN/BASH
+BIN:X:1:1:BIN:/BIN:/SBIN/NOLOGIN
+BIN:X:1:1:BIN:/BIN:/SBIN/NOLOGIN 
+ 
+命令：split 
+作用：切割大文件用的
+语法：split [参数] inputfile [目标文件名称]
+参数：
+-b : 按大小来分割单位默认为byte 
+-l : 按行数分隔（split -l10 file）
+ 
+PS:默认会以fileaa, fileab, ...这样的形式定义分隔后的文件名
+ 
+用法举例：
+## 把11k大小的pass1文件分割为1k大小的文件
+# ll -h
+total 4.0K
+-rw-r--r-- 1 root root 6.4K May  7 04:55 passwd
+# split -b 1k passwd newpasswd
+# ll -h new*
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdaa
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdab
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdac
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdad
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdae
+-rw-r--r-- 1 root root 1.0K May  7 04:59 newpasswdaf
+-rw-r--r-- 1 root root  394 May  7 04:59 newpasswdag 
+ 
+管道命令：xargs
+作用：
+读入stdin，并以空白字符和换行符来分辨将stdin分隔成单独的参数交给后面的命令使用
+语法：command | xargs [参数] command
+参数：
+"-i" 此参数可使用{}来代表stdin里的内容
+"-I" 此参数和-i同义，不过-I必须提前加{}（具体区别参见下面实例）
+"-n" 最多一次可执行多少参数
+ 
+用法示例：
+## -i和-I参数来批量给文件重命名
+ 
+## -i不需提前写下{},-I需提前写下{}
+# ls 00* |xargs -i mv {} {}.txt
+# ls | grep -v '00'|xargs -I {} mv {} {}.log
+ 
+## 查看结果，都已经改过名字了
+# ls
+001.txt  003.txt  005.txt  007.txt  037.log  177.log  777.log           
+002.txt  004.txt  006.txt  017.log  077.log  377.log
+ 
+ 
+## -n参数来指定最大处理参数
+ 
+## 把passwd文件中的用户名echo出来,这里是整个一行输出了出来
+# cut -d : -f 1 /etc/passwd | xargs echo
+root bin daemon adm lp sync shutdown halt mail uucp operator games gopher ftp nobody dbus vcsa rpc saslauth postfix rpcuser nfsnobody haldaemon sshd avahi-autoipd rtkit pulse gdm essence zpw oracle webapp ntp zpw01 tcpdump
+ 
+## 下面的结果是5个一行输出的
+# cut -d : -f 1 /etc/passwd | xargs -n 5 echo
+root bin daemon adm lp
+sync shutdown halt mail uucp
+operator games gopher ftp nobody
+dbus vcsa rpc saslauth postfix
+rpcuser nfsnobody haldaemon sshd avahi-autoipd
+rtkit pulse gdm essence zpw
+oracle webapp ntp zpw01 tcpdump
+ 
+ 
+## xargs可以把输出结果多行变成一行
+# ls
+001.txt  003.txt  005.txt  007.txt  037.log  177.log  777.log
+002.txt  004.txt  006.txt  017.log  077.log  377.log
+# ls |xargs
+001.txt 002.txt 003.txt 004.txt 005.txt 006.txt 007.txt 017.log 037.log 077.log 177.log 377.log 777.log 

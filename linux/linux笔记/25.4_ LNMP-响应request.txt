@@ -1,0 +1,38 @@
+25.4: LNMP-响应request
+2015年12月3日 星期四
+14:39
+ 
+NGXIN接受request后，如何来返回响应
+0、request is coming
+ 
+1、判断listen ip_address:port
+* 若port未指定，则用默认值；
+* 若ip_address未指定，则监听所有ip；
+* 若listen 这个配置在server{}中不存在，标准port是80/tcp，但默认port是8000/tcp（根据superuser的权限所定）；
+* 若多个server的listen指定了同一个ip:port，转去查看server_name； 
+2、判断server_name
+* 类型包括
+准确名称；
+wildcard（带星号的）；
+正则匹配；
+* 匹配先后顺序：
+1、准确名称（www.example.org）
+2、最长的开头带asterisk的wildcard（*.example.org）
+3、最长的末尾带asterisk的wildcard（mail.example.*）
+4、第一个匹配的正则表达
+* 如果以上全不匹配，nginx把请求转去默认server(主配文件中的server{})； 
+3、判断location
+类型包括
+路径名称
+location /some/path {
+    ...
+}
+这个会匹配/some/path/test 但是不会匹配 /test/some/path
+正则表达式
+~ 大小写敏感
+~* 大小写不敏感
+匹配逻辑
+带"="的路径名称(location = /)如果匹配到，停止匹配其他
+把^~修饰符放在路径之前(把路径当作普通字符)匹配到，不再检查其他正则
+匹配到一个正则就停止匹配其他，然后使用相应的location
+在没有正则表达式匹配到的情况下，使用匹配到的路径名称

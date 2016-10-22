@@ -1,0 +1,35 @@
+23.5: PHP配置-进程数调整
+2016年1月11日
+9:59
+ 
+## 配置文件中的解释说明
+; Choose how the process manager will control the number of child processes.
+; Possible Values:
+;   static  - a fixed number (pm.max_children) of child processes;
+;   dynamic - the number of child processes are set dynamically based on the
+;             following directives:
+;             pm.max_children      - the maximum number of children that can
+;                                    be alive at the same time.
+;             pm.start_servers     - the number of children created on startup.
+;             pm.min_spare_servers - the minimum number of children in 'idle'
+;                                    state (waiting to process). If the number
+;                                    of 'idle' processes is less than this
+;                                    number then some children will be created.
+;             pm.max_spare_servers - the maximum number of children in 'idle'
+;                                    state (waiting to process). If the number
+;                                    of 'idle' processes is greater than this
+;                                    number then some children will be killed.
+; Note: This value is mandatory. 
+## 总结
+## 模式选择
+pm = static/dynamic
+## STATIC MODE
+生效配置：
+pm.max_children(同一时间可存在的最大进程数)
+ 
+## DYNAMIC MODE
+生效配置：
+pm.start_servers(php启动时创建的进程数)
+pm.min_spare_servers(处于idle状态下最少的进程数，少于此数会创建进程)
+pm.max_spare_servers(处于idle状态下最多的进程数，多于此数会杀掉进程)
+pm.max_children(同static中的效果，和pm.max_spare_servers区别在于，后者是设定的idel状态进程数，而前者是配置的所有状态下进程最大数目)

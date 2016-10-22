@@ -1,0 +1,15 @@
+24.3: MYSQL-存储引擎
+2015年1月14日
+19:04
+ 
+4、innodb与myisam（暂时了解即可）
+个人理解：
+需要速度快、轻量负载的，用myisam
+需要稳定、可靠性强的，用innodb（支持单行锁）
+可参考此链接： http://www.lishiming.net/thread-97-1-1.html 
+如何查看database engine
+mysql> SHOW TABLE STATUS from database where Name='table';
+mysql> SHOW  ENGINES\G
+#skip innodb 禁止innodb引擎
+ 
+ 

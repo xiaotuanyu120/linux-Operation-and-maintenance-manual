@@ -1,0 +1,132 @@
+28.2: samba-配置share共享
+2015年1月26日
+下午 1:32
+ 
+sercurity = share模式
+==================================
+## 主配文件设定
+# vim /etc/samba/smb.conf
+*****************************************************
+[global]
+        workgroup = WORKGROUP
+## 和windows里的工作组或域名一致即可
+        server string = Samba Server Version %v
+## 只是一个描述字符串而已,%v是此配置文件的变量
+        log file = /var/log/samba/log.%m
+## log文件配置,%m代表NETBIOS的hostname
+        max log size = 50
+## log文件最大为50k,超过后就轮询
+        security = share     
+## 安全模式:user,用户模式;share，分享模式；server，其他服务器验证模式。
+        passdb backend = tdbsam    
+## 密码库文件的模式：smbpasswd, tdbsam, and ldapsam
+        load printers = no
+## 是否加载打印机
+        cups options = raw
+## 打印机驱动的选项
+ 
+## 家目录设定
+[homes]
+        comment = Home Directories
+        browseable = no
+        writable = yes
+ 
+## 打印机设定
+[printers]
+        comment = All Printers
+        path = /var/spool/samba
+        browseable = no
+        guest ok = no
+        writable = no
+        printable = yes
+ 
+## 分享目录设定
+[share]
+## 分享目录的名称
+ 
+comment = share all
+## 分享目录的描述
+ 
+path = /tmp/samba
+## 分享目录路径
+ 
+browseable = yes
+## 此目录是否可见
+ 
+public = yes
+## public和guest ok一样效果
+ 
+writable = no
+## 是否可写
+ 
+## 扩展变量
+%m，代表client端的NETBIOS hostname
+%M，代表client端的HOSTNAME
+%L，代表samba主机的NETBIOS hostname
+%h，代表samba主机的HOSTNAME
+%H，代表使用者的家目录
+%U，代表使用者的用户名称
+%g，代表使用者的组名
+%I，代表client端的ip地址
+%T，代表当前的日期时间
+%u，代表samba服务的用户名
+%S，代表服务名称
+*****************************************************
+ 
+ 
+## 创建分享目录及分配相应权限
+# mkdir /tmp/samba
+# chmod 777 /tmp/samba
+ 
+ 
+## 启动服务
+## 主要是smb.conf中的内容实现，用tcp来传输资料，端口为139、445
+# service smb start
+Starting SMB services:                                     [  OK  ]
+## 负责netbios hostname、群组名称解析等，端口为137、138
+# service nmb start
+Starting NMB services:                                     [  OK  ]
+ 
+# ps aux |grep mb | grep -v "grep"
+root     10092  0.1  0.3  24808  3156 ?        Ss   11:21   0:00 smbd -D
+root     10094  0.0  0.1  25332  1708 ?        S    11:21   0:00 smbd -D
+root     10096  0.0  0.1  24808  1616 ?        S    11:21   0:00 smbd -D
+root     10107  0.0  0.1  13552  1736 ?        Ss   11:21   0:00 nmbd -D
+ 
+# netstat -ltunp| grep mb
+tcp        0      0 0.0.0.0:139                 0.0.0.0:*                   LISTEN      10092/smbd       
+tcp        0      0 0.0.0.0:445                 0.0.0.0:*                   LISTEN      10092/smbd       
+tcp        0      0 :::139                      :::*                        LISTEN      10092/smbd       
+tcp        0      0 :::445                      :::*                        LISTEN      10092/smbd       
+udp        0      0 192.168.0.255:137           0.0.0.0:*                               10107/nmbd       
+udp        0      0 192.168.0.26:137            0.0.0.0:*                               10107/nmbd       
+udp        0      0 0.0.0.0:137                 0.0.0.0:*                               10107/nmbd       
+udp        0      0 192.168.0.255:138           0.0.0.0:*                               10107/nmbd       
+udp        0      0 192.168.0.26:138            0.0.0.0:*                               10107/nmbd       
+udp        0      0 0.0.0.0:138                 0.0.0.0:*                               10107/nmbd  
+ 
+ 
+## smbclient命令使用
+# smbclient //127.0.0.1/share
+WARNING: The security=share option is deprecated
+Enter root's password:        #因为没有密码，直接回车进入即可
+Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.6.23-12.el6]
+Server not using user level security and no password supplied.
+smb: \> ls
+  .                                   D        0  Mon Jan 26 20:40:20 2015
+  ..                                  D        0  Tue Jan 27 11:00:05 2015
+ 
+                39371 blocks of size 262144. 7233 blocks available
+smb: \> mkdir test
+NT_STATUS_MEDIA_WRITE_PROTECTED making remote directory \test
+#因为我们设置的writeable = no 所以不可写，提示"write protected"
+ 
+ 
+## mount挂载
+# mount -t cifs //127.0.0.1/share/ /mnt/path
+ 
+## 中间报错因为格式问题无法挂载，运行下面命令解决
+## yum install cifs.utils
+ 
+ 
+## windows下可以通过在资源浏览器地址栏输入"\\ip\"的方式登入

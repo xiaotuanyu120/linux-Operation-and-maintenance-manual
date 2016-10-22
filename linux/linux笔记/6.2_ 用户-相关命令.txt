@@ -1,0 +1,154 @@
+6.2: 用户-相关命令
+2014年11月20日
+20:37
+ 
+用户及用户组相关命令
+=====================================================
+命令：id
+作用：查看用户的uid、gid和所属组信息
+语法：id username
+用法举例：
+# id zpw
+uid=500(zpw) gid=500(zpw) groups=500(zpw) 
+ 
+命令：groupadd
+作用：增加用户组
+配置文件：/etc/group & /etc/gshadow
+语法：groupadd 参数 groupname 
+参数：-g 指定gid
+用法举例：
+# groupadd -g 1000 test
+# cat /etc/group | grep 1000
+test:x:1000: 
+ 
+命令：groupdel
+作用：删除用户组
+语法：groupdel groupname
+PS：
+单纯作为用户附属组的时候是可以直接删除的；
+若是某用户的主组，就不能随意删除了，需要提前把用户清空
+用法举例：
+## zpw的主组是zpw，附属组是test
+# id zpw
+uid=500(zpw) gid=500(zpw) groups=500(zpw),1000(test)
+ 
+## 尝试删除主组，报错
+# groupdel zpw
+groupdel: cannot remove the primary group of user 'zpw'
+## 尝试删除附属组
+# groupdel test
+ 
+## 查看结果，附属组被顺利删除
+# id zpw
+uid=500(zpw) gid=500(zpw) groups=500(zpw) 
+ 
+命令：useradd
+作用：增加用户
+语法：useradd 参数 username
+参数：
+-u 指定uid
+-g 指定现存gid或组名
+-d 指定家目录
+-M 不建立家目录，但依然会创建用户的mail目录
+-s 指定shell类型，可通过指定"/sbin/nologin"控制普通用户不能登录
+PS：
+多个用户可以共享一个主组
+uid和gid未指定自动分配时，以现存uid的最大数字+1
+用法举例：
+## 多用户共享主组
+# useradd test -g 500
+# id test
+uid=502(test) gid=500(zpw) groups=500(zpw)
+# id zpw
+uid=500(zpw) gid=500(zpw) groups=500(zpw)
+ 
+## useradd -M参数不创建家目录，手动拷贝家目录
+# useradd -M user01
+# cp -rf /etc/skel /home/user01
+# chown -R user01:user01 /home/user01
+ 
+## 切换去user01，检查效果
+# su - user01
+$ cd ~
+$ pwd
+/home/user01
+ 
+## /etc/skel中只是一些用户的初始化化境文件
+# ls -la /etc/skel/
+total 20
+drwxr-xr-x.  2 root root 4096 Jan 13 05:54 .
+drwxr-xr-x. 62 root root 4096 Apr 27 23:43 ..
+-rw-r--r--.  1 root root   18 Jul 24  2015 .bash_logout
+-rw-r--r--.  1 root root  176 Jul 24  2015 .bash_profile
+-rw-r--r--.  1 root root  124 Jul 24  2015 .bashrc 
+ 
+ 
+命令：userdel
+作用：删除用户，无参数时默认不删除家目录
+语法：userdel 参数 username
+参数：
+-r 删除用户的家目录和邮件目录（/var/spool/mail/username)
+用法举例：
+# id user01;id user02
+uid=500(user01) gid=500(user01) groups=500(user01)
+uid=501(user02) gid=501(user02) groups=501(user02)
+# userdel -r user01;userdel user02
+# ls -ld /home/user*
+drwx------. 2 501 501 4096 Apr 27 23:53 /home/user02
+# ls -ld /var/spool/mail/user*
+-rw-rw----. 1 501 mail 0 Apr 27 23:53 /var/spool/mail/user02 
+ 
+命令：usermod
+作用：修改用户uid、gid、家目录、附属组等信息
+语法：usermod 参数 参数内容 username
+参数：
+-a append追加模式，仅可与-G一起使用，用来避免-G指定附属组时造成用户脱离其他附属组。
+-u 修改用户uid
+-s 修改用户shell环境
+-d 修改目录家目录
+-L 锁定用户密码，使之不能用密码登录
+-U 解锁用户密码
+-g 指定用户主组gid
+-G 指定用户附属组（1个用户可以有多个附属组）
+PS：usermod -G "" user 把附属组清空
+用法举例：
+## usermod -L在原密码前增加"!"使密码失效
+# usermod -L essence
+# cat /etc/shadow|grep "essence"
+essence:!$6$lBhElHM$UHKJjTGrCyo2upw1OlIG6F8SE09VYGTLHlBw0/MBVgIu5ZZh1e1koc7tHWDBHk4obu33CEe/FrSEn4bpnDpdo1:16397:0:99999:7:::
+ 
+## root用户可使用su命令无密码登录该用户
+# su - essence
+$ exit
+Logout
+ 
+## 新终端无法登录
+essence@192.168.0.80's password:
+Access denied 
+ 
+命令：passwd  
+作用：修改用户密码
+语法：passwd 用户名
+创建强密码的规则：
+长度大于10；
+含大小写字母数字以及特殊字符；
+不规则性；
+不要带有自己名字、公司名字、自己电话、自己生日等。
+ 
+ 
+命令：mkpasswd
+作用：生成密码的工具
+参数：
+-l 指定长度
+-d 指定数字最少个数
+-c 指定字母最少个数
+-s 特殊字符最少个数
+-C 指定大写字母最少个数
+安装方法：
+# yum install -y expect
+用法举例：
+# mkpasswd -l 20 -c 5 -d 6 -s 5
+{dg(06#gvVI#q{9b98s5 
+扩展资料：
+Keepass，管理密码软件
+Keepass官网地址: http://www.keepass.info  

@@ -1,0 +1,38 @@
+26.4: NGINX配置-auth
+2016年6月23日
+16:11
+ 
+0, 虚拟主机中的auth配置
+========================================
+## 安装htpasswd命令
+# yum install httpd -y
+ 
+## 创建密码文件及admin帐号
+# htpasswd -c /usr/local/nginx/conf/.htpasswd admin
+ 
+## 虚拟主机文件配置
+# vim /usr/local/nginx/conf/vhost/test.conf
+*****************************************
+server {
+    listen       80;
+    server_name  www.test.com;
+    root           /data/test;
+    location / {
+        ......
+        auth_basic      "Auth";
+        auth_basic_user_file /usr/local/nginx/conf/.htpasswd;
+    }
+}
+*****************************************
+ 
+# nginx -t
+# nginx -s reload
+ 
+# curl -x localhost:80 www.test.com -I
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.8.0
+Date: Thu, 23 Jun 2016 16:03:09 GMT
+Content-Type: text/html
+Content-Length: 194
+Connection: keep-alive
+WWW-Authenticate: Basic realm="Auth"

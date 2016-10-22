@@ -1,0 +1,178 @@
+28.3: samba-配置user共享
+2015年1月26日
+下午 1:32
+ 
+sercurity = user模式
+==================================
+## 主配文件设定
+# vim /etc/samba/smb.conf
+*****************************************************
+[global]
+        workgroup = WORKGROUP
+## 和windows里的工作组名一致即可
+        server string = Samba Server Version %v
+## 只是一个描述字符串而已,%v是此配置文件的变量
+        log file = /var/log/samba/log.%m
+## log文件配置,%m代表NETBIOS的hostname
+        max log size = 50
+## log文件最大为50k,超过后就轮询
+        security = user    
+## 安全模式:user,用户模式;share，分享模式；server，其他服务器验证模式。
+        passdb backend = tdbsam    
+## 密码库文件的模式：smbpasswd, tdbsam, and ldapsam
+        load printers = no
+## 是否加载打印机
+        cups options = raw
+#打印机驱动的选项
+ 
+## 家目录设定
+[homes]
+        comment = Home Directories
+        browseable = no
+        writable = yes
+ 
+## 打印机设定
+[printers]
+        comment = All Printers
+        path = /var/spool/samba
+        browseable = no
+        guest ok = no
+        writable = no
+        printable = yes
+ 
+## 分享目录设定
+[igame]
+comment = igame company
+path = /data/samba
+browseable = yes
+writeable = yes
+guest ok = no
+*****************************************************
+ 
+ 
+## 创建分享目录及分配相应权限
+# mkdir /data/samba -p
+# chmod g+w /data/samba
+ 
+## 建立samba用户samba01
+# useradd -s /sbin/nologin samba
+# chown :samba /data/samba
+# pdbedit -a samba
+new password:
+retype new password:
+Unix username:        samba
+NT username:
+Account Flags:        [U          ]
+User SID:             S-1-5-21-2665897175-1334849868-1302066288-1000
+Primary Group SID:    S-1-5-21-2665897175-1334849868-1302066288-513
+Full Name:
+Home Directory:       \\template\samba
+HomeDir Drive:
+Logon Script:
+Profile Path:         \\template\samba\profile
+Domain:               TEMPLATE
+Account desc:
+Workstations:
+Munged dial:
+Logon time:           0
+Logoff time:          Wed, 06 Feb 2036 23:06:39 CST
+Kickoff time:         Wed, 06 Feb 2036 23:06:39 CST
+Password last set:    Wed, 10 Aug 2016 20:24:17 CST
+Password can change:  Wed, 10 Aug 2016 20:24:17 CST
+Password must change: never
+Last bad password   : 0
+Bad password count  : 0
+Logon hours         : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+ 
+## pdbedit：manage the SAM database (Database of Samba Users)
+-a 增加用户
+-x 减少用户
+-L 列出用户列表
+-v verbose冗长模式
+-r 修改用户
+ 
+ 
+## 启动服务
+# testparm
+Load smb config files from /etc/samba/smb.conf
+rlimit_max: increasing rlimit_max (1024) to minimum Windows limit (16384)
+Processing section "[homes]"
+Processing section "[printers]"
+Processing section "[igame]"
+Loaded services file OK.
+Server role: ROLE_STANDALONE
+Press enter to see a dump of your service definitions
+ 
+[global]
+        workgroup = IG.COM
+        server string = Samba Server Version %v
+        log file = /var/log/samba/log.%m
+        max log size = 50
+        client signing = required
+        idmap config * : backend = tdb
+        cups options = raw
+ 
+[homes]
+        comment = Home Directories
+        read only = No
+ 
+[printers]
+        comment = All Printers
+        path = /var/spool/samba
+        printable = Yes
+        print ok = Yes
+        browseable = No
+ 
+[igame]
+        comment = igame company
+        path = /data/samba
+        read only = No
+ 
+# service smb restart
+Shutting down SMB services:                                [  OK  ]
+Starting SMB services:                                     [  OK  ]
+# service nmb restart
+Shutting down NMB services:                                [  OK  ]
+Starting NMB services:                                     [  OK  ]
+ 
+ 
+## 用samba身份smbclient访问共享目录
+# smbclient //127.0.0.1/igame/ -U samba
+Enter samba's password:
+Domain=[IG.COM] OS=[Unix] Server=[Samba 3.6.23-35.el6_8]
+smb: \> mkdir test
+smb: \> ls
+  .                                   D        0  Tue Jan 27 13:19:19 2015
+  ..                                  D        0  Tue Jan 27 12:14:11 2015
+  test                                D        0  Tue Jan 27 13:19:19 2015
+ 
+                39371 blocks of size 262144. 7232 blocks available
+ 
+## 用samba身份smblcient访问samba家目录
+# smbclient //template/samba -U samba
+Enter samba's password:
+Domain=[IG.COM] OS=[Unix] Server=[Samba 3.6.23-35.el6_8]
+smb: \> mkdir test
+smb: \> ls
+  .                                   D        0  Wed Aug 10 20:43:05 2016
+  ..                                  D        0  Wed Aug 10 20:23:26 2016
+  .bash_profile                       H      176  Thu Jul 18 21:19:03 2013
+  .bash_logout                        H       18  Thu Jul 18 21:19:03 2013
+  test                                D        0  Wed Aug 10 20:43:05 2016
+  .bashrc                             H      124  Thu Jul 18 21:19:03 2013
+ 
+                37946 blocks of size 524288. 28009 blocks available
+ 
+ 
+ 
+## 挂载
+# mount -t cifs //127.0.0.1/igame/ /mnt/samba -o username=samba,password=123456
+# df -h
+Filesystem                       Size  Used Avail Use% Mounted on
+/dev/mapper/vg_root-LogVol_root   19G  4.0G   14G  23% /
+tmpfs                            491M     0  491M   0% /dev/shm
+/dev/sda1                        194M   28M  156M  16% /boot
+//127.0.0.1/igame                 19G  4.0G   14G  23% /mnt/samba
+ 
+ 
+## windows下可以通过在资源浏览器地址栏输入"\\ip\"的方式登入
