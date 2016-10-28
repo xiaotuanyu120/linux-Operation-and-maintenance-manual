@@ -4,6 +4,7 @@ date: 2016-10-21 21:00:00
 categories: devops/ansible
 tags: [devops, ansible]
 ---
+
 ### why should use become
 We don't use root directly in ansible in most cases. Instead, we prefer a common
 user to execute some tasks in sudo mode. By doing so, we can keep the security.

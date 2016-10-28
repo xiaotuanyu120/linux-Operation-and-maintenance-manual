@@ -1,5 +1,5 @@
 ---
-title: ansible: copy模块错误
+title: ansible copy模块错误
 date: 2016-09-23 17:01:00
 categories: devops/ansible
 tags: [ansible,copy,libselinux-python]

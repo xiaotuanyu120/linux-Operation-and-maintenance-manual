@@ -1,9 +1,10 @@
 ---
 title: ansible, host在不同group中，变量覆盖问题
 date: 2016-10-17 10:19:00
-categories: devops
+categories: devops/ansible
 tags: [devops,ansible]
 ---
+
 ### 问题背景
 在ansible中，inventory的组织方式可如下
 ```

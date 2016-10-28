@@ -4,6 +4,7 @@ date: 2016-10-25 22:08:00
 categories: devops/ansible
 tags: [ansible,vars,group_vars]
 ---
+
 ### 为什么有这个发问？
 在ansible的使用过程中我们会遇到这样的情况
 ```
