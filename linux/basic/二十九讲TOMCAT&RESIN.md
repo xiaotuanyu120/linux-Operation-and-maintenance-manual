@@ -1,6 +1,8 @@
 ---
 title: 二十九讲TOMCAT&RESIN
-date: 2015年1月28日	 下午 12:22:00
+date: 2015-1-28 12:22:00
+categories: linux/basic
+tags:
 ---
  
 本节内容：TOMCAT&RESIN

@@ -1,6 +1,8 @@
 ---
 title: 三十讲MYSQL主从
-date: 2015年1月30日	 20:33:00
+date: 2015-1-30 20:33:00
+categories: linux/basic
+tags:
 ---
  
 本节内容:MYSQL主从配置

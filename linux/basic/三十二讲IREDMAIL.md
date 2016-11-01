@@ -1,6 +1,8 @@
 ---
 title: 三十二讲IREDMAIL
-date: 2015年2月5日	 上午 8:23:00
+date: 2015-2-5 8:23:00
+categories: linux/basic
+tags:
 ---
  
 邮件基础知识

@@ -1,6 +1,8 @@
 ---
 title: 二十七讲NFS\FTP
-date: 2015年1月22日	 下午 2:54:00
+date: 2015-1-22 2:54:00
+categories: linux/basic
+tags:
 ---
  
 本节内容：NFS文件分享、FTP服务器搭建

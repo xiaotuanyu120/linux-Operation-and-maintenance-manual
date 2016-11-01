@@ -1,6 +1,8 @@
 ---
 title: 三十一讲DNS服务
-date: 2015年2月2日	 20:14:00
+date: 2015-2-2 20:14:00
+categories: linux/basic
+tags:
 ---
  
 dig -t NS .
