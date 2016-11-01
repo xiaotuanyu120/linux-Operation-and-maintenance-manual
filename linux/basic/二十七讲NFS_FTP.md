@@ -1,7 +1,6 @@
 ---
 title: 二十七讲NFS\FTP
-date: 2015年1月22日
-categories: 下午 2:54
+date: 2015年1月22日	 下午 2:54:00
 ---
  
 本节内容：NFS文件分享、FTP服务器搭建
@@ -46,7 +45,7 @@ anongid(指定取代root_squash或all_squash所使用匿名用户的gid)。
  
 扩展、nfsnobody
 [root@web03 ~]# cat /etc/passwd|grep nfsnobody
-nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin       #专门的匿名NFS用户 
+nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin       #专门的匿名NFS用户 
 3、NFS的启动与相关命令
 1、NFS和RPC的启动
 [root@web03 ~]# service rpcbind start
@@ -77,7 +76,7 @@ Export list for localhost:    #因为我们卸载掉了NFS共享目录，所以�
 exporting 192.168.0.1/24:/tmp/sharefolder
 [root@web03 ~]# showmount -e localhost
 Export list for localhost:
-/tmp/sharefolder 192.168.0.1/24 
+/tmp/sharefolder 192.168.0.1/24 
 4、客户端使用NFS
 1、客户端也必须安装NFS和RPC
 [root@filesbak ~]# showmount -e 192.168.0.26
@@ -107,7 +106,7 @@ good  test
 #
 #在用户端创建文件
 [root@filesbak nfs]# touch test2
-touch: cannot touch `test2': Permission denied 
+touch: cannot touch `test2': Permission denied 
 FTP介绍
 文件传输协议（英文：File Transfer Protocol，缩写：FTP）是用于在网络上进行文件传输的一套标准协议。
 使用端口：
@@ -202,7 +201,7 @@ rename successful
 lftp ftp01@192.168.0.26:/> get ./ftptest/111.log        #下载，默认是下载到本目录
 24 bytes transferred
 lftp ftp01@192.168.0.26:/> get ./pass -o ./aa           #下载到指定目录
-1531 bytes transferred 
+1531 bytes transferred 
 ftp协议工具二：vsftp
 1、安装vsftp及其依赖包
 [root@web03 data]# yum install -y vsftpd db4-utils
@@ -271,10 +270,10 @@ local_max_rate=50000
 6、启动vsftpd服务
 [root@web03 ~]# service vsftpd start
 Starting vsftpd for vsftpd:                                [  OK  ]
-#启动失败的话，请注意端口是否被占用，若被占用，kill掉那个占用的进程即可 
+#启动失败的话，请注意端口是否被占用，若被占用，kill掉那个占用的进程即可 
 curl -e参数 指定refer地址，可用来测试防盗链
 1、nginx的www.301r.com虚拟域名的配置文件
-========================================================location ~* ^.+\.(gif|jpe?g|png|bmp|swf|rar|zip|flv|xls|bz2|gz|doc)$
+========================================================location ~* ^.+\.(gif|jpe?g|png|bmp|swf|rar|zip|flv|xls|bz2|gz|doc)$
         {
                 valid_referers none blocked server_names .*301r.com;
                 if ($invalid_referer)
@@ -292,4 +291,4 @@ Date: Sun, 25 Jan 2015 02:04:55 GMT
 Content-Type: text/html
 Content-Length: 168
 Connection: keep-alive
-这让我们思考，其实铭哥的授课上曾经就遇到过这个问题，当时也是在vhost的配置文件中先写了php解析，然后又对某个php文件进行auth认证，就是用调换顺序把auth认证写在了php解析的前面才成功了的，所以，nginx和apache配置文件的逻辑，应该与iptables类似，只要满足前面的规则就可以执行了。 
+这让我们思考，其实铭哥的授课上曾经就遇到过这个问题，当时也是在vhost的配置文件中先写了php解析，然后又对某个php文件进行auth认证，就是用调换顺序把auth认证写在了php解析的前面才成功了的，所以，nginx和apache配置文件的逻辑，应该与iptables类似，只要满足前面的规则就可以执行了。 

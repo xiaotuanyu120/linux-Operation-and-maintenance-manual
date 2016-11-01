@@ -1,7 +1,6 @@
 ---
 title: 二十九讲TOMCAT&RESIN
-date: 2015年1月28日
-categories: 下午 12:22
+date: 2015年1月28日	 下午 12:22:00
 ---
  
 本节内容：TOMCAT&RESIN
@@ -28,7 +27,7 @@ CLASSPATH=/usr/local/jdk1.8.0_31/jre/lib:/usr/local/jdk1.8.0_31/lib:/usr/local/j
 [root@web03 sourcecode]# java -version
 java version "1.7.0_45"
 OpenJDK Runtime Environment (rhel-2.4.3.3.el6-i386 u45-b15)
-OpenJDK Client VM (build 24.45-b08, mixed mode, sharing) 
+OpenJDK Client VM (build 24.45-b08, mixed mode, sharing) 
 tomcat
 1、下载、解压、移动并更名到/usr/local/tomcat
 [root@web03 sourcecode]# wget http://mirror.nus.edu.sg/apache/tomcat/tomcat-7/v7.0.57/bin/apache-tomcat-7.0.57.tar.gz
@@ -99,7 +98,7 @@ root     11569  0.0  0.0   4356   744 pts/0    S+   17:43   0:00 grep --color=au
         <body>
         <center> Now time is: Thu Jan 29 17:32:20 SGT 2015 </center>
         </body>
-</html> 
+</html> 
 resin
 1、下载、解压、编译安装
 [root@web03 sourcecode]# wget http://caucho.com/download/resin-4.0.42.tar.gz
@@ -136,11 +135,11 @@ Now time is: <%=new java.util.Date()%>
 [root@web03 conf]# curl -xlocalhost:8080 www.111.com
 <html><body><center>
 Now time is: Thu Jan 29 21:56:34 SGT 2015
-</center></body></html> 
+</center></body></html> 
 resin+nginx(代理)
 1、nginx代理配置
 [root@web03 ~]# vi /usr/local/nginx/conf/vhost/proxy.conf
-====================================================server{
+====================================================server{
 listen 80;
 server_name www.122.com;
  
@@ -178,4 +177,4 @@ Now time is: Thu Jan 29 23:34:28 SGT 2015
 [root@web03 ~]# curl -xlocalhost:8080 www.122.com
 <html><body><center>
 Now time is: Thu Jan 29 23:34:39 SGT 2015
-</center></body></html>
+</center></body></html>

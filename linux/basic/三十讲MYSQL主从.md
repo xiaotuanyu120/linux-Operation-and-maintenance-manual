@@ -1,7 +1,6 @@
 ---
 title: 三十讲MYSQL主从
-date: 2015年1月30日
-categories: 20:33
+date: 2015年1月30日	 20:33:00
 ---
  
 本节内容:MYSQL主从配置
@@ -151,4 +150,4 @@ binlog_checksum=none
 #总结：既然slave无法搞定master上的checksum 那么，我们便在master上关掉它-"binlog_checksum=none"
  
 扩展、如何禁止mysql记录命令记录
-把/dev/null做一个软连接到~/.mysql_history即可
+把/dev/null做一个软连接到~/.mysql_history即可
