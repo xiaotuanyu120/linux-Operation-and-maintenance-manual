@@ -4,14 +4,17 @@ VSFTP: centos6搭建和配置
  
 安装环境：
 OS：Centos 6 x64位
-网段：172.168.2.x/24 
+网段：172.168.2.x/24
+ 
 Install Packets
 step1 >> 安装vsftp&db4-utils
-# yum install -y vsftpd db4-utils 
+# yum install -y vsftpd db4-utils
+ 
 Service Configuration
 step2 >> 设置服务开机启动
 # chkconfig --level 35 vsftpd on
-# service vsftpd start 
+# service vsftpd start
+ 
 Vsftp User
 step3 >> 增加vsftpd服务的用户
 # useradd vsftpd-u -s /sbin/nologin
@@ -39,7 +42,8 @@ step5 >> 用db-utils加密userlist
 db_load [-nTV] [-c name=value] [-f file] 
 [-h home] [-P password] [-t btree | hash | recno | queue] db_file
 db_load -r lsn | fileid [-h home] [-P password] db_file
-# chmod 600 /etc/vsftpd/vsftpd_userlist.db 
+# chmod 600 /etc/vsftpd/vsftpd_userlist.db
+ 
 Configuration
 step6 >> 配置认证文件位置
 # vim /etc/pam.d/vsftpd
@@ -63,7 +67,8 @@ guest_username=vsftpd-u
 virtual_use_local_privs=YES
 user_config_dir=/etc/vsftpd/vsftpd_user_conf
 ***************************************************
-# mkdir /etc/vsftpd/vsftpd_user_conf 
+# mkdir /etc/vsftpd/vsftpd_user_conf
+ 
 虚拟用户目录
 step8 >> 配置虚拟用户
 # vim /etc/vsftpd/vsftpd_user_conf/ftp1
@@ -82,15 +87,44 @@ local_max_rate=50000
 ********************************************************
 step9 >> 创建虚拟用户目录
 # mkdir /home/vsftpd-u/ftp1
-# chown -R vsftpd-u:vsftpd-u /home/vsftpd-u/ftp1 
+# chown -R vsftpd-u:vsftpd-u /home/vsftpd-u/ftp1
+ 
 Service Restart
 step10 >> 重启服务
-# service vsftpd restart 
+# service vsftpd restart
+ 
 Selinux
 step11 >> selinux放行
 # setsebool -P allow_ftpd_full_access 1
-## 如果未关闭selinux而且未设置ftp的访问权限，会报错500 oops cannot change directory 
+## 如果未关闭selinux而且未设置ftp的访问权限，会报错500 oops cannot change directory
  
+Iptables
+step12 >> iptables放行
+# passive mode添加iptables规则的方法
+``` bash
+# vsftpd配置被动模式的端口范围
+vim /etc/vsftpd/vsftpd.conf
+*************************
+listen_port=3721
+pasv_enable=YES
+pasv_min_port=3722
+pasv_max_port=3999
+port_enable=YES
+*************************
+
+# iptables根据配置放行端口
+vim /etc/sysconfig/iptables
+*************************
+# 添加以下两行
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 3721 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 3722:3999 -j ACCEPT
+*************************
+
+# 重启vsftpd和防火墙
+service vsftpd restart
+service iptables restart 
+```
+
 配置研究(/etc/vsftpd/vsftpd.conf)
 配置：listen
 配置项listen=YES/NO说明
@@ -137,7 +171,8 @@ vsftpd is stopped
 xinetd (pid  3710) is running...
 # netstat -nltp |grep 21
 tcp    0   0 :::21                 :::*                    LISTEN      3710/xinetd
-## 说明xinetd已经接替vsftpd这个daemon来监听21端口，可以测试下访问ftp，成功 
+## 说明xinetd已经接替vsftpd这个daemon来监听21端口，可以测试下访问ftp，成功
+ 
 配置tcp_wrappers
 配置项tcp_wrappers=YES/NO说明
 If enabled, and vsftpd was compiled with tcp_wrappers support, incoming connections will be fed through tcp_wrappers access control. Furthermore, there is a mechanism for per-IP based configuration. If tcp_wrappers sets the VSFTPD_LOAD_CONF environment variable, then the vsftpd session will try and load the vsftpd configuration file specified in this variable.
@@ -174,7 +209,8 @@ vsftpd:172.16.2.28
 ## 达到，只允许同一个网段不同ip访问vsftp的效果；
 ## 再往深层次考虑，我们设置两台vsftp服务器，用了上面的mac绑定ip控制以后，一台vsftp
 ## 只能写入，一台只能读取，然后做个shell脚本用root用户从写vsftp->读vsftp，这样就形成
-## 了一种内外网机制，软件或文档只可以内流。当然首先你要先部署内外网隔离和其他安全项 
+## 了一种内外网机制，软件或文档只可以内流。当然首先你要先部署内外网隔离和其他安全项
+ 
 配置cmds_allowed或cmds_denied
 配置项说明
 cmds_allowed
@@ -201,7 +237,8 @@ cmds_denied=DELE,RMD,RNFR,RNTO
  
 ## 例外，cmd上ftp可以删除空目录
 
-  
+ 
+ 
 配置write_enable和download_enable
 配置说明：
 write_enable
@@ -211,7 +248,8 @@ Default: NO
 download_enable
 If set to NO, all download requests will give permission denied.
 Default: YES
-ps:配置很简单，不演示 
+ps:配置很简单，不演示
+ 
 网摘所有cmds_allowd和cmds_denied相关的ftp命令缩写
 List of raw FTP commands
 (Warning: this is a technical document, not necessary for most FTP use.)
@@ -373,4 +411,5 @@ USER
 Syntax: USER username
 Send this command to begin the login process. username should be a valid username on the system, or "anonymous" to initiate an anonymous login.
  
-来自 <http://www.nsftools.com/tips/RawFTP.htm>  
+来自 <http://www.nsftools.com/tips/RawFTP.htm> 
+ 
