@@ -1,7 +1,7 @@
 ---
 title: centos6安装python2.7
 date: 2016-09-23 16:01:00
-categories: python
+categories: python/python
 tags: [python2.7,python]
 ---
 ### 安装环境
