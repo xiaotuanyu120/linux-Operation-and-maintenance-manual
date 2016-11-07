@@ -16,7 +16,7 @@ tags: [python,django,model]
 
 #### 迁移过程
 [stackoverflow 参考](http://stackoverflow.com/questions/1985383/update-django-database-to-reflect-changes-in-existing-models)
-```
+``` bash
 # 版本>=django1.5
 
 # 备份当前数据库数据(不指定备份类型时默认是json格式备份)，并清空已存在的table
