@@ -18,3 +18,8 @@ if (condition1) {
     block of code to be executed if the condition1 is false and condition2 is false
 }
 ```
+
+**与或标识符**
+与：conditionA && conditionB
+或：conditionA || conditionB
+与或混合：(conditionA && conditionB) || conditionC
