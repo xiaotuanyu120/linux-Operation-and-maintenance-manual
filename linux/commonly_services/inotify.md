@@ -1,7 +1,7 @@
 ---
 title: inotify初识
 date: 2016-11-08 13:02:00
-categoires: linux/common_service
+categoires: linux/commonly_services
 tags: [linux,inotify]
 ---
 ### inotify初识
@@ -45,6 +45,7 @@ inotifywait  [-hcmrq]  [-e  <event>  ]  [-t  <seconds> ]
 - -e 指定需要监控的事件类型
 ```
 # 没有用-e指定监控的事件时，默认监控所有改动事件
+# -e指定多个事件类型时，时间类型以','间隔
 access
 A watched file or a file within a watched directory was read from.
 modify
