@@ -1,5 +1,5 @@
 ---
-title: nginx+uwsgi+django组合
+title: nginx+uwsgi+django
 date: 2016-11-04 16:37:00
 categories: python/django
 tags: [python,django,uwsgi]

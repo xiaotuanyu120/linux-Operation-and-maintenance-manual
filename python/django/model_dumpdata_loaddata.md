@@ -1,5 +1,5 @@
 ---
-title: django如何在改动model后平滑迁移数据
+title: model：数据导入及导出
 date: 2016-11-04 13:00:00
 categories: python/django
 tags: [python,django,model]
