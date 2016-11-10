@@ -23,6 +23,7 @@ tags: [python,django,login,logout]
 - form的`method`是`POST`，因为要post数据到django，由django相应的`views`处理
 - form的`action`指定的内容就是post的目标url
 - form包含`name`为"username"和"password"两个text和一个button
+- 忽略`\`，只是为了转义
 
 **views功能编写**
 ``` python
@@ -57,6 +58,7 @@ def login_user(request):
 </form>
 ```
 - 和login功能相似，但此处只需要一个button
+- 忽略`\`，只是为了转义
 
 **views内容**
 ``` python
