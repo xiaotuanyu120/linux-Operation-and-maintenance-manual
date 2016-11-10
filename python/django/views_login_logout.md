@@ -13,7 +13,7 @@ tags: [python,django,login,logout]
 **前端页面内容**
 ``` html
 <form  action="/login/" method="POST">
- \{% csrf_token %\}
+ \{\% csrf_token \%\}
   <input name="username" id="UserName" type="text" class="form-control" placeholder="UserName">
   <input name="password" id="PassWord" type="password" class="form-control" placeholder="PassWord">
   <button type="submit" class="btn btn-primary" >Login In</button>
@@ -52,7 +52,7 @@ def login_user(request):
 **前端页面内容**
 ``` html
 <form class="navbar-form navbar-right inline" method='POST' action="/logout/">
-  \{% csrf_token %\}
+  \{\% csrf_token \%\}
   <button type="submit" class="btn btn-danger">Logout</button>
 </form>
 ```
