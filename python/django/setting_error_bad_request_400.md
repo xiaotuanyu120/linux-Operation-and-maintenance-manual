@@ -1,8 +1,8 @@
 ---
-title: settings: DEBUG=False(bad_request_400错误)
+title: settings: bad_request_400
 date: 2016-11-10 16:07:00
 categories: python/django
-tags: [python,django]
+tags: [python,django,DEBUG]
 ---
 ### 当设置DEBUG为False时，访问页面出现bad request 400错误
 
