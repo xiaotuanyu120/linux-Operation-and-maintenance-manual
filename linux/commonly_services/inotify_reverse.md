@@ -1,5 +1,5 @@
 ---
-title: inotify实现代码回滚
+title: inotify:实现代码回滚
 date: 2016-11-08 14:26:00
 categories: linux/commonly_services
 tags: [linux,inotify]

@@ -1,5 +1,5 @@
 ---
-title: sersync 基于inotify和rsync的实时同步工具
+title: sersync：实时同步工具
 date: 2016-11-09 15:44:00
 categories: linux/commonly_services
 tags: [linux,inotify,rsync,sersync]

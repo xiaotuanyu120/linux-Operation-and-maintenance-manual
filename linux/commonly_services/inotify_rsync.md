@@ -1,5 +1,5 @@
 ---
-title: inotify+rsync实现实时文件同步
+title: inotify:inotify+rsync
 date: 2016-11-08 13:52:00
 categories: linux/commonly_services
 tags: [linux,inotify]
