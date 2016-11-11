@@ -1,5 +1,5 @@
 ---
-title: 当list的string中包含数字的时候，用数字来给list排序
+title: list:排序
 date: 2016-11-09 12:57:00
 categories: python/advance
 tags: [python,list,sort]

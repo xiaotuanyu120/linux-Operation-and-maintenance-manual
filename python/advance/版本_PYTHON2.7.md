@@ -1,5 +1,5 @@
 ---
-title: centos6安装python2.7
+title: python2.7:安装
 date: 2016-09-23 16:01:00
 categories: python/advance
 tags: [python2.7,python]
