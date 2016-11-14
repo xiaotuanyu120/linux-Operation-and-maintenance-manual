@@ -161,6 +161,12 @@ vi /etc/init.d/redis
 
 # 修改配置文件位置
 CONF="/etc/redis/${REDISPORT}.conf"
+
+# 如果设置了auth的话，需要在关闭时提供密码字符串
+# 配置一个自定义变量
+AUTH_PASSWORD="123456"
+# 在关闭stop case中增加"-a $AUTH_PASSWORD"
+$CLIEXEC -p $REDISPORT -a $AUTH_PASSWORD shutdown
 ******************************
 chkconfig redis on
 ```
