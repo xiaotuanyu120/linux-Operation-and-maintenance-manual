@@ -1,10 +1,10 @@
 ---
-title: redis: tomcat-session共享
+title: redis: 1.0_tomcat-session共享
 date: 2016-09-27 12:59:00
 categories: linux/commonly_services
 tags: [redis,session,tomcat,nginx]
 ---
-### redis + nginx + tomcat实现session共享
+### 1.0 redis + nginx + tomcat实现session共享
 ----
 ### 1. 环境介绍
 **软件版本**
@@ -100,7 +100,7 @@ vim /usr/local/tomcat/conf/context.xml
      password="mypass"
      database="0"
      maxInactiveInterval="60"
-     />
+    />
 ******************************
 ```
 Valve要在Manager之前  
@@ -177,7 +177,7 @@ daemonize yes
 
 #### 4) 拷贝jar包到tomcat
 ``` bash
-https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/tomcat-redis-session-manager-1.2.jar
+wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/tomcat-redis-session-manager-1.2.jar
 wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/jedis-2.1.0.jar
 wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/commons-pool-1.6.jar
 
