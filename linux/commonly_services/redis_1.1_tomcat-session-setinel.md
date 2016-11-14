@@ -110,6 +110,7 @@ vim /usr/local/tomcat/conf/context.xml
 [配置详细说明见此链接](https://github.com/jcoleman/tomcat-redis-session-manager)  
 Valve要配置在Manager之前  
 注意className，网上的都不一样，需要按照自己下载jar包的版本进行调整  
+其中maxInactiveInterval，配置的是非活动状态最大持续时间，即用户停止操作多长时间停掉session。  
 `password` 对应redis master配置文件中的requirepass配置项配置的密码  
 `mymaster` 对应sentinel配置文件中的`sentinel monitor <master-group-name> <ip> <port> <quorum>`中的`<master-group-name>`
 

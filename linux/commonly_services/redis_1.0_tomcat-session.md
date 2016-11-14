@@ -106,6 +106,7 @@ vim /usr/local/tomcat/conf/context.xml
 Valve要在Manager之前  
 注意className，网上的都不一样，需要按照自己下载jar包的版本进行调整  
 其中password配置，是对应redis master中的requirepass配置项配置的密码
+其中maxInactiveInterval，配置的是非活动状态最大持续时间，即用户停止操作多长时间停掉session。
 
 #### 3) 编写测试程序
 ``` bash
