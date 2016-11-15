@@ -74,9 +74,8 @@ from django.http import *
 
 
 def execute(request):
-    data = ''
     if request.method == 'POST' and request.is_ajax():
         data = request.POST['test']
         return HttpResponse(json.dumps(data), content_type = "application/json")
-    return HttpResponse(data)
+    return HttpResponseNotFound('<h1>Page not found</h1>')
 ```
