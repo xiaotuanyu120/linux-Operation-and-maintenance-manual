@@ -1,13 +1,11 @@
 ---
-title: sersync：实时同步工具
+title: inotify: 3.0 sersync实时同步
 date: 2016-11-09 15:44:00
 categories: linux/commonly_services
 tags: [linux,inotify,rsync,sersync]
 ---
-### sersync 基于inotify和rsync的实时同步工具
-
+### 3.0 sersync 基于inotify和rsync的实时同步工具
 ----
-
 #### 测试环境
 服务器名称|角色|ip|系统
 ---|---|---|---

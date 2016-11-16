@@ -1,13 +1,11 @@
 ---
-title: inotify:实现代码回滚
+title: inotify: 2.0 实现代码回滚
 date: 2016-11-08 14:26:00
 categories: linux/commonly_services
 tags: [linux,inotify]
 ---
-### inotify实现代码回滚
-
+### 2.0 inotify实现代码回滚
 ----
-
 #### 需求背景
 目前公司实际情况：
 1. 开发团队更新时段09:00 - 18:00

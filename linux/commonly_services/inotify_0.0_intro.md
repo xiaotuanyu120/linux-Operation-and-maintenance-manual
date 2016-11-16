@@ -1,13 +1,11 @@
 ---
-title: inotify：初识
+title: inotify: 0.0 初识
 date: 2016-11-08 13:02:00
 categories: linux/commonly_services
 tags: [linux,inotify]
 ---
-### inotify初识
-
+### 0.0 inotify初识
 ----
-
 #### 什么是inotify？
 inotify是用来监控文件系统事件的实时监控工具。
 
