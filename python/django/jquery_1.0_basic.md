@@ -43,6 +43,32 @@ $("#some").prop("attr_name", true)
 $("#some").removeAttr("attr_name")
 $("#some").prop("attr_name", false)
 ```
+
+#### 4) 选择元素
+``` javascript
+//选择id
+$("#some_id")
+
+//选择类
+$(".some_class")
+
+//选择当前元素
+$(this)
+
+//选择多个元素
+$("selection1, selection2, selection3 ...")
+```
+
+#### 5) 传递django的变量值给jquery
+``` javascript
+//html
+<button type="submit" class="btn btn-primary" value='Click' id="btn2" user={{ request.user.username }}>test</button>
+
+//javascript
+$("#btn2").click(function(){
+  alert($(this).attr("user"));
+});
+```
 ----
 ### 2. ajax
 #### 1) ajax与django的csrf
