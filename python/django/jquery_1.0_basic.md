@@ -60,14 +60,10 @@ $("selection1, selection2, selection3 ...")
 ```
 
 #### 5) 传递django的变量值给jquery
-html内容
-```
-<button type="submit" class="btn btn-primary" value='Click' id="btn2" user={{ request.user.username }}>
-test
-</button>
-```
-javascript内容
 ``` javascript
+//html的button元素中加入下面的属性
+user={{ request.user.username }}>
+
 //javascript
 $("#btn2").click(function(){
   alert($(this).attr("user"));
