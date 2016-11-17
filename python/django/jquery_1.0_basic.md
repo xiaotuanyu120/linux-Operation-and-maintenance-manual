@@ -69,6 +69,25 @@ $("#btn2").click(function(){
   alert($(this).attr("user"));
 });
 ```
+
+#### 6) 显示和隐藏元素
+``` javascript
+//隐藏
+$("#someid").hide()
+//指定隐藏过程时间
+$("#someid").hide(100)
+
+//显示
+$("#someid").show()
+//指定显示过程时间
+$("#someid").show(100)
+```
+
+#### 7) form元素的reset
+``` javascript
+//会将from中的元素都reset成初始化的状态
+$("#someformid")[0].reset()
+```
 ----
 ### 2. ajax
 #### 1) ajax与django的csrf

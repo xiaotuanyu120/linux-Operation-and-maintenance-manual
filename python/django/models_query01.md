@@ -1,13 +1,11 @@
 ---
-title: model： 查询字段内容
+title: models: 1.1 查询字段内容
 date: 2016-11-07 11:49:00
 categories: python/django
-tags: [python,django,model]
+tags: [python,django,models]
 ---
-### 通过model的查询操作，来获取某一个字段内容
-
+### 1.1 通过model的查询操作，来获取某一个字段内容
 ----
-
 #### 问题背景
 我们知道django中的model对应的是数据库的设计，所以通过对model操作，我们就可以操纵数据库。
 举例，我们有如下一个model类：
