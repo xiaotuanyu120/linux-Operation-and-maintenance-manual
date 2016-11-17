@@ -27,7 +27,7 @@ YOURMODELS.objects.filter(field__endswith = "filter")
 # 忽略大小写可以用iendwith
 ```
 
-#### 3) 中部匹配
+#### 4) 中部匹配
 sql: `select from table where field like "%filter%"`
 ``` python
 YOURMODELS.objects.filter(field__contains = "filter")
