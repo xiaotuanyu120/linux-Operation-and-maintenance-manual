@@ -4,7 +4,7 @@ date: 2016-11-07 11:49:00
 categories: python/django
 tags: [python,django,models]
 ---
-### 1.1 通过model的查询操作，来获取某一个字段内容
+### 1.0 通过model的查询操作，来获取某一个字段内容
 ----
 #### 问题背景
 我们知道django中的model对应的是数据库的设计，所以通过对model操作，我们就可以操纵数据库。
