@@ -8,20 +8,20 @@ tags: [python,django,template]
 ----
 #### 1. 当我们使用list时
 ``` html
-{% for li in list %}
-<li>{{ li }}</li>
-{% endfor %}
+\{\% for li in list \%\}
+<li>\{\{ li \}\}</li>
+\{\% endfor \%\}
 ```
 ----
 #### 2. 当我们使用dict时
 ``` html
 <!-- key和value获取 -->
-{% for key, value in dict.items %}
-<li>{{ key }} - {{ value }}</li>
-{% endfor %}
+\{\% for key, value in dict.items \%\}
+<li>\{\{ key \}\} - \{\{ value \}\}</li>
+\{\% endfor \%\}
 
 <!-- 仅获取key -->
-{% for key in dict.keys %}
-<li>{{ key }}</li>
-{% endfor %}
+\{\% for key in dict.keys \%\}
+<li>\{\{ key \}\}</li>
+\{\% endfor \%\}
 ```
