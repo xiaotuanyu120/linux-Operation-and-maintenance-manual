@@ -1,5 +1,5 @@
 ---
-title: models: 1.2 查询字段内容
+title: models: 1.2 查询字段-基础
 date: 2016-11-17 11:36:00
 categories: python/django
 tags: [python,django,models]
