@@ -40,3 +40,16 @@ my_filter = {}
 my_filter[my_keyword] = my_filter_value
 my_object = MyModel.objects.filter(**my_filter)
 ```
+----
+### 3. filter之后的排序问题
+``` python
+# 指定排序字段
+YOURMODELS.objects.filter(field = 'filter').order_by('field')
+
+# 逆序排序
+YOURMODELS.objects.filter(field = 'filter').order_by('-field')
+
+# 多条件排序
+YOURMODELS.objects.filter(field = 'filter').order_by('-field', 'another field')
+```
+[django doc](https://docs.djangoproject.com/en/dev/ref/models/querysets/#order-by)

@@ -24,7 +24,8 @@ class Record(models.Model):
 ``` python
 # 核心用法就是YOURMODELS._meta.get_fields()获取fields列表，然后field.verbose_name获得该属性
 from .models import Record
-[f.verbose_name for f in Record._meta.get_fields() \
-          if f.verbose_name.encode('utf-8') not in ['ID', '命令', '动作']]
+{f.verbose_name: f.name for f in Record._meta.get_fields() \
+          if f.verbose_name.encode('utf-8') not in ['ID', '命令', '动作']}
 # 后面的if语句是筛选不需要的field
+# 之所以储存成一个dict，是为了好调用name属性
 ```
