@@ -88,6 +88,20 @@ $("#someid").show(100)
 //会将from中的元素都reset成初始化的状态
 $("#someformid")[0].reset()
 ```
+
+#### 8) append方法
+``` javascript
+$("#someid").append(somelist[i] + "<br>");
+//输入源为somelist
+//将list中的值换行增加到someid的html内容中
+```
+
+#### 9) for循环
+``` javascript
+for (i=0;i<somelist.length;i++) {
+  $("#someid").append(somelist[i] + "<br>");
+}
+```
 ----
 ### 2. ajax
 #### 1) ajax与django的csrf
