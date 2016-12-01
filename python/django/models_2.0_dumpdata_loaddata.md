@@ -1,10 +1,10 @@
 ---
-title: model：数据导入及导出
+title: model: 2.0 数据导入及导出
 date: 2016-11-04 13:00:00
 categories: python/django
-tags: [python,django,model]
+tags: [python,django,models]
 ---
-### django如何在改动model后平滑迁移数据
+### 2.0 数据导入及导出
 
 ----
 

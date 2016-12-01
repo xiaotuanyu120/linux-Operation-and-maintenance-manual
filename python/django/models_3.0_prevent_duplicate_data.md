@@ -1,10 +1,10 @@
 ---
-title: django如何在model中创建不可重复的字段
+title: models: 3.0 字段不可重复
 date: 2016-11-04 13:15:00
 categories: python/django
-tags: [python,django,model]
+tags: [python,django,models]
 ---
-### django如何在model中创建不可重复的字段
+### 3.0 如何在model中创建不可重复的字段
 
 ----
 

@@ -1,10 +1,10 @@
 ---
-title: models: 1.2 查询字段-基础
+title: models: 1.0 查询字段-基础
 date: 2016-11-17 11:36:00
 categories: python/django
 tags: [python,django,models]
 ---
-### 1.2 models中的数据，如何实现数据库中的select语句
+### 1.0 models中的数据，如何实现数据库中的select语句
 ----
 ### 1. views中实现models数据查询
 #### 1) 精确匹配
