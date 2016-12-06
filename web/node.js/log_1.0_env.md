@@ -1,10 +1,17 @@
 ---
-title: log: 1.0 env
+title: weblog: 1.0 env
 date: 2016-12-06 21:00:00
 categories: web/node.js
 tags: [node.js,socket.io,express,jquery,redis]
 ---
 ### log: 1.0 env
+
+---
+### 0. 目的
+实现用web页面来查看日志内容
+- 使用express和node.js来做web服务器
+- 使用socket.io+redis来实现实时数据传输
+- 使用jquery和html来实现前端的特效和页面展示
 
 ---
 
