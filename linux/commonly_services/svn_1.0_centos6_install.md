@@ -19,7 +19,7 @@ OS：|Centos 6 x64位
 yum install httpd
 ```
 #### Step 2 " 配置apache:配置文件"/etc/httpd/conf/httpd.conf"
-此步需要跳过，因为下面我们选择用虚拟主机来处理请求
+若选择用虚拟主机来处理请求，此步需跳过
 ``` bash
 vim /etc/httpd/conf/httpd.conf
 ===================================
