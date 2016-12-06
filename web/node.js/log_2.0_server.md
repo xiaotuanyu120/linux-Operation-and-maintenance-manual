@@ -1,5 +1,5 @@
 ---
-title: log 2.0 server
+title: log: 2.0 server
 date: 2016-12-07 00:05:00
 categories: web/node.js
 tags: [node.js,socket.io,express,jquery,redis]
