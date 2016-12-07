@@ -19,7 +19,6 @@ OS：|Centos 6 x64位
 yum install httpd
 ```
 #### Step 2 " 配置apache:配置文件"/etc/httpd/conf/httpd.conf"
-若选择用虚拟主机来处理请求，此步需跳过
 ``` bash
 vim /etc/httpd/conf/httpd.conf
 ===================================
@@ -58,15 +57,17 @@ mkdir /data/svn
 #### Step 6 " 创建svn仓库
 ``` bash
 cd /data/svn
-svnadmin create cp
+svnadmin create demo
+svnadmin create test
 ```
 #### Step 7 " 修改svn仓库目录权限
 ``` bash
 chown -R apache:apache /data/svn/
 ```
-#### Step 8 " 创建密码文件"cp.users"并创建用户"levi"
+#### Step 8 " 创建密码文件"cp.users"并创建用户
 ``` bash
-htpasswd -cm /data/svn/cp.users levi
+htpasswd -c /data/svn/svn.users admin
+htpasswd -m /data/svn/svn.users test
 # 相当于这个用户是记录在这个密码文件上的
 # 增加一个用户
 # htpasswd -m /data/svn/cp.users username
@@ -74,30 +75,33 @@ htpasswd -cm /data/svn/cp.users levi
 
 #### Step 9 " 配置SVN apache配置文件( /etc/httpd/conf.d/subversion.conf )
 ``` bash
-# vim /etc/httpd/conf.d/subversion.conf
+vim /etc/httpd/conf.d/subversion.conf
 ==========================================
 <Location /repos>
    DAV svn
-   SVNParentPath /data/svn                     # svn仓库目录
-   AuthType Basic                               # 认证类型
+   SVNParentPath /data/svn
+   AuthType Basic
    AuthName "Authorization Realm"
-   AuthUserFile /data/svn/cp.users             # 指定密码文件
+   AuthUserFile /data/svn/svn.users
+   AuthzSVNAccessFile /data/svn/svn.authz
    Require valid-user
 </Location>
 ===========================================
+# 上面指定的SVNParentPath是多个项目共同的父目录
+# 然后可以通过/repos/repo_name来访问多个项目
 ```
 #### Step 10 " 重启 apache service
 ``` bash
 service httpd restart
 ```
-#### Step 11 " 在浏览器中打开svn的网络路径"http://172.16.2.58/repos/cp"
-
-#### 后续Step >>可以在windows上安装tortoisesvn来管理
+#### Step 11 " 在浏览器中打开svn的网络路径
+- "http://172.16.2.58/repos/demo"
+- "http://172.16.2.58/repos/test"
+[ip]/[subversion中配置的location]/[repo_name]> 后续Step >>可以在windows上安装tortoisesvn来管理
 ---
 
 ### 4. 权限访问
 #### Step 1 Configure firewall ( Iptables )
-配置iptables
 ``` bash
 # 考虑到svn服务器的安全性，可以指定一台svn控制台，绑定mac地址
 vim /etc/sysconfig/iptables
@@ -108,97 +112,65 @@ vim /etc/sysconfig/iptables
 ===========================================
 mac地址的格式必须为XX:XX:XX:...
 service iptables restart```
-
-用apache虚拟主机来管控访问权限
+#### Step 2 Configure httpd
+用apache虚拟主机来管控主机访问权限（针对主机访问）
 ``` bash
 cat /etc/httpd/conf.d/svn.conf
 <VirtualHost *:80>
         ServerName 172.16.2.58
-        DocumentRoot "/data/svn/cp"
-        <Directory "/data/svn/cp">
+        DocumentRoot "/data/svn"
+
+        <Directory "/data/svn/demo">
                 Order deny,allow
                 Deny from all
                 Allow from 172.16.2.28
         </Directory>
-</VirtualHost>
-```
-ps：之前就想用apache本身来控制访问权限，但因为错误的把Directory这个directive放在了svn的conf里面，后来采用了自建虚拟主机的方式（上面的写法）才得以生效
 
-官方配置引导：
-link：http://svnbook.red-bean.com/en/1.7/index.html
----
-
-### 5. HTTPD+SVN多项目管理
-``` bash
-# 环境
-# svn项目父目录：/data/svn/seo
-# svn项目创建：
-cd /data/svn/seo
-svnadmin create tech1-igamejybapp
-svnadmin create tech2-ccs
-svnadmin create tech3-igamejybservice
-
-# svn的repos配置
-vim /etc/httpd/conf.d/subversion.conf
-===========================================
-<Location /seo/tech1>
-   DAV svn
-   SVNParentPath /data/svn/seo
-   AuthType Basic
-   AuthName "Authorization Realm"
-   AuthUserFile /data/svn/seo/tech1-igamejybapp.users
-   Require valid-user
-</Location>
-
-<Location /seo/tech2>
-   DAV svn
-   SVNParentPath /data/svn/seo
-   AuthType Basic
-   AuthName "Authorization Realm"
-   AuthUserFile /data/svn/seo/tech2-ccs.users
-   Require valid-user
-</Location>
-
- <Location /seo/tech3>
-   DAV svn
-   SVNParentPath /data/svn/seo
-   AuthType Basic
-   AuthName "Authorization Realm"
-   AuthUserFile /data/svn/seo/tech3-igamejybservice.users
-   Require valid-user
-</Location>
-===========================================
-
-# apache httpd的控制配置
-vim /etc/httpd/conf.d/svn.conf
-===========================================
-<VirtualHost *:80>
-        ServerName 10.10.210.21
-        DocumentRoot "/data/svn/seo/"
-
-        <Directory "/data/svn/seo/tech1-igamejybapp">
+        <Directory "/data/svn/test">
                 Order deny,allow
                 Deny from all
                 Allow from 10.10.180.17 10.10.180.14 10.10.190.4
         </Directory>
-
-        <Directory "/data/svn/seo/tech2-ccs">
-                Order deny,allow
-                Deny from all
-               Allow from 10.10.180.19 10.10.180.15 10.10.190.4
-        </Directory>
-
-        <Directory "/data/svn/seo/tech3-igamejybservice">
-                Order deny,allow
-                Deny from all
-                Allow from 10.10.180.18 10.10.190.4
-        </Directory>
 </VirtualHost>
-===========================================
 ```
-访问url  
-http://10.10.210.21/seo/tech1/tech1-igamejybapp/  
-http://10.10.210.21/seo/tech2/tech2-ccs/  
-http://10.10.210.21/seo/tech3/tech3-igamejybservice/  
 
-[ip]/[subversion中配置的location]/[directory最后一段]
+官方配置引导：
+link：http://svnbook.red-bean.com/en/1.7/index.html
+
+#### step 3 增加访问控制
+``` bash
+## 修改subversion.conf
+vim /etc/httpd/conf.d/subversion.conf
+===========================================
+# 增加AuthzSVNAccessFile配置
+<Location /repos>
+   DAV svn
+   SVNParentPath /data/svn
+   AuthType Basic
+   AuthName "Authorization Realm"
+   AuthUserFile /data/svn/svn.users
+   AuthzSVNAccessFile /data/svn/svn.authz
+   Require valid-user
+</Location>
+===========================================
+
+## 创建权限控制文件
+cat /data/svn/svn.authz
+===========================================
+[groups]
+group1 = admin
+group2 = test,admin
+
+[/]
+* = r
+
+[demo:/css]
+@group1 = rw
+
+[test:/js]
+@group2 = rw
+===========================================
+[groups]指定组及其user
+[path]指定所有repos的路径的访问权限
+[repo_name:path]被指定repo的路径的访问权限
+```
