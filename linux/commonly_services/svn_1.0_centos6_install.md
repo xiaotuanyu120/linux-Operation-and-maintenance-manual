@@ -77,6 +77,9 @@ htpasswd -m /data/svn/svn.users test
 ``` bash
 vim /etc/httpd/conf.d/subversion.conf
 ==========================================
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
 <Location /repos>
    DAV svn
    SVNParentPath /data/svn
@@ -142,13 +145,16 @@ link：http://svnbook.red-bean.com/en/1.7/index.html
 ## 修改subversion.conf
 vim /etc/httpd/conf.d/subversion.conf
 ===========================================
-# 增加AuthzSVNAccessFile配置
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
 <Location /repos>
    DAV svn
    SVNParentPath /data/svn
    AuthType Basic
    AuthName "Authorization Realm"
    AuthUserFile /data/svn/svn.users
+   # 增加AuthzSVNAccessFile配置
    AuthzSVNAccessFile /data/svn/svn.authz
    Require valid-user
 </Location>
