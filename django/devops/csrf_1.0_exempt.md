@@ -1,7 +1,7 @@
 ---
 title: csrf: 1.0 为views去除csrf认证
 date: 2016-12-01 11:02:00
-categories: python/django
+categories: django/devops
 tags: [python,django,csrf]
 ---
 ### 1.0 为views去除csrf认证

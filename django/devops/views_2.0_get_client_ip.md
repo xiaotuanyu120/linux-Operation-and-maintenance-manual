@@ -1,7 +1,7 @@
 ---
 title: views: 2.0 获取用户ip
 date: 2016-11-15 16:16:00
-categories: python/django
+categories: django/devops
 tags: [python,django,views,ip]
 ---
 ### 2.0 如何获取用户的ip

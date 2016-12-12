@@ -1,7 +1,7 @@
 ---
 title: models: 1.1 查询字段-实践
 date: 2016-11-07 11:49:00
-categories: python/django
+categories: django/devops
 tags: [python,django,models]
 ---
 ### 1.1 通过model的查询操作，来获取某一个字段内容

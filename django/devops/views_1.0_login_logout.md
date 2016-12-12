@@ -1,7 +1,7 @@
 ---
 title: views: 1.0 login and logout
 date: 2016-11-10 16:28:00
-categories: python/django
+categories: django/devops
 tags: [python,django,login,logout]
 ---
 ### 1.0 如何实现login和logout

@@ -1,7 +1,7 @@
 ---
 title: views: 1.1 装饰器login_required
 date: 2016-11-10 09:23:00
-categories: python/django
+categories: django/devops
 tags: [python,django,decorators]
 ---
 ### 1.1 装饰器login_required的使用

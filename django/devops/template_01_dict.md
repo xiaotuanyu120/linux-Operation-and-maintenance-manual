@@ -1,7 +1,7 @@
 ---
 title: template: 1.0 使用dict
 date: 2016-11-18 17:36:00
-categories: python/django
+categories: django/devops
 tags: [python,django,template]
 ---
 ### 1.0 template中使用dict

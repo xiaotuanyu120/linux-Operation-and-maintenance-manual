@@ -1,7 +1,7 @@
 ---
 title: models: 2.0 数据导入及导出
 date: 2016-11-04 13:00:00
-categories: python/django
+categories: django/devops
 tags: [python,django,models]
 ---
 ### 2.0 数据导入及导出

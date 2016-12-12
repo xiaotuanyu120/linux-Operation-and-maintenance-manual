@@ -1,7 +1,7 @@
 ---
 title: urllib: 1.0 登陆django的python客户端
 date: 2016-12-01 10:30:00
-categories: python/django
+categories: django/devops
 tags: [python,django,urllib,urllib2]
 ---
 ### 1.0 urllib登陆django的python客户端

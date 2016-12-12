@@ -1,7 +1,7 @@
 ---
 title: uwsgi: nginx超时设定
 date: 2016-11-11 11:16:00
-categories: python/django
+categories: django/devops
 tags: [python,django,nginx,uwsgi]
 ---
 ### nginx中如何设定uwsgi的timeout

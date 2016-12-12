@@ -1,7 +1,7 @@
 ---
 title: models: 3.0 字段不可重复
 date: 2016-11-04 13:15:00
-categories: python/django
+categories: django/devops
 tags: [python,django,models]
 ---
 ### 3.0 如何在model中创建不可重复的字段

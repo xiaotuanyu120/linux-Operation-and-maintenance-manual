@@ -1,7 +1,7 @@
 ---
 title: models: 1.2 查询verbose_name
 date: 2016-11-18 14:49:00
-categories: python/django
+categories: django/devops
 tags: [python,django,models,verbose_name]
 ---
 ### 1.2 在views中获取models中字段的verbose_name
