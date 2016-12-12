@@ -1,7 +1,7 @@
 ---
 title: weblog: 3.0 client
 date: 2016-12-07 00:19:00
-categories: web/node.js
+categories: javascript/node.js
 tags: [node.js,socket.io,express,jquery,redis]
 ---
 ### log 3.0 client

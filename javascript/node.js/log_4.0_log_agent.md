@@ -1,7 +1,7 @@
 ---
 title: weblog: 4.0 log_agent
 date: 2016-12-07 00:40:00
-categories: web/node.js
+categories: javascript/node.js
 tags: [node.js,socket.io,express,jquery,redis]
 ---
 ### log 4.0 client

@@ -1,7 +1,7 @@
 ---
 title: weblog: 1.0 env
 date: 2016-12-06 21:00:00
-categories: web/node.js
+categories: javascript/node.js
 tags: [node.js,socket.io,express,jquery,redis]
 ---
 ### log: 1.0 env

@@ -1,7 +1,7 @@
 ---
 title: node.js: 1.0 introduction
 date: 2016-12-07 11:20:00
-categories: web/node.js
+categories: javascript/node.js
 tags: [node.js]
 ---
 ### node.js: 1.0 introduction
