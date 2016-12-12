@@ -1,5 +1,5 @@
 ---
-title: django中执行os.chdir()引起的"devserver autoreload: OSError: [Errno 2] No such file or directory"
+title: django中执行os.chdir()引起的"devserver autoreload: OSError"
 date: 2016-11-03 15:51:00
 categories: django/devops
 tags: [python,django,chdir,autoreload,manage.py,OSError]
