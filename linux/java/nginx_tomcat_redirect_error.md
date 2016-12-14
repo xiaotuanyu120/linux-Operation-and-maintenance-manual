@@ -78,3 +78,10 @@ if (proxyName != null) {
 
 
 [转载地址](http://www.ituring.com.cn/article/48042)
+
+
+http://stackoverflow.com/questions/3561667/can-i-run-tomcat-securely-on-port-443-and-insecurely-on-8080
+
+sslProtocol='SSL'
+proxyPort='443'
+scheme='https'
