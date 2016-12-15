@@ -1,7 +1,7 @@
 ---
 title: jdk: 1.1.0 jre1.6安装
 date: 2016-09-27 11:42:00
-categories: java
+categories: linux/java-env
 tags: [java,jre]
 ---
 ### 1. 下载并安装jre1.6
