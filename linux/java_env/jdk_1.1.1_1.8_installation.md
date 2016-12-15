@@ -1,7 +1,7 @@
 ---
 title: jdk: 1.1.1 jdk1.8安装
 date: 2016-01-07 21:35:00
-categories: linux/java-env
+categories: linux/java_env
 tags: [jdk]
 ---
 ### 1.1.1 jdk1.8安装
