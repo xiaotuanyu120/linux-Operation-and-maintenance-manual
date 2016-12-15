@@ -1,21 +1,24 @@
 ---
-title: JRE1.6安装
+title: jdk: 1.1.0 jre1.6安装
 date: 2016-09-27 11:42:00
 categories: java
 tags: [java,jre]
 ---
-### 下载并安装jre1.6
-需要注册oracle帐号才能在下面下载
-http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html
+### 1. 下载并安装jre1.6
+需要注册oracle帐号才能下载，[jre1.6下载页面](
+http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html)
 
-### 安装jre1.6
+---
+
+### 2. 安装JAVA环境
+#### 1) 安装
 ``` bash
 chmod u+x jre-6u45-linux-x64.bin
 sh jre-6u45-linux-x64.bin
 mv jre1.6.0_45 /usr/local/
 ln -s /usr/local/jre1.6.0_45/ /usr/local/jdk
-
-### 初始化java环境
+```
+#### 2) 配置java环境变量
 ``` bash
 vi /etc/profile.d/java-env.sh
 *******************************

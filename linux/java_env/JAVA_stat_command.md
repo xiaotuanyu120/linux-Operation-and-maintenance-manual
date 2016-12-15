@@ -242,6 +242,8 @@ Loaded  Bytes  Unloaded  Bytes     Time
   1850  3905.6        0     0.0       1.22
 ```
 
+---
+
 ### 3. jps
 简介：jps - Java Virtual Machine Process Status Tool
 语法：`jps [ options ] [ hostid ]`
@@ -272,3 +274,8 @@ jps -m
 14391 Bootstrap start
 14981 Jps -m
 ```
+
+---
+
+### 4. jstack
+jstack pid
