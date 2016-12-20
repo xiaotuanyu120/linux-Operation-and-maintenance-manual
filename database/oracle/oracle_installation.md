@@ -1,3 +1,14 @@
+---
+title: 1.0 silent模式安装oracle 11G R2
+date: 2016-12-20 11:53:00
+categories: database/oracle
+tags: [database,oracle]
+---
+### 1.0 silent模式安装oracle 11G R2
+
+---
+
+### 0. 环境介绍
 oracle version: oracle 11g R2
 os version: centos 6.8 x64
 
