@@ -1,7 +1,7 @@
 ---
 title: nginx+uwsgi+django
 date: 2016-11-04 16:37:00
-categories: django/devops
+categories: python/django
 tags: [python,django,uwsgi]
 ---
 ### nginx+uwsgi+django组合

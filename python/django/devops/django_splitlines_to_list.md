@@ -1,7 +1,7 @@
 ---
 title: django中如何将多行string转换成list
 date: 2016-11-03 16:36:00
-categories: django/devops
+categories: python/django
 tags: [django,split,splitlines]
 ---
 ### django中如何使用splitlines

@@ -1,7 +1,7 @@
 ---
 title: models: 4.0 重写save方法
 date: 2016-10-11 16:16:00
-categories: django/devops
+categories: python/django
 tags: [python,django,models]
 ---
 ### 4.0 models中重写save方法

@@ -1,7 +1,7 @@
 ---
 title: views: 5.0 调用models，保存数据
 date: 2016-12-01 09:40:00
-categories: django/devops
+categories: python/django
 tags: [python,django,models,views]
 ---
 ### 5.0 views调用models，保存数据

@@ -1,7 +1,7 @@
 ---
 title: views: 3.0 ajax + views
 date: 2016-11-15 16:56:00
-categories: django/devops
+categories: python/django
 tags: [python,django,ajax,views]
 ---
 ### 3.0 views与ajax间的数据沟通

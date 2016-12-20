@@ -1,7 +1,7 @@
 ---
 title: models: 1.0 查询字段-基础
 date: 2016-11-17 11:36:00
-categories: django/devops
+categories: python/django
 tags: [python,django,models]
 ---
 ### 1.0 models中的数据，如何实现数据库中的select语句

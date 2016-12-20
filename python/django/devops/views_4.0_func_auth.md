@@ -1,7 +1,7 @@
 ---
 title: views: 4.0 控制function访问权限
 date: 2016-12-01 15:35:00
-categories: django/devops
+categories: python/django
 tags: [python,django,auth]
 ---
 ### 4.0 控制views中function的访问权限
