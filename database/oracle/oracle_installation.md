@@ -9,8 +9,8 @@ tags: [database,oracle]
 ---
 
 ### 0. 环境介绍
-oracle version: oracle 11g R2
-os version: centos 6.8 x64
+- oracle version: oracle 11g R2
+- os version: centos 6.8 x64
 
 ### 1. 系统配置及准备
 #### 1) 切换到root用户
