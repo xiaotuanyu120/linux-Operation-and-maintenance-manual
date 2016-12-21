@@ -461,6 +461,7 @@ INS-13013: Target environment do not meet some mandatory requirements.
 ./runInstaller -silent -responseFile /home/oracle/database/response/db_install.rsp -ignorePrereq
 ```
 
+- [oracle offical docs about "how to install oracle using response files"](http://docs.oracle.com/cd/E11882_01/install.112/e47689/app_nonint.htm#LADBI1342)
 - [参考链接1](http://dbaora.com/install-oracle-in-silent-mode-11g-release-2-11-2/)
 - [参考链接2](https://www.krenger.ch/blog/11g-silent-installation-error/)
 - [参考链接3](https://oracle-base.com/blog/2011/02/13/oracle-11gr2-on-oracle-linux-6/)
