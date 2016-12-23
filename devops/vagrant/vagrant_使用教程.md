@@ -60,6 +60,13 @@ config.vm.hostname = "hostname"
 
 # 网络配置
 config.vm.network "private_network", ip: "11.11.11.11"
+# 不需要自动配置
+config.vm.network "private_network", ip: "11.11.11.11", auto_config: false
+# 自动配置宿主机的dns到虚拟机的配置
+config.vm.provider :virtualbox do |vb|
+  vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+end
 
 # 同步目录
 # 默认把host机器的Vagrantfile所在目录和虚机的/vagrant自动同步
