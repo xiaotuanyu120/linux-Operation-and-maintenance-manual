@@ -96,7 +96,7 @@ mysql> show status ;
 | Aborted_connects           | 1        |
 | Binlog_cache_disk_use      | 0        |
 | Binlog_cache_use           | 0        |
-。。。省略。。。
+...
 | Threads_created            | 1        |
 | Threads_running            | 1        |
 | Uptime                     | 4270     |
