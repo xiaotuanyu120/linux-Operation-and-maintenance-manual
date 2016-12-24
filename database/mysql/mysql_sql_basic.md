@@ -1,30 +1,40 @@
-24.3: MYSQL-常用操作
-2015年1月14日
-19:04
- 
-6. mysql常用操作
-1、对数据库进行的操作
-#查看所有数据库
+---
+title: MYSQL-sql语句：常用操作
+date: 2015-01-14 19:04:00
+categories: database/mysql
+tags: [database,mysql]
+---
+### MYSQL-sql语句：常用操作
+
+---
+
+### 1. 对数据库进行的操作
+#### 1) 查看所有数据库
+``` sql
 mysql> show databases \G
 *************************** 1. row ***************************
 Database: information_schema
-。。。省略。。。
+...
 Database: test
 *************************** 6. row ***************************
 Database: test1
 6 rows in set (0.00 sec)
-#
-#查看某个库的表
+```
+
+#### 2) 查看某个库的表
+``` sql
 mysql> use mysql;show tables \G
 Database changed
 *************************** 1. row ***************************
 Tables_in_mysql: columns_priv
-。。。省略。。。
+...
 *************************** 23. row ***************************
 Tables_in_mysql: user
 23 rows in set (0.00 sec)
-#
-#查看表结构
+```
+
+#### 3) 查看表结构
+``` sql
 mysql> desc user;
 +-----------------------+-----------------------------------+------+-----+---------+-------+
 | Field                 | Type                              | Null | Key | Default | Extra |
@@ -34,7 +44,7 @@ mysql> desc user;
 | Password              | char(41)                          | NO   |     |         |       |
 | Select_priv           | enum('N','Y')                     | NO   |     | N       |       |
 | Insert_priv           | enum('N','Y')                     | NO   |     | N       |       |
-。。。省略。。。
+...
 | x509_subject          | blob                              | NO   |     | NULL    |       |
 | max_questions         | int(11) unsigned                  | NO   |     | 0       |       |
 | max_updates           | int(11) unsigned                  | NO   |     | 0       |       |
@@ -42,8 +52,10 @@ mysql> desc user;
 | max_user_connections  | int(11) unsigned                  | NO   |     | 0       |       |
 +-----------------------+-----------------------------------+------+-----+---------+-------+
 39 rows in set (0.01 sec)
-#
-#查看建表语句
+```
+
+#### 4) 查看建表语句
+``` sql
 mysql> show create table user \G
 *************************** 1. row ***************************
        Table: user
@@ -51,29 +63,31 @@ Create Table: CREATE TABLE `user` (
   `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
   `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
   `Password` char(41) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT '',
-     。。。省略。。。
+  ...
   `max_connections` int(11) unsigned NOT NULL DEFAULT '0',
   `max_user_connections` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`Host`,`User`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Users and global privileges'
 1 row in set (0.00 sec)
-#
-#查看当前用户、数据库、系统版本、mysql状态、正在执行的任务
+```
+
+#### 5) 查看当前用户、数据库、系统版本、mysql状态、正在执行的任务
+``` sql
 mysql> select user() \G
 *************************** 1. row ***************************
 user(): root@localhost
 1 row in set (0.00 sec)
- 
+
 mysql> select database() \G
 *************************** 1. row ***************************
 database(): mysql
 1 row in set (0.00 sec)
- 
+
 mysql> select version() \G
 *************************** 1. row ***************************
 version(): 5.1.73-log
 1 row in set (0.00 sec)
- 
+
 mysql> show status ;
 +----------------------------+----------+
 | Variable_name              | Value    |
@@ -89,7 +103,7 @@ mysql> show status ;
 | Uptime_since_flush_status  | 4270     |
 +----------------------------+----------+
 226 rows in set (0.00 sec)
- 
+
 mysql> show processlist;
 +----+------+-----------+-------+---------+------+-------+------------------+
 | Id | User | Host      | db    | Command | Time | State | Info             |
@@ -97,8 +111,10 @@ mysql> show processlist;
 |  7 | root | localhost | mysql | Query   |    0 | NULL  | show processlist |
 +----+------+-----------+-------+---------+------+-------+------------------+
 1 row in set (0.02 sec)
- 
-## 查看当前连接数
+```
+
+#### 6) 查看当前连接数
+``` sql
 mysql> show status like "Threads_connected";
 +-------------------+-------+
 | Variable_name     | Value |
@@ -106,9 +122,10 @@ mysql> show status like "Threads_connected";
 | Threads_connected | 59    |
 +-------------------+-------+
 1 row in set (0.00 sec)
- 
- 
-## 查看连接请求数(成功和未成功的都算)
+```
+
+#### 7) 查看连接请求数(成功和未成功的都算)
+``` sql
 mysql> show status like "Connections";
 +---------------+----------+
 | Variable_name | Value    |
@@ -116,10 +133,10 @@ mysql> show status like "Connections";
 | Connections   | 13630617 |
 +---------------+----------+
 1 row in set (0.00 sec)
- 
- 
- 
-#修改mysql参数
+```
+
+#### 8) 修改mysql参数
+``` sql
 mysql> show variables like 'max_conne%';
 +--------------------+-------+
 | Variable_name      | Value |
@@ -128,10 +145,10 @@ mysql> show variables like 'max_conne%';
 | max_connections    | 151   |
 +--------------------+-------+
 2 rows in set (0.00 sec)
- 
+
 mysql> set global max_connect_errors=1000;
 Query OK, 0 rows affected (0.00 sec)
- 
+
 mysql> show variables like 'max_conne%';
 +--------------------+-------+
 | Variable_name      | Value |
@@ -140,64 +157,30 @@ mysql> show variables like 'max_conne%';
 | max_connections    | 151   |
 +--------------------+-------+
 2 rows in set (0.00 sec)
-#
-#创建库、创建表、删除表、删除库
+```
+
+#### 9) 创建库、创建表、删除表、删除库
+``` sql
 mysql> create database test01;
 Query OK, 1 row affected (0.00 sec)
- 
+
 mysql> create table test01_tb (id int(5),name varchar(10));
 Query OK, 0 rows affected (0.08 sec)
- 
+
 mysql> drop table test01_tb;
 Query OK, 0 rows affected (0.03 sec)
- 
+
 mysql> drop database test01;
 Query OK, 0 rows affected (0.03 sec)
- 
-#
-#清空表、修复表
+```
+
+#### 10) 清空表、修复表
+``` sql
+-- 清空表
 mysql> truncate table test01;
 Query OK, 0 rows affected (0.01 sec)
- 
-mysql的非常全的基础语法，请参照： http://www.w3schools.com/sql/default.asp修复表 repair table tb1 [use frm];
- 
-7. mysql备份与恢复
-1、备份与恢复数据库
-#备份数据库discuz
-[root@web02 ~]# mysqldump -uroot -p discuz > discuz_20150116.sql
-Enter password:
-[root@web02 ~]# ll discuz_20150116.sql
--rw-r--r-- 1 root root 4674702 Jan 16 17:30 discuz_20150116.sql
-#
-#恢复数据库discuz
-[root@web02 ~]# mysql -uroot -p discuz < discuz_20150116.sql
-Enter password:
-#
-#备份单独一个表
-[root@web02 ~]# mysqldump -u root -p mysql user > mysql_user_20150116.sql
-Enter password:
-[root@web02 ~]# ll mysql_user_20150116.sql
--rw-r--r-- 1 root root 5430 Jan 16 17:35 mysql_user_20150116.sql
-#
-#备份及恢复时指定字符集
-备份时指定字符集 mysqldump -uroot -p --default-character-set=utf8 db > 1.sql
-恢复也指定字符集 mysql -uroot -p --default-character-set=utf8 db < 1.sql
-#字符集必须与你创建表的字符集一致 
-8. 一台mysql服务器启动多个端口
-http://www.lishiming.net/thread-63-1-1.html 
- 
-9、在哪里配置my.cnf的路径
-[root@web02 ~]# vi /etc/init.d/mysqld       #mysql启动脚本里边配置
-conf=/etc/my.cnf 
- 
-27-03学习知识点
-mysqladmin -u root -p -e "flush logs"
-#其中的flush logs意为强制刷新binlog文件，开新日志；
-#mysqldump的时候也可以加来强制更新binlog文件。
- 
-mysqlbinlog --stop-datetime="时间点" binlog.file | mysql -u -p
-#把数据库用binlog恢复到某个时间点，后面的管道跟mysql -u -p 意为把前面的信息交给数据库执行
- 
-*总结：为了数据库安全，尽量用innodb数据库结构，完全备份mysqldump和增量备份binlog的mysqlbinlog方式备份。
- 
- 
+-- 修复表
+mysql> repair table tb1 [use frm];
+-- http://dev.mysql.com/doc/refman/5.7/en/repair-table.html
+-- 此命令只针对MyISAM, ARCHIVE, 和 CSV 表
+```
