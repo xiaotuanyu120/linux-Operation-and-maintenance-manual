@@ -15,12 +15,12 @@ Vagrant.configure("2") do |config|
   config.vm.box = "d:\IMAGE-ISO\mycentos6.8.box"
   config.vm.define "node01" do |node01|
     node01.vm.hostname = "node01"
-	node01.vm.network "private_network", ip: "192.168.33.101"
+	  node01.vm.network "private_network", ip: "192.168.33.101"
   end
 
   config.vm.define "node02" do |node02|
     node02.vm.hostname = "node02"
-	node01.vm.network "private_network", ip: "192.168.33.102"
+  	node02.vm.network "private_network", ip: "192.168.33.102"
   end
 end
 ```
