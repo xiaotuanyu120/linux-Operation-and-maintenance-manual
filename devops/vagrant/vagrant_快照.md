@@ -22,16 +22,16 @@ vagrant snapshot pop
 
 ``` bash
 # 保存快照
-vagrant snapshot save vm_name NAME
+vagrant snapshot save vm_name SNAPSHOT_NAME
 
 # 列出快照
 vagrant snapshot list vm_name
 
 # 恢复快照
-vagrant snapshot restore NAME
+vagrant snapshot restore vm_name SNAPSHOT_NAME
 
 # 删除快照
-vagrant snapshot delete NAME
+vagrant snapshot delete vm_name SNAPSHOT_NAME
 ```
 
 若使用了push和pop，要避免同时使用save和restore，混用这两套命令不安全

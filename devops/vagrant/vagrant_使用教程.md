@@ -68,6 +68,12 @@ config.vm.provider :virtualbox do |vb|
   vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
 end
 
+## 内存配置
+config.vm.provider "virtualbox" do |v|
+  v.memory = 2048
+  v.cpus = 2
+end
+
 # 同步目录
 # 默认把host机器的Vagrantfile所在目录和虚机的/vagrant自动同步
 config.vm.synced_folder "d:/local/dir", "/vm/dir/"
