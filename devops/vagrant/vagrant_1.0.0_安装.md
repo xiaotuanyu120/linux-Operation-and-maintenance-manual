@@ -1,7 +1,7 @@
 ---
 title: vagrant: 1.0.0 多平台安装
 date: 2016-08-27 14:04:00
-categories: devops
+categories: devops/vagrant
 tags: [devops,vagrant]
 ---
 ### vagrant: 1.0.0 多平台安装

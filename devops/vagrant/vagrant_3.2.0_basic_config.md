@@ -1,7 +1,7 @@
 ---
 title: vagrant: 3.2.0 基本配置
 date: 2016-09-30 15:40:00
-categories: devops
+categories: devops/vagrant
 tags: [devops,vagrant]
 ---
 ### vagrant: 3.2.0 基本配置

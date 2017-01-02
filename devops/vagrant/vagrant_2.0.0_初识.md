@@ -1,7 +1,7 @@
 ---
 title: vagrant: 2.0.0 初识
 date: 2016-08-27 10:09:00
-categories: devops
+categories: devops/vagrant
 tags: [devops,vagrant]
 ---
 ### vagrant: 2.0.0 初识

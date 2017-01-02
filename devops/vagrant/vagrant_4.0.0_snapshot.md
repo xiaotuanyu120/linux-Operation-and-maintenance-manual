@@ -1,7 +1,7 @@
 ---
 title: vagrant: 4.0.0 快照
 date: 2016-10-03 10:23:00
-categories: devops
+categories: devops/vagrant
 tags: [devops,vagrant]
 ---
 ### vagrant: 4.0.0 快照

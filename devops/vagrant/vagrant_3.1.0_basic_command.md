@@ -1,7 +1,7 @@
 ---
 title: vagrant: 3.1.0 基础操作命令
 date: 2016-09-30 15:40:00
-categories: devops
+categories: devops/vagrant
 tags: [devops,vagrant]
 ---
 ### vagrant: 3.1.0 基础操作命令
