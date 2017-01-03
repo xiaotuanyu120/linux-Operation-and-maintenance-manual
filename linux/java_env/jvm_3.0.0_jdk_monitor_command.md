@@ -1,9 +1,13 @@
 ---
-title:
+title: JVM: 3.0.0 jvm状态查看命令(JDK自带)
 date: 2016-12-05 10:46:00
 categories: linux/java
 tags: [linux,java,stat]
 ---
+### JVM: 3.0.0 jvm状态查看命令(JDK自带)
+
+---
+
 以下为jdk1.6中的命令
 ### 1. jinfo
 简介：jinfo - Configuration Info
@@ -258,6 +262,7 @@ The host identifier of the host for which the process report should be generated
 jps
 14826 Jps
 14391 Bootstrap
+# 可使用jps -v查看详细信息
 
 # 仅查看pid
 jps -q
@@ -278,4 +283,126 @@ jps -m
 ---
 
 ### 4. jstack
-jstack pid
+``` bash
+jstack 1534
+2017-01-03 06:49:28
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (20.45-b01 mixed mode):
+
+"Attach Listener" daemon prio=10 tid=0x00007fb0a0006800 nid=0x262c runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"ajp-8009-Acceptor-0" daemon prio=10 tid=0x00007fb0bc2ad000 nid=0xb4f runnable [0x00007fb0c0e63000]
+   java.lang.Thread.State: RUNNABLE
+        at org.apache.tomcat.jni.Socket.accept(Native Method)
+        at org.apache.tomcat.util.net.AprEndpoint$Acceptor.run(AprEndpoint.java:1345)
+
+"ajp-8009-CometPoller-0" daemon prio=10 tid=0x00007fb0bc300800 nid=0xb4e in Object.wait() [0x00007fb0c1054000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5ed17b0> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.AprEndpoint$Poller.run(AprEndpoint.java:1528)
+        - locked <0x00000000f5ed17b0> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+
+"ajp-8009-Poller-0" daemon prio=10 tid=0x00007fb0bc318800 nid=0xb4d in Object.wait() [0x00007fb0c1155000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5ed1848> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.AprEndpoint$Poller.run(AprEndpoint.java:1528)
+        - locked <0x00000000f5ed1848> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+
+"http-8080-Acceptor-0" daemon prio=10 tid=0x00007fb0bc0d4000 nid=0xb4c runnable [0x00007fb0c1256000]
+   java.lang.Thread.State: RUNNABLE
+        at org.apache.tomcat.jni.Socket.accept(Native Method)
+        at org.apache.tomcat.util.net.AprEndpoint$Acceptor.run(AprEndpoint.java:1345)
+
+"http-8080-Sendfile-0" daemon prio=10 tid=0x00007fb0bc052000 nid=0xb4b in Object.wait() [0x00007fb0c1446000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5e665e8> (a org.apache.tomcat.util.net.AprEndpoint$Sendfile)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.AprEndpoint$Sendfile.run(AprEndpoint.java:2002)
+        - locked <0x00000000f5e665e8> (a org.apache.tomcat.util.net.AprEndpoint$Sendfile)
+
+"http-8080-CometPoller-0" daemon prio=10 tid=0x00007fb0bc2a3800 nid=0xb4a in Object.wait() [0x00007fb0c1547000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5e66680> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.AprEndpoint$Poller.run(AprEndpoint.java:1528)
+        - locked <0x00000000f5e66680> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+
+"http-8080-Poller-0" daemon prio=10 tid=0x00007fb0bc2b8000 nid=0xb49 in Object.wait() [0x00007fb0c1648000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5e66718> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.AprEndpoint$Poller.run(AprEndpoint.java:1528)
+        - locked <0x00000000f5e66718> (a org.apache.tomcat.util.net.AprEndpoint$Poller)
+
+"ContainerBackgroundProcessor[StandardEngine[Catalina]]" daemon prio=10 tid=0x00007fb0bc2b3000 nid=0xb48 waiting on condition [0x00007fb0c1749000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+        at java.lang.Thread.sleep(Native Method)
+        at org.apache.catalina.core.ContainerBase$ContainerBackgroundProcessor.run(ContainerBase.java:1635)
+        at java.lang.Thread.run(Thread.java:662)
+
+"GC Daemon" daemon prio=10 tid=0x00007fb0bc267800 nid=0xa21 in Object.wait() [0x00007fb0c1854000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5b93108> (a sun.misc.GC$LatencyLock)
+        at sun.misc.GC$Daemon.run(GC.java:100)
+        - locked <0x00000000f5b93108> (a sun.misc.GC$LatencyLock)
+
+"Low Memory Detector" daemon prio=10 tid=0x00007fb0bc088000 nid=0x698 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread1" daemon prio=10 tid=0x00007fb0bc085800 nid=0x697 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread0" daemon prio=10 tid=0x00007fb0bc083000 nid=0x696 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Signal Dispatcher" daemon prio=10 tid=0x00007fb0bc081000 nid=0x695 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Finalizer" daemon prio=10 tid=0x00007fb0bc065000 nid=0x65b in Object.wait() [0x00007fb0c2613000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5a354e8> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)
+        - locked <0x00000000f5a354e8> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:134)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:171)
+
+"Reference Handler" daemon prio=10 tid=0x00007fb0bc063000 nid=0x65a in Object.wait() [0x00007fb0c2714000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000f5a35588> (a java.lang.ref.Reference$Lock)
+        at java.lang.Object.wait(Object.java:485)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:116)
+        - locked <0x00000000f5a35588> (a java.lang.ref.Reference$Lock)
+
+"main" prio=10 tid=0x00007fb0bc007000 nid=0x60f runnable [0x00007fb0c340a000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:408)
+        - locked <0x00000000f5ed1910> (a java.net.SocksSocketImpl)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:462)
+        at java.net.ServerSocket.accept(ServerSocket.java:430)
+        at org.apache.catalina.core.StandardServer.await(StandardServer.java:430)
+        at org.apache.catalina.startup.Catalina.await(Catalina.java:676)
+        at org.apache.catalina.startup.Catalina.start(Catalina.java:628)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:289)
+        at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:414)
+
+"VM Thread" prio=10 tid=0x00007fb0bc05c000 nid=0x62e runnable
+
+"VM Periodic Task Thread" prio=10 tid=0x00007fb0bc08b000 nid=0x699 waiting on condition
+
+JNI global references: 950
+```
