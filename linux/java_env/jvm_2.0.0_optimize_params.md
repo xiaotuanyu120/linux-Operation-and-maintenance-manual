@@ -1,7 +1,7 @@
 ---
 title: JVM: 2.0.0 内存区域调优参数
 date: 2016-08-09 16:59:00
-categories: java
+categories: linux/java_env
 tags: [java,jvm,memory]
 ---
 ### JVM: 2.0.0 内存区域调优参数

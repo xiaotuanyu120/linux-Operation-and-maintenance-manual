@@ -1,7 +1,7 @@
 ---
 title: JVM: 1.0.0 运行时数据区域概念
 date: 2016-08-08 09:03:00
-categories: java
+categories: linux/java_env
 tags: [java,jvm]
 ---
 ### JVM: 1.0.0 运行时数据区域概念

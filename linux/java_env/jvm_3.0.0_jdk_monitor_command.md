@@ -1,7 +1,7 @@
 ---
 title: JVM: 3.0.0 jvm状态查看命令(JDK自带)
 date: 2016-12-05 10:46:00
-categories: linux/java
+categories: linux/java_env
 tags: [linux,java,stat]
 ---
 ### JVM: 3.0.0 jvm状态查看命令(JDK自带)
