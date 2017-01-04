@@ -1,7 +1,7 @@
 ---
 title: centos6 开机服务优化
 date: 2016-08-22 16:40:00
-categories: linux
+categories: linux/advance
 tags: [linux,centos]
 ---
 ### centos6 开机服务优化
