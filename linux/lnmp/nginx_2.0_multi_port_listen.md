@@ -1,7 +1,7 @@
 ---
 title: nginx: 2.0 同时监听http和https
 date: 2016-12-14 14:58:00
-categories: linux/advance
+categories: linux/lnmp
 tags: [nginx]
 ---
 ### nginx: 2.0 同时监听http和https
@@ -39,4 +39,4 @@ server {
 重点配置：
 - https端口后面增加ssl，`listen 4433 ssl`，相当于省略`ssl on`
 - 之所以不加`ssl on`，是因为此配置会影响http端口的正常监听
-- `proxy_set_header Host $host:$server_port`可以将正确的端口传递给tomcat
+- `proxy_set_header Host $host:$server_port`可以将正确的端口传递给tomcat(只是在用ip访问此host的情况，如果域名的话，不用增加)
