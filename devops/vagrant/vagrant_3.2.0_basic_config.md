@@ -30,14 +30,14 @@ config.vm.provider :virtualbox do |vb|
 end
 ```
 
-#### 3) 内存配置
+#### 3) 内存、CPU、视频显示配置
 ``` bash
-config.vm.provider "virtualbox" do |v|
+config.vm.provider "virtualbox" do |vb|
   # Display the VirtualBox GUI when booting the machine
   vb.gui = true
 
-  v.memory = 2048
-  v.cpus = 2
+  vb.memory = 2048
+  vb.cpus = 2
 end
 ```
 
