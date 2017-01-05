@@ -67,4 +67,10 @@ location / {
 将`proxy_set_header Host $host;`改为`proxy_set_header Host $host:$server_port;`
 
 #### 3) 总结
-无论是在nginx还是tomcat上去配置，都是在request header中的$host后面增加端口，上面的方法只能解决ip访问的，但是会引出一个问题，如果你的域名是www.test.com，我们http的端口是6446，那么它会将$host变量改为www.test.com:6446，这样就造成了错误，所以，一定要注意上面解决办法的局限性，它只适用于我们用ip去访问此服务器的情况。
+无论是在nginx还是tomcat上去配置，原理都是在request header中的$host后面增加端口号。
+- 当我们使用ip来访问的时候
+我们使用ip:port访问，request到达tomcat后，tomcat会根据request中的host来返回其他资源的连接给客户端，即返回http://ip:port/something ，所以这时是可以用server_port来解决的
+- 当我们使用域名访问的时候
+首先来讨论域名的解析，假设一个www.test.com。  
+默认情况下，此域名会经由A记录来到一个ip地址，默认的端口是80来进行request；  
+但是我们不能使用80，而是在A记录之后指向了一个cdn，cdn指向了源ip:non_80_port，此时request到达tomcat，tomcat根据request中的host为url:non_80_port给客户端，而客户端使用这个去请求时就会出错，因为该域名被解析时，默认的端口是80。而如果我们自己使用fiddler软件去本地解析域名到ip:non_80_port，此时就可成功访问，因为url:non_80_port本来就解析到了正确的端口non_80_port。
