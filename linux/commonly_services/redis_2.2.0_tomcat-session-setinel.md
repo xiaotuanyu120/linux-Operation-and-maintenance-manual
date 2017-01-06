@@ -1,10 +1,13 @@
 ---
-title: redis: 2.0_集群实现session共享
+title: redis: 2.2.0 redis集群实现session共享
 date: 2016-09-29 10:42:00
 categories: linux/commonly_services
 tags: [redis,session,tomcat,nginx]
 ---
-### 2.0 redis集群+nginx+tomcat实现session共享
+### redis: 2.2.0 redis集群实现session共享
+
+---
+
 ### 1. 环境介绍
 **软件版本**
 - nginx: 1.10.1
@@ -22,7 +25,7 @@ tags: [redis,session,tomcat,nginx]
 | redis02 | 192.168.110.6|
 | redis03 | 192.168.110.5|
 
-<!--more-->
+---
 
 ### 2. 安装并配置nginx
 在nginx节点执行以下命令
@@ -52,6 +55,8 @@ server {
 ******************************
 service nginx restart
 ```
+
+---
 
 ### 3. 安装并配置tomcat
 在两台tomcat节点执行以下命令
@@ -145,6 +150,7 @@ vim index.jsp
 ***********************
 ```
 
+---
 
 ### 4. 安装并配置redis
 在三台redis节点执行以下命令
@@ -263,6 +269,8 @@ service redis-6381 start
 /usr/local/tomcat/bin/catalina.sh start
 ```
 
+---
+
 ### 5. 使用sentinel来实现主从切换功能
 每个redis节点，配备一个sentinel，192.168.110.5上有两个节点，即在该主机上布置两个节点
 
@@ -299,6 +307,8 @@ redis-sentinel /etc/redis/sentinel03.conf &
 # 在192.168.110.6上启动2
 redis-sentinel /etc/redis/sentinel02.conf &
 ```
+
+---
 
 ### 6. 效果测试
 ``` bash
@@ -390,6 +400,7 @@ repl_backlog_histlen:20874
 ```
 值得一提的是，当6380接管master身份时，也继承了master的可写配置，也就是说6380由原来的从身份只读状态，转变为了主身份可写状态。而6379在重新启动加入集群时，会默认接管6380原有的身份，也就是从身份只读状态，而这些功能的实现全部是由于sentinel节点提供的，实际是去修改了redis各自的配置文件和sentinel自己的配置文件。
 
+---
 
 ### 7. sentinel管理
 #### 1) 查看master信息

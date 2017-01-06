@@ -1,11 +1,13 @@
 ---
-title: redis: 0.0_安装
+title: redis: 1.1.0 安装
 date: 2016-11-14 13:25:00
 categories: linux/commonly_services
 tags: [linux,redis,installation]
 ---
-### redis 2.8 安装
-----
+### redis: 1.1.0 安装
+
+---
+
 ### 1. redis源码安装
 ``` bash
 wget http://download.redis.io/releases/redis-2.8.24.tar.gz
@@ -14,7 +16,9 @@ cd redis-2.8.24
 make
 make install
 ```
+
 ----
+
 ### 2. 拷贝redis启动脚本
 ``` bash
 cp utils/redis_init_script /etc/init.d/redis
@@ -35,7 +39,9 @@ $CLIEXEC -p $REDISPORT -a $AUTH_PASSWORD shutdown
 ******************************
 chkconfig redis on
 ```
+
 ----
+
 ### 3. 配置redis
 ``` bash
 mkdir /etc/redis
@@ -76,7 +82,9 @@ dir ./
 requirepass redis
 ******************************
 ```
+
 ----
+
 ### 4. 管理redis服务
 ``` bash
 # 使用启动脚本

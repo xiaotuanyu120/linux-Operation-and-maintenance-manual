@@ -1,11 +1,13 @@
 ---
-title: redis: 1.0_tomcat-session共享
+title: redis: 2.1.0 tomcat-session共享
 date: 2016-09-27 12:59:00
 categories: linux/commonly_services
 tags: [redis,session,tomcat,nginx]
 ---
-### 1.0 redis + nginx + tomcat实现session共享
-----
+### redis: 2.1.0 tomcat-session共享
+
+---
+
 ### 1. 环境介绍
 **软件版本**
 - nginx: 1.10.1
@@ -21,7 +23,7 @@ tags: [redis,session,tomcat,nginx]
 | tomcat02 | 192.168.110.6|
 | redis | 192.168.110.5|
 
-<!--more-->
+---
 
 ### 2. 安装并配置nginx
 在nginx节点执行以下命令  
@@ -51,6 +53,8 @@ server {
 ******************************
 service nginx restart
 ```
+
+---
 
 ### 3. 安装并配置tomcat
 在两台tomcat节点执行以下命令
@@ -139,6 +143,7 @@ vim index.jsp
 ***********************
 ```
 
+---
 
 ### 4. 安装并配置redis
 #### 1) 安装redis
@@ -206,6 +211,8 @@ service redis start
 /usr/local/tomcat/bin/catalina.sh stop
 /usr/local/tomcat/bin/catalina.sh start
 ```
+
+---
 
 ### 5. 效果测试
 ``` bash

@@ -1,12 +1,14 @@
 ---
-title: redis: 0.1_基本命令
+title: redis: 1.2.0 基本管理命令
 date: 2016-11-14 13:45:00
 categories: linux/commonly_services
 tags: [linux,redis]
 ---
-### redis的基本命令
-----
-### 1. redis基本命令
+### redis: 1.2.0 基本命令
+
+---
+
+### 1. redis基本管理命令
 - `redis-server`, redis服务启动命令
 - `redis-cli`, redis客户端启动命令
 - `redis-setinel`, redis哨兵程序启动命令
@@ -15,9 +17,11 @@ tags: [linux,redis]
 - `redis-check-dump`, redis RDB持久化文件的检测工具  
 `Usage: redis-check-dump <dump.rdb>`
 - `redis-benchmark`, 用来测试redis性能的工具
-----
-### 2. redis-cli
-`-a` 使用密码登录 及 `auth`授权
+
+---
+
+### 2. redis基本操作命令
+#### 1) `-a` 使用密码登录 及 `auth`授权
 ``` bash
 # 使用密码登录redis
 redis-cli -p 6389 -a redis
@@ -25,7 +29,6 @@ redis-cli -p 6389 -a redis
 1) "counter:__rand_int__"
 2) "key:__rand_int__"
 3) "mylist"
-
 
 # 无密码连接后，使用auth
 redis-cli -h 127.0.0.1 -p 6389
@@ -39,7 +42,7 @@ OK
 3) "mylist"
 ```
 
-增加`key:value`及查询`value`
+#### 2) 增加key和查询key内容
 ``` bash
 127.0.0.1:6389> set foo bar
 OK
@@ -47,7 +50,7 @@ OK
 "bar"
 ```
 
-查询key是否存在
+#### 3) 查询key是否存在
 ``` bash
 # 查询key是否存在
 127.0.0.1:6389> keys food
@@ -67,7 +70,7 @@ OK
 5) "food"
 ```
 
-给key设置过期时间，并查看可存活时间
+#### 4) 给key设置过期时间，并查看可存活时间
 ``` bash
 127.0.0.1:6389> set mykey hello
 OK
@@ -84,7 +87,7 @@ OK
 (nil)
 ```
 
-`MGET`减少request数量
+#### 5) `MGET`查询多次，减少request压力
 ``` bash
 127.0.0.1:6389> get foo
 "bar"
@@ -96,9 +99,11 @@ OK
 ```
 > 多次GET请求可以合并成一个MGET请求，降低请求次数
 
-慢日志查询
+---
+
+### 3. 慢日志查询(临时配置命令CONFIG)
+#### 1)  查看慢日志配置
 ``` bash
-# 查看慢日志配置
 127.0.0.1:6389> CONFIG GET slowlog-log-slower-than
 1) "slowlog-log-slower-than"
 2) "10000"
@@ -107,8 +112,10 @@ OK
 1) "slowlog-max-len"
 2) "128"
 # 内存中慢日志条数的最大值
+```
 
-# 临时设定慢日志配置为0，然后查询慢日志内容
+#### 2) 临时设定慢日志配置为0，然后查询慢日志内容
+``` bash
 127.0.0.1:6389> CONFIG SET slowlog-log-slower-than 0
 OK
 127.0.0.1:6389> get number
@@ -132,8 +139,10 @@ OK
       3) "slowlog-log-slower-than"
       4) "0"
 # 发现慢日志记录从下往上一次是慢日志查询设置操作-redis授权-number值的获取
+```
 
-# 查看慢日志条数
+#### 3) 查看慢日志条数
+``` bash
 127.0.0.1:6389> slowlog len
 (integer) 6
 ```
