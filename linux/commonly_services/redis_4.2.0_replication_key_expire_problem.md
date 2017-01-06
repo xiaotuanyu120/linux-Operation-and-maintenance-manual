@@ -1,7 +1,7 @@
 ---
 title: redis: 4.2.0 主从遇到的问题
 date: 2017-01-06 14:33:00
-categories: linux
+categories: linux/commonly_services
 tags: [redis,replication,linux,key]
 ---
 ### redis: 4.2.0 主从遇到的问题
