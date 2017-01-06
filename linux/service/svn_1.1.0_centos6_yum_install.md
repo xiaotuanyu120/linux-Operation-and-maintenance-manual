@@ -1,5 +1,5 @@
 ---
-title: svn: 1.0 centos6下yum安装
+title: svn: 1.1.0 centos6下yum安装
 date: 2015-11-2 14:09:00
 categories: linux/service
 tags: [linux,svn]
@@ -8,10 +8,12 @@ tags: [linux,svn]
 
 ---
 
-### 1. 安装环境：
+### 1. 安装环境
 OS：|Centos 6 x64位
 ---|---
 网段：|172.168.2.x/24
+
+---
 
 ### 2. Install and configure apache
 #### Step 1 " 安装apache
