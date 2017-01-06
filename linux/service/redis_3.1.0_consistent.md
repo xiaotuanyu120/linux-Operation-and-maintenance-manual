@@ -1,7 +1,7 @@
 ---
 title: redis: 3.1.0 持久化、备份及恢复
 date: 2016-09-28 13:22:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [redis]
 ---
 ### redis: 3.1.0 持久化、备份及恢复

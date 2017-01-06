@@ -1,7 +1,7 @@
 ---
 title: svn: 1.0 centos6下yum安装
 date: 2015-11-2 14:09:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [linux,svn]
 ---
 ### svn: 1.0 centos6下yum安装

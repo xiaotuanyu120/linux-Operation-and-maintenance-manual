@@ -1,29 +1,31 @@
 ---
-title: inotify: 0.0 初识
+title: inotify: 1.1.0 初识inotify
 date: 2016-11-08 13:02:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [linux,inotify]
 ---
-### 0.0 inotify初识
-----
-#### 什么是inotify？
+### inotify: 1.1.0 初识inotify
+
+---
+
+### 1. 什么是inotify？
 inotify是用来监控文件系统事件的实时监控工具。
 
 特点：
 inotify可监控文件或目录，监控目录时，会返回所有该目录和其内部文件的监控情况。
 inotify监控目录时，若无-r参数，则只监控目录本身及其根目录下的文件，子目录中的文件不监控
 
-----
+---
 
-#### 安装inotify
+### 2. 安装inotify
 ``` bash
 yum install epel-release
 yum install inotify-tools
 ```
 
-----
+---
 
-#### inotify使用
+### 3. inotify使用
 **inotifywait命令**
 作用：使用inotify来等待文件系统的改动
 语法：

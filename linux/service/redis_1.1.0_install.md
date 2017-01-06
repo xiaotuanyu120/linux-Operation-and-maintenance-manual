@@ -1,7 +1,7 @@
 ---
 title: redis: 1.1.0 安装
 date: 2016-11-14 13:25:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [linux,redis,installation]
 ---
 ### redis: 1.1.0 安装

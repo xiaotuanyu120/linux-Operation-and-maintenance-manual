@@ -1,12 +1,14 @@
 ---
-title: inotify: 3.0 sersync实时同步
+title: inotify: 4.1.0 sersync 基于inotify和rsync的实时同步工具
 date: 2016-11-09 15:44:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [linux,inotify,rsync,sersync]
 ---
-### 3.0 sersync 基于inotify和rsync的实时同步工具
-----
-#### 测试环境
+### inotify: 4.1.0 sersync 基于inotify和rsync的实时同步工具
+
+---
+
+### 0. 测试环境
 服务器名称|角色|ip|系统
 ---|---|---|---
 服务器A|主服务器|192.168.33.101|centos6 x86_64
@@ -16,12 +18,12 @@ tags: [linux,inotify,rsync,sersync]
 服务器A-安装rsync、inotify、sersync  
 服务器B-安装rsync  
 
-----
+---
 
-#### 服务器B
+### 1. 服务器B
 部署用于接收文件的rsync
 
-**安装rsync**
+#### 1) 安装rsync
 ``` bash
 # 编译安装rsync
 wget https://download.samba.org/pub/rsync/src/rsync-3.1.2.tar.gz
@@ -31,7 +33,7 @@ cd rsync-3.1.2
 make && make install
 ```
 
-**配置rsync daemon**  
+#### 2) 配置rsync daemon
 服务器A上的sersync会与此daemon对接同步文件
 ``` bash
 # 1. 编写rsync daemon的配置文件
@@ -63,23 +65,23 @@ userB:passwordB
 *********************************
 ```
 
-**启动rsync daemon**
+#### 3) 启动rsync daemon
 ``` bash
 rsync --daemon
 # 会默认使用/etc/rsyncd.conf，可使用--config自定义
 ```
 
-----
+---
 
-#### 服务器A
+### 2. 服务器A
 部署rsync、inotify、sersync
 
-**安装 rsync**
+#### 1) 安装 rsync
 ``` bash
 # 安装同服务器B
 ```
 
-**安装inotify**
+#### 2) 安装inotify
 ``` bash
 wget https://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
 tar zxf inotify-tools-3.14.tar.gz
@@ -88,14 +90,14 @@ cd inotify-tools-3.14
 make && make install
 ```
 
-**安装sersync**
+#### 3) 安装sersync
 ``` bash
 wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz
 tar zxf sersync2.5.4_64bit_binary_stable_final.tar.gz
 mv GNU-Linux-x86/ /usr/local/sersync
 ```
 
-**配置sersync**
+#### 4) 配置sersync
 ``` bash
 cd /usr/local/sersync/
 vim confxml.xml
@@ -129,7 +131,7 @@ vim confxml.xml
 # 在sersync中的crontab配置块中,也可以配置crontab的频率
 ```
 
-**配置密码文件**  
+#### 5) 配置密码文件
 此文件用于通过服务器B的rsync daemon认证
 ``` bash
 vim /usr/local/sersync/user.pass
@@ -141,7 +143,7 @@ passwordB
 chmod 600 /usr/local/sersync/user.pass
 ```
 
-**启动sersync**
+#### 6) 启动sersync
 ``` bash
 cd /usr/local/sersync
 ./sersync2 -r -d -o confxml.xml

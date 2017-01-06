@@ -1,18 +1,20 @@
 ---
-title: inotify: 1.0 inotify+rsync
+title: inotify: 2.1.0 inotify+rsync实现实时文件同步
 date: 2016-11-08 13:52:00
-categories: linux/commonly_services
+categories: linux/service
 tags: [linux,inotify]
 ---
-### 1.0 inotify+rsync实现实时文件同步
-----
-#### 需求背景
+### inotify: 2.1.0 inotify+rsync实现实时文件同步
+
+---
+
+### 1. 需求背景
 服务器文件需要实时同步，即使是轮询，也存在同步延迟，inotify的出现让真正的实时成为了现实  
 我们可以用inotify去监控文件系统的事件变化，一旦有我们期望的事件发生，就使用rsync进行冗余同步
 
 ----
 
-#### 脚本内容
+### 2. 脚本内容
 ``` bash
 #!/bin/bash
 
