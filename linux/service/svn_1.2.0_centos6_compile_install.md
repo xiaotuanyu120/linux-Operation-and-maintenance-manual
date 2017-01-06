@@ -1,7 +1,7 @@
 ---
 title: svn: 1.2.0 centos6下源码安装svn1.6.19
 date: 2016-10-28 15:49:00
-categories: linux/commonly_used_services
+categories: linux/service
 tags: [svn]
 ---
 ### svn: 1.2.0 centos6下源码安装svn1.6.19
