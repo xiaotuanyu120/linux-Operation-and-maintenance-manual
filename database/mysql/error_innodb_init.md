@@ -1,7 +1,7 @@
 ---
 title: mysql无法启动排障
 date: 2016-11-04 10:37:00
-categories: linux/mysql
+categories: database/mysql
 tags: [mysql,linux,error,innodb,init,auto-extend]
 ---
 ### mysql无法启动排障
