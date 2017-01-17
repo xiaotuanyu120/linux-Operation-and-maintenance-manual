@@ -1,22 +1,26 @@
 ---
-title: mysql无法启动排障
+title: MYSQL-错误：无法启动排障
 date: 2016-11-04 10:37:00
 categories: database/mysql
 tags: [mysql,linux,error,innodb,init,auto-extend]
 ---
-### mysql无法启动排障
-#### mysql启动报错过程及错误定位
-环境介绍:
+### MYSQL-错误：无法启动排障
+
+---
+
+### 1. mysql启动报错过程及错误定位
+#### 1) 环境介绍
 - 系统：centos6 x86_64
 - 数据库：mysql 5.6
 
-线上机器重启后，启动mysql报错
+#### 2) 重启mysql报错
 ``` bash
 service mysqld start
 Starting MySQL.The server quit without updating PID file (/var/lib/mysql/tserver.pid).[FAILED]
 ```
 
-按照经验，原以为是pid文件未在配置文件和启动脚本中指定的原因，但是配置上之后重启错误依旧在  
+#### 3) 分析过程
+按照经验，原以为是pid文件未在配置文件和启动脚本中指定的原因，但是配置上之后重启错误依旧在   
 网上很多不靠谱的答案，例如重装mysql和重新初始化mysql-data，线上机器哪能这样搞，就算可以解决，备份数据和恢复数据也是时间成本  
 
 于是查看mysql错误日志
@@ -56,7 +60,7 @@ InnoDB: 1152 pages (rounded down to MB) than specified in the .cnf file:
 InnoDB: initial 33536 pages, max 0 (relevant if non-zero) pages!
 ```
 
-#### 错误解决的知识学习
+**错误解决的知识学习**  
 通过网查，聚焦到以下两个<code>/etc/my.cnf</code>中的配置
 ```
 innodb_log_file_size = 256M
@@ -76,7 +80,7 @@ innodb_data_file_path = ibdata1:524M:autoextend
 - [以上配置修改测试](http://blog.csdn.net/hw_libo/article/details/39215723)
 - [错误解决办法参考](http://marvelyu.blog.51cto.com/471030/1353288)
 
-#### 解决过程
+#### 4) 解决过程
 1. 按照网查结果，删除mysql数据目录中的redo log文件和datafile，重启错误依旧
 2. 因为报错信息跟innodb_data_file_path配置有关，更改其配置中的524M为14M，重启问题解决
 
