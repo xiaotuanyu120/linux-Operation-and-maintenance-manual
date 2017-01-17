@@ -1,14 +1,14 @@
 ---
-title: list:排序
+title: 排序: 1.0 list按数字排序
 date: 2016-11-09 12:57:00
 categories: python/advance
 tags: [python,list,sort]
 ---
-### 当list的string中包含数字的时候，用数字来给list排序
+### 排序: 1.0 list按数字排序
 
-----
+---
 
-#### sort()和sorted()的区别
+### 1. sort()和sorted()的区别
 - sort() Docstring:  
 L.sort(cmp=None, key=None, reverse=False) -- stable sort *IN PLACE*;
 
@@ -17,9 +17,9 @@ sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
 
 通过它们的docstring知道，list.sort()的in place，是将原list本身进行排序，而sorted()的new sorted list，是在原list外生成一个新的排过序的list
 
-----
+---
 
-#### 普通list的字符串排序
+### 2. 普通list的字符串排序
 ``` python
 # 字符串组成的list，按照字符串排序
 >>> a = ['1a', '3c', '2b', 'others']
@@ -27,9 +27,9 @@ sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
 ['1a', '2b', '3c', 'others']
 ```
 
-----
+---
 
-#### 复杂list的字符串排序
+### 3. 复杂list的字符串排序
 ``` python
 # list组成的list，按照字符串排序(默认是用子list来排序)
 >>> b = [['1a', 'one'], ['3c', 'three'], ['2b', 'two'], ['others', 'more']]
@@ -40,10 +40,9 @@ sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
 [['others', 'more'], ['1a', 'one'], ['3c', 'three'], ['2b', 'two']]
 ```
 
+---
 
-----
-
-#### 普通list的数字排序
+### 4. 普通list的数字排序
 ``` python
 # 当数字是int格式时
 >>> c = [1, 3, 2, 'other']
@@ -63,9 +62,9 @@ sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
 ```
 > "key=int"的函数，代表了要将每一个key带入到int函数中，处理后再排序
 
-----
+---
 
-#### 复杂list的数字排序
+### 5. 复杂list的数字排序
 ``` python
 >>> e = [['1', 'one'], ['2', 'two'], ['4', 'four'], ['23', 'twenty three']]
 # 若直接使用key=int函数会报错
@@ -83,9 +82,9 @@ TypeError: int() argument must be a string or a number, not 'list'
 [['1', 'one'], ['2', 'two'], ['4', 'four'], ['23', 'twenty three']]
 ```
 
-----
+---
 
-#### 当数字和字符串混合在一起时，如何进行数字排序
+### 6. 当数字和字符串混合在一起时，如何进行数字排序
 若数字字符串不为"1"这种格式，而是"1c"这种混合格式，我们就无法通过直接int来对key进行操作了，但按照我们上面的思路，需要进一步修改new_int函数
 ``` python
 # 我们来个更复杂的，直接加入一个完全不包含数字的
