@@ -10,7 +10,7 @@ tags: [shell,variable]
 
 ### 0. 声明file变量
 ``` bash
-# file=http://www.python.org/test.php?pip.tar.gz
+file=http://www.python.org/test.php?pip.tar.gz
 ```
 
 ---
@@ -108,19 +108,20 @@ newfile
 ```
 
 PS:扩展
-${file=my.file.txt} ：若 $file 沒設定，則使用 my.file.txt 作傳回值，同時將 $file 賦值為 my.file.txt 。 (空值及非空值時不作處理)
-${file:=my.file.txt} ：若 $file 沒設定或為空值，則使用 my.file.txt 作傳回值，同時將 $file 賦值為 my.file.txt 。 (非空值時不作處理)
-${file?my.file.txt} ：若 $file 沒設定，則將 my.file.txt 輸出至 STDERR。 (空值及非空值時不作處理)
-${file:?my.file.txt} ：若 $file 沒設定或為空值，則將 my.file.txt 輸出至 STDERR。 (非空值時不作處理)
+${file=my.file.txt} ：若 $file 沒設定，則使用 my.file.txt 作傳回值，同時將 $file 賦值為 my.file.txt 。 (空值及非空值時不作處理)  
+${file:=my.file.txt} ：若 $file 沒設定或為空值，則使用 my.file.txt 作傳回值，同時將 $file 賦值為 my.file.txt 。 (非空值時不作處理)  
+${file?my.file.txt} ：若 $file 沒設定，則將 my.file.txt 輸出至 STDERR。 (空值及非空值時不作處理)  
+${file:?my.file.txt} ：若 $file 沒設定或為空值，則將 my.file.txt 輸出至 STDERR。 (非空值時不作處理)  
 
 ---
 
 ### 5. 获取变量字符串长度
 ``` bash
 file='oldfile'
-echo ${#file}
+echo ${\#file}
 7
 ```
+> "\\"只是为了jinja语法的转义
 
 ---
 
