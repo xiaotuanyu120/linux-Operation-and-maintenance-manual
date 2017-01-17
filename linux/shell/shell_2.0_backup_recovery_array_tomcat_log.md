@@ -1,3 +1,9 @@
+---
+title: SHELL: 2.0 tomcat日志切割脚本（数组）
+date: 2017-01-17 09:47:00
+categories: linux/shell
+tags: [linux,tomcat,shell]
+---
 ``` bash
 #!/bin/bash
 log_file=(/tmp/tomcat1/logs/catalina.out
