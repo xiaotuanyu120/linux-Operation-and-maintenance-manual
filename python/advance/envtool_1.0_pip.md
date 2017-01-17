@@ -1,5 +1,5 @@
 ---
-title: 工具：1.0 pip-包管理工具
+title: 工具: 1.0 pip-包管理工具
 date: 2016-09-23 16:12:00
 categories: python/advance
 tags: [python,python2.7]
