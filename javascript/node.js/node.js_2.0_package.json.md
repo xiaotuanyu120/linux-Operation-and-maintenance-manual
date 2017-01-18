@@ -15,7 +15,7 @@ package.json是一个app或者模块的meta信息文件，特别是记录了该a
 ---
 
 ### 2. package.json示例
-```
+``` json
 {
   "name": "my log reporter",
   "version": "0.0.1",
