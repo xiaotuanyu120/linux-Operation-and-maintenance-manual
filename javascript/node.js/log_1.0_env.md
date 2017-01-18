@@ -28,7 +28,7 @@ vim package.json
   {
     "socket.io": "1.7.1",
     "express": "4.14.0",
-    "redis": "2.6.3"
+    "redis": "2.6.3",
     "jquery": "3.1.1"
   }
 }
