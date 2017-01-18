@@ -1,5 +1,5 @@
 ---
-title: if: 简单if语句
+title: 语法: 简易if语句
 date: 2016-12-09 19:00:00
 categories: python/advance
 tags: [python,if]

@@ -1,14 +1,14 @@
 ---
-title: os: 使用os的walk方法遍历目录下的文件
+title: 函数: 使用os的walk方法遍历目录下的文件
 date: 2016-12-09 20:17:00
 categories: python/advance
 tags: [python,os,walk]
 ---
-### os: 使用os的walk方法遍历目录下的文件
+### 函数: 使用os的walk方法遍历目录下的文件
 
 ---
 
-### 1. os.walk介绍
+### 1. docstring of os.walk
 ``` python
 >>> import os
 >>> help(os.walk)
@@ -31,7 +31,7 @@ walk(top, topdown=True, onerror=None, followlinks=False)
     dirpath, do os.path.join(dirpath, name).
 ...
 ```
-迭代返回包含3个元素的tuple，(dirpath, dirnames, filenames)，其中dirpath是str类型，后两个是list类型
+> 迭代返回包含3个元素的tuple，(dirpath, dirnames, filenames)，其中dirpath是str类型，后两个是list类型
 
 ---
 
