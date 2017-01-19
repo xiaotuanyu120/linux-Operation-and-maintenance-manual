@@ -4,7 +4,7 @@ date: 2016-05-02 19:42:00
 categories: database/mysql
 tags: [database,mysql,error]
 ---
-###
+### MYSQL-错误: 1.1 DNS查询优化和Host缓存
 
 ---
 
