@@ -1,19 +1,36 @@
-### Dev Environment
-**system info**
+---
+title: flask实战: 1.1.0 如何创建一个flask开发环境
+date: 2017-01-19 13:09:00
+categories: python/flask
+tags: [python,flask]
+---
+### flask_env: 1.1.0 如何创建一个flask环境
+
+---
+
+### 0. 背景介绍
+这个文档是记录创建本站时，搭建flask开发环境的过程。
+
+---
+
+### 1. 开发环境
+#### 1) system info
 I use <code>Centos 6.8 x86_64</code>, if you have some familiar distribution, you can replace centos to it, if not, follow this.
 
-**virtual tools**
+#### 2) virtual tools
 virtual host: vagrant + virtualbox, also you can use vmware-workstation.
 
-### System Preparation
-**upgrade System**
+---
+
+### 2. System Preparation
+#### 1) upgrade System
 ``` bash
 yum install epel-release -y
 yum upgrade -y
 yum groupinstall base "Development tools" -y
 ```
 
-**Install Python2.7 Virtual Environment**
+#### 2) Install Python2.7 Virtual Environment
 ``` bash
 yum install gcc gcc-c++ zip zip-devel openssl openssl-devel sqlite-devel -y
 

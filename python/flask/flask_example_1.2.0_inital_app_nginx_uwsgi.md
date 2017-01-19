@@ -1,23 +1,32 @@
-### initial flask app
+---
+title: flask实战: 1.2.0 初始化flask-app_initial,nginx,uwsgi
+date: 2017-01-19 13:09:00
+categories: python/flask
+tags: [python,flask]
+---
+### flask实战: 1.2.0 初始化flask-app_initial,nginx,uwsgi
 
-**activate virtual env**
+---
+
+### 1. initial flask app
+#### 1) activate virtual env
 ``` bash
 source /vagrant/flask_blog/bin/activate
 ```
 
-**create app directory**
+#### 2) create app directory
 ``` bash
 cd /vagrant/flask_blog
 mkdir MyBlog
 ```
 
-**create basic directory**
+#### 3) create basic directory
 ``` bash
 cd MyBlog
 mkdir ./{static,templates}
 ```
 
-**create app initial file**
+#### 4) create app initial file
 <code>vi __init__.py</code>
 ``` python
 from flask import Flask
@@ -35,7 +44,9 @@ if __name__ == "__main__":
 after run <code>vi __init__.py</code>, press <code>i</code> into insert mode.
 after finish input, press <code>ESC</code> and input <code>:wq</code> to save and quit
 
-### run test
+---
+
+### 2. run test
 ``` bash
 # as we install Flask before, so you can run it directly.
 # if you see the output is same with below, it means everything is good.
@@ -45,15 +56,17 @@ python __init__.py
 although we can run flask like this, but it only listen 127.0.0.1 and can not persistence.
 so we need a web server to proxy requests and use uwsgi to process these requests.
 
-### deploy web server and configure uwsgi
+---
 
-**install nginx(web server, you can choose apache also) and uwsgi**
+### 3. deploy web server and configure uwsgi
+
+#### 1) install nginx(web server, you can choose apache also) and uwsgi
 ``` bash
 yum install nginx -y
 pip install uwsgi
 ```
 
-**configure uwsgi**
+#### 2) configure uwsgi
 <code>vi /vagrant/flask_blog/wsgi.py</code>
 ``` python
 from MyBlog import app
@@ -62,7 +75,7 @@ if __name__ == "__main__":
     app.run()
 ```
 
-**uwsgi test and make configuration file**
+#### 3) uwsgi test and make configuration file
 ``` bash
 # use command line to test first
 uwsgi --socket 0.0.0.0:8000 --file /vagrant/flask_blog/wsgi.py --callable app --protocol=http
@@ -93,7 +106,7 @@ socket = 127.0.0.1:8001
 ```
 然后两种方法都用浏览器测试一下，访问ip:8000端口，查看结果
 
-**configure nginx**
+#### 4) configure nginx
 <code>vi /etc/nginx/conf.d/uwsgi.conf</code>
 ``` bash
 server {
@@ -115,7 +128,7 @@ server {
 # and application name(app)
 ```
 
-**enable and start nginx uwsgi**
+#### 5) enable and start nginx uwsgi
 ``` bash
 service nginx start
 chkconfig nginx on
