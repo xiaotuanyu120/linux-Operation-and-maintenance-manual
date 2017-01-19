@@ -1,5 +1,5 @@
 ---
-title: 错误: 1.0 force close of thread xxx user: 'someuser'
+title: error: 1.0 force close of thread xxx user: 'someuser'
 date: 2017-01-19 14:06:00
 categories: database/mysql
 tags: [database,mysql,error]
