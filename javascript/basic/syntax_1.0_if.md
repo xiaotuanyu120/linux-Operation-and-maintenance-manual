@@ -1,7 +1,7 @@
 ---
 title: 语法: 1.0 javascript的if语句
 date: 2016-11-07 13:47:00
-categories: javascript/example
+categories: javascript/basic
 tags: [javascript]
 ---
 ### 语法: 1.0 javascript的if语句
