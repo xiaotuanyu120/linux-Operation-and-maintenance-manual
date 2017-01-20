@@ -29,15 +29,15 @@ django terminal演示(<code>python manage.py shell</code>):
 In [1]: from devops.models import Brand
 
 In [2]: Brand.objects.all()
-Out[2]: [<Brand: 千亿>, <Brand: 龙8>, <Brand: 亚虎pt777>, <Brand: E68>, <Brand: 优发>, <Brand: 优乐>, <Brand: 武松>, <Brand: 齐乐>]
+Out[2]: [<Brand: qq>, <Brand: ll9>, <Brand: yy8>, <Brand: E68>, <Brand: uu8>, <Brand: uu9>, <Brand: ww6>, <Brand: qq7>]
 ```
 
 **筛选部分内容**  
 sql语句：<code>select * from devops_brand where name like "优%"</code>  
 django terminal演示(<code>python manage.py shell</code>):
 ``` python
-In [3]: Brand.objects.filter(name__startswith="优")
-Out[3]: [<Brand: 优发>, <Brand: 优乐>]
+In [3]: Brand.objects.filter(name__startswith="uu")
+Out[3]: [<Brand: uu8>, <Brand: uu9>]
 ```
 
 但是遇到了一个问题，我希望通过name字段去做筛选条件，然后筛选出来的结果再取得其brand字段的值。  
@@ -49,11 +49,11 @@ Out[3]: [<Brand: 优发>, <Brand: 优乐>]
 **model类的values方法**
 ``` python
 # 通过dir(Brand.objects)列出所有属性，然后找到一个values方法
-In [5]: Brand.objects.filter(name="千亿").values()
-Out[5]: [{'brand': u'qy8', 'created': datetime.datetime(2016, 11, 2, 5, 1, 38, 783000, tzinfo=<UTC>), 'updated': datetime.datetime(2016, 11, 4, 5, 27, 28, 91000, tzinfo=<UTC>), u'id': 1, 'name': u'\u5343\u4ebf'}]
+In [5]: Brand.objects.filter(name="qq").values()
+Out[5]: [{'brand': u'qy8', 'created': datetime.datetime(2016, 11, 2, 5, 1, 38, 783000, tzinfo=<UTC>), 'updated': datetime.datetime(2016, 11, 4, 5, 27, 28, 91000, tzinfo=<UTC>), u'id': 1, 'name': u'qq'}]
 
 # 发现values方法的输出是一个包含dict的list
-In [6]: Brand.objects.filter(name="千亿").values()[0]['brand']
+In [6]: Brand.objects.filter(name="qq").values()[0]['brand']
 Out[6]: u'qy8'
 ```
 
