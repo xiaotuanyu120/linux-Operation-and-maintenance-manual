@@ -161,7 +161,7 @@ def form_interaction(request):
   <div class="form-group">
     <label class="control-label" for="selbrand">Brand</label>
     <select class="form-control" id="selbrand" name="selbrand">
-      {\% for brand in brands %\}
+      {\% for brand in brands \%}
       <option>{{ brand }}</option>
       {\% endfor \%}
     </select>
