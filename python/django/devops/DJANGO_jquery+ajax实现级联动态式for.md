@@ -155,55 +155,33 @@ def form_interaction(request):
 
 ### 前端页面内容
 ``` html
-<!--head部分-->
-<link rel="stylesheet" type="text/css" href="{% static 'devops/css/bootstrap.min.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'devops/css/dashboard.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'devops/css/customized.css' %}" />
-<!-- <link href="{% static 'devops/css/simple-sidebar.css' %}" rel="stylesheet"> -->
-<!-- jQuery library -->
-<script src={% static "devops/js/jquery.min.js" %}></script>
-<!-- Latest compiled JavaScript -->
-<script src={% static "devops/js/bootstrap.min.js" %}></script>
+<form method="POST" action="">
+  {\% csrf_token \%}
 
-
-<!--form 部分-->
-<div class="container-fluid">
-  <div class="row">
-
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-      <h1>TOMCAT HANDLER</h1>
-      <form method="POST" action="">
-        {% csrf_token %}
-
-        <div class="form-group">
-          <label class="control-label" for="selbrand">Brand</label>
-          <select class="form-control" id="selbrand" name="selbrand">
-            {% for brand in brands %}
-            <option>{{ brand }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label" for="selhost">Host</label>
-          <select class="form-control" id="selhost" name="selhost">
-            <option>select brand first</option>
-          </select>
-          <p id="test_p"></p>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label" for="cmd">Command</label>
-          <input type="text" class="form-control" id="cmd" placeholder="Enter cmd" name="cmd" value=''>
-        </div>
-
-        <button type="submit" class="btn btn-primary" name="run" value="Click">run</button>
-      </form>
-      {{ stdout }}
-    </div>
-
+  <div class="form-group">
+    <label class="control-label" for="selbrand">Brand</label>
+    <select class="form-control" id="selbrand" name="selbrand">
+      {\% for brand in brands %\}
+      <option>{{ brand }}</option>
+      {\% endfor \%}
+    </select>
   </div>
-</div>
+
+  <div class="form-group">
+    <label class="control-label" for="selhost">Host</label>
+    <select class="form-control" id="selhost" name="selhost">
+      <option>select brand first</option>
+    </select>
+    <p id="test_p"></p>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="cmd">Command</label>
+    <input type="text" class="form-control" id="cmd" placeholder="Enter cmd" name="cmd" value=''>
+  </div>
+
+  <button type="submit" class="btn btn-primary" name="run" value="Click">run</button>
+</form>
 <!--这部分重点注意id和class，这是html元素的身份标识-->
 ```
 
