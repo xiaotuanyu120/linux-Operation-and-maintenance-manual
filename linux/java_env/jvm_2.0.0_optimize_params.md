@@ -58,3 +58,13 @@ JVM中一般分为以下几种内存区域
 
 #### 5) 程序计数器
 线程私有，独立存储。代表当前线程所执行字节码的行号指示器。
+
+---
+
+### 3. tomcat调优实战
+``` bash
+vim appweb02/bin/catalina.sh
+**********************************
+JAVA_OPTS="-server -Xms1G -Xmx1G -XX:PermSize=128m -XX:MaxPermSize=512m"
+**********************************
+```
