@@ -45,6 +45,22 @@ http://
 # 截取第7个字符后面连续14个字符
 echo ${file:7:14}
 www.python.org
+
+# 截取第一个字符
+echo ${file::1}
+h
+
+# 截取最后一个字符
+echo ${file: -1}
+z
+
+# 去除第一个字符
+echo ${file%?}
+http://www.python.org/test.php?pip.tar.g
+
+# 去除最后一个字符
+echo ${file#?}
+ttp://www.python.org/test.php?pip.tar.gz
 ```
 
 ---
