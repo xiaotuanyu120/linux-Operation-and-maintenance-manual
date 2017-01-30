@@ -1,0 +1,69 @@
+---
+title: handlers: 1.2.0 多个actions
+date: 2017-01-30 13:28:00
+categories: devops/ansible
+tags: [devops,ansible,handlers]
+---
+### handlers: 1.2.0 多个tasks
+
+---
+
+### 1. 需求背景
+有时候我们需要根据一个handler来执行多个任务，可用以下思路
+
+---
+
+### 2. 解决思路
+#### 1) 思路1
+可以在第一个action后面串联一系列动作
+``` bash
+vim roles/test/tasks/main.yml
+******************************
+- name: demo tasks
+  some_module: some_action
+  notify: demo_handler
+******************************
+
+vim roles/test/handlers/main.yml
+******************************
+- name: demo_handler
+  some_module: some_action
+  notify: demo_handler2
+
+- name: demo_handler2
+  some_module: some_other_action
+  notify: demo_handler3
+
+- name: demo_handler3
+  ...
+******************************
+```
+> 缺点是，如果中间有一步是已经满足要求了，就会断掉
+
+#### 2) 思路2(推荐)
+``` bash
+vim roles/test/tasks/main.yml
+******************************
+- name: demo tasks
+  some_module: some_action
+  notify: demo_handler
+******************************
+
+vim roles/test/handlers/main.yml
+******************************
+- name: demo_handler
+  include: extra.yml
+******************************
+
+vim roles/test/handlers/extra.yml
+******************************
+- name: task1
+  some_module: some_action
+
+- name: task2
+  some_module: some_other_action
+
+- name: task3
+  ...
+******************************
+```
