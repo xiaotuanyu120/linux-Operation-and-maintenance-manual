@@ -46,16 +46,15 @@ vim roles/test/tasks/main.yml
 ******************************
 - name: demo tasks
   some_module: some_action
-  notify: demo_handler
-******************************
+  register: demo_result
 
-vim roles/test/handlers/main.yml
-******************************
-- name: demo_handler
+- name: demo handler
   include: extra.yml
+  when: demo_result.stderr != ""
 ******************************
+# 使用when来确定执行extra.yml内容的条件
 
-vim roles/test/handlers/extra.yml
+vim roles/test/tasks/extra.yml
 ******************************
 - name: task1
   some_module: some_action
