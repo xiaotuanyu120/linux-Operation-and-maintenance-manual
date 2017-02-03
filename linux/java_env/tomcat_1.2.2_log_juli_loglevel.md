@@ -1,7 +1,7 @@
 ---
 title: tomcat 1.2.2 日志-JULI日志级别
 date: 2016-11-04 11:24:00
-categories: linux/java
+categories: linux/java_env
 tags: [linux,java,tomcat6,loglevel]
 ---
 ### tomcat 1.2.2 日志-日志级别
