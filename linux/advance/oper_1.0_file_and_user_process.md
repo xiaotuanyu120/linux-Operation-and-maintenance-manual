@@ -40,4 +40,17 @@ zabbix_ag 14441 zabbix  mem    REG     253,0  1923352 2621455 /lib64/libc-2.12.s
 zabbix_ag 14441 zabbix  mem    REG     253,0   110960 2621481 /lib64/libresolv-2.12.so
 zabbix_ag 14441 zabbix  mem    REG     253,0    43944 2621483 /lib64/librt-2.12.so
 zabbix_ag 14441 zabbix  mem    REG     253,0    19536 2621461 /lib64/libdl-2.12.so
+
+# 查看某个进程使用的文件信息
+lsof -p 8347|head
+COMMAND  PID USER   FD   TYPE     DEVICE SIZE/OFF       NODE NAME
+java    8347 root  cwd    DIR      253,0     4096          2 /
+java    8347 root  rtd    DIR      253,0     4096          2 /
+java    8347 root  txt    REG      253,0    50794    3671775 /usr/java/jdk1.6.0_45/bin/java
+java    8347 root  mem    REG      253,0   110960    2490409 /lib64/libresolv-2.12.so
+java    8347 root  mem    REG      253,0    27424    2490397 /lib64/libnss_dns-2.12.so
+java    8347 root  mem    REG      253,2     9837   21760138 /home/webservice/lftomcat00/temp/axis2-tmp-6076242715820528929.tmp/axis25334067364580589901rahas-1.6.2.mar
+java    8347 root  mem    REG      253,0 99164480    1446015 /usr/lib/locale/locale-archive
+java    8347 root  mem    REG      253,2     5533   22807729 /home/webservice/lfwebservice/WEB-INF/lib/spring-agent.jar
+java    8347 root  mem    REG      253,2     9627   22807799 /home/webservice/lfwebservice/WEB-INF/lib/smsapi.jar
 ```
