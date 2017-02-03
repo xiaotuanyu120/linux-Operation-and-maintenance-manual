@@ -1,14 +1,14 @@
-tomcat: log rotate
-2016年10月20日
-21:44
- 
 ---
-title: how to rotate tomcat logs with cronolog
-date: 2016-10-20 20:38:00
-categories: java
-tags: [java,tomcat,cronolog]
+title: tomcat 1.2.0 日志-cronolog日志切割
+date: 2016-10-20 21:44:00
+categories: linux/java_env
+tags: [linux,tomcat,log]
 ---
-### install cronolog
+### tomcat 1.2.0 日志-cronolog日志切割
+
+---
+
+### 1. install cronolog
 [fedoraproject's download link, cronolog1.6.2](http://pkgs.fedoraproject.org/repo/pkgs/cronolog/cronolog-1.6.2.tar.gz/a44564fd5a5b061a5691b9a837d04979/cronolog-1.6.2.tar.gz)
 ``` bash
 tar zxf cronolog-1.6.2.tar.gz
@@ -16,20 +16,20 @@ cd cronolog-1.6.2
 ./configure
 make && make install
 ```
- 
-<!--more-->
- 
-### configure tomcat
-**<code>bin/catalina.sh</code>'s content'**
+
+---
+
+### 2. configure tomcat
+<code>bin/catalina.sh</code>内容
 ``` bash
 # 1, add ".%Y-%m-%d"
 if [ -z "$CATALINA_OUT" ] ; then
   CATALINA_OUT="$CATALINA_BASE"/logs/catalina.%Y-%m-%d.out
 fi
- 
+
 # 2, comment "touch "$CATALINA_OUT"(located about 370 lines)
 #touch "$CATALINA_OUT"
- 
+
 #3, change log redirection
 if [ "$1" = "-security" ] ; then
   if [ $have_tty -eq 1 ]; then
@@ -47,7 +47,7 @@ if [ "$1" = "-security" ] ; then
 #    >> "$CATALINA_OUT" 2>&1 &
     org.apache.catalina.startup.Bootstrap "$@" start 2>&1\
     |/usr/local/sbin/cronolog "$CATALINA_OUT" &
- 
+
 else
   "$_RUNJAVA" "$LOGGING_CONFIG" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
@@ -60,11 +60,12 @@ else
     |/usr/local/sbin/cronolog "$CATALINA_OUT" &
 fi
 ```
- 
-### restart tomcat
+
+---
+
+### 3. restart tomcat
 ``` bash
 bin/catalina.sh stop
 bin/catalina.sh start
 # if can't stop it, go straight to kill it
 ```
-then, you will see result

@@ -1,10 +1,10 @@
 ---
-title: tomcat参数 1.1.0 sessionCookieName
+title: tomcat 1.1.0 参数-sessionCookieName
 date: 2017-01-25 10:44:00
 categories: linux/java_env
 tags: [tomcat,linux,sessionCookieName]
 ---
-### tomcat参数 1.1.0 sessionCookieName
+### tomcat 1.1.0 参数-sessionCookieName
 
 ---
 
