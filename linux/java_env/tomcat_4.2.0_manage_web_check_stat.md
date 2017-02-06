@@ -1,9 +1,13 @@
 ---
-title:
+title: tomcat 4.2.0 管理-web界面查看tomcat状态
 date: 2016-12-05 11:54:00
 categories: linux/java
 tags: [linux,java,tomcat,stat]
 ---
+### tomcat 4.2.0 管理-web界面查看tomcat状态
+
+---
+
 ### 1. 如何在web上查看tomcat状态(tomcat6)
 `conf/tomcat-users.xml`增加以下内容
 ``` bash
