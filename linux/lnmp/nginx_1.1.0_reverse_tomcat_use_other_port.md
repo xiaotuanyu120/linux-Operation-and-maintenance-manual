@@ -1,5 +1,5 @@
 ---
-title: nginx: 1.0 nginx反向代理tomcat，使用非80端口
+title: nginx: 1.1.0 nginx反向代理tomcat，使用非80端口
 date: 2016-12-14 14:11:00
 categories: linux/lnmp
 tags: [tomcat,nginx]

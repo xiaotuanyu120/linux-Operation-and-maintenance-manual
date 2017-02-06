@@ -1,5 +1,5 @@
 ---
-title: nginx: 2.0 同时监听http和https
+title: nginx: 2.1.0 同时监听http和https
 date: 2016-12-14 14:58:00
 categories: linux/lnmp
 tags: [nginx]
