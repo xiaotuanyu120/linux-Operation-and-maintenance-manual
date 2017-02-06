@@ -1,19 +1,19 @@
-memcached会话保持
-2016年9月23日
-15:30
- 
 ---
-title: memcached会话保持
+title: tomcat 4.1.0 应用-memcached会话保持
 date: 2016-09-23 15:30:00
-categories: linux
+categories: linux/java_env
 tags: [memcached,session,tomcat,nginx]
 ---
-## 环境准备
+### tomcat 4.1.0 应用-memcached会话保持
+
+---
+
+## 0. 环境准备
 三台主机
 - nginx：192.168.110.4 nginx-proxy
 - tomcat+memcached：192.168.110.5 ss01
 - tomcat+memcached：192.168.110.6 ss02
- 
+
 软件版本
 linux: centos6.5
 nginx: 1.10.1
@@ -21,21 +21,21 @@ JDK: 1.6
 tomcat: 6
 memcached: 1.4.4
 MSM: 1.8.2
- 
-<!--more-->
- 
-## 环境搭建
-### nginx环境
+
+---
+
+## 1. 环境搭建
+### 1. nginx环境
 在nginx-proxy上安装nginx
-**1、安装nginx**
+#### 1) 安装nginx
 ``` bash
 yum install epel-release -y
 yum install nginx -y
 chkconfig nginx on
 ```
 为了测试方便，直接yum安装，生产环境尽量编译安装
- 
-**2、配置nginx**
+
+#### 2) 配置nginx
 ``` bash
 # 新建nginx虚拟机配置文件
 vim /etc/nginx/conf.d/sstest.conf
@@ -44,7 +44,7 @@ upstream ss {
     server 192.168.110.5:8080;
     server 192.168.110.6:8080;
 }
- 
+
 server {
     listen 80;
     server_name 192.168.110.4 default_server;
@@ -55,11 +55,11 @@ server {
 ******************************
 service nginx restart
 ```
- 
-### tomcat环境
+
+### 2. tomcat环境
 在nginx-proxy上作为跳板机安装ansible，并做ss01和ss02的key信任（此步骤省略），也就是说，下面的操作都是在nginx-proxy上执行的
- 
-**1、安装tomcat**
+
+#### 1) 安装tomcat
 ``` bash
 # 下载并安装jdk1.6
 # 需要注册oracle帐号才能在下面下载
@@ -76,21 +76,21 @@ PATH=$PATH:${JAVA_HOME}/bin:${JRE_HOME}/bin
 CLASSPATH=${JAVA_HOME}/lib:${JRE_HOME}/lib
 *******************************
 source /etc/profile.d/java-env.sh
- 
- 
+
+
 # 安装tomcat
 wget http://mirror.rise.ph/apache/tomcat/tomcat-6/v6.0.45/bin/apache-tomcat-6.0.45.tar.gz
 tar zxf apache-tomcat-6.0.45.tar.gz
 mv apache-tomcat-6.0.45 /usr/local/tomcat
 ```
- 
+
 注意，以下操作转到ss01和ss02上执行
-**2、启动并配置tomcat**
+#### 2) 启动并配置tomcat
 ``` bash
 # 启动tomcat
 cd /usr/local/tomcat
 ./bin/catalina.sh start
- 
+
 # 配置tomcat虚拟主机
 vim /usr/local/tomcat/conf/server.xml
 ************************
@@ -100,17 +100,17 @@ vim /usr/local/tomcat/conf/server.xml
   ......
 </Host>
 ************************
- 
+
 /usr/local/tomcat/bin/catalina.sh stop
 /usr/local/tomcat/bin/catalina.sh start
 ```
- 
-**4、编写测试程序**
+
+#### 3) 编写测试程序
 ``` bash
 # 创建web程序目录
 mkdir -p /data/webapps/{WEB-INF,META-INF,classes,lib}
 cd /data/webapps
- 
+
 # 编写首页程序
 # ss02上把Tomcat01更换成Tomcat02
 vim index.jsp
@@ -135,8 +135,8 @@ vim index.jsp
 </html>
 ***********************
 ```
- 
-**5、访问测试**
+
+#### 4) 访问测试
 ``` bash
 curl -I 192.168.110.5:8080
 HTTP/1.1 200 OK
@@ -145,7 +145,7 @@ Set-Cookie: JSESSIONID=678BAF3DD0E30285B6FC9475ED97800F-n1; Path=/
 Content-Type: text/html
 Content-Length: 373
 Date: Tue, 27 Sep 2016 03:55:33 GMT
- 
+
 curl -I 192.168.110.6:8080
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
@@ -155,24 +155,24 @@ Content-Length: 373
 Date: Tue, 27 Sep 2016 03:56:01 GMT
 ```
 通过负载均衡查看时为上面两个结果交替出现
- 
-## memcached做session共享
- 
+
+## 2. memcached做session共享
+
 以下操作在ss01和ss02执行
-### 安装memcached
+### 1. 安装memcached
 ``` bash
 yum install memcached
 ```
- 
-### 安装MSM（memcached session manager）
-**准备库文件**
+
+### 2. 安装MSM（memcached session manager）
+#### 1) 准备库文件
 ``` bash
 # 下载MSM类库文件，[MSM类库文件下载地址](https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration)
- 
+
 mv javolution-5.5.1.jar memcached-session-manager-tc6-1.8.2.jar memcached-session-manager-1.8.2.jar spymemcached-2.11.1.jar msm-javolution-serializer-1.8.2.jar /usr/local/tomcat/lib/
 ```
- 
-**在tomcat里配置MSM**
+
+#### 2) 在tomcat里配置MSM
 ``` bash
 vim /usr/local/tomcat/conf/server.xml
 ************************
@@ -188,8 +188,10 @@ vim /usr/local/tomcat/conf/server.xml
 /usr/local/tomcat/bin/catalina.sh stop
 /usr/local/tomcat/bin/catalina.sh start
 ```
- 
-## 效果测试
+
+---
+
+## 3. 效果测试
 ``` bash
 curl -I localhost
 HTTP/1.1 200 OK
@@ -201,8 +203,10 @@ Connection: keep-alive
 Set-Cookie: JSESSIONID=60692852333F53A272F406AFD1120B57-n1; Path=/
 ```
 多次测试皆为一样结果
- 
-## session过期时间设置
+
+---
+
+## 4. session过期时间设置
 配置完成后，发现session会在短时间内(3mins)过期，可用以下配置设定解决
 ``` bash
 vim /usr/local/tomcat/conf/web.xml
