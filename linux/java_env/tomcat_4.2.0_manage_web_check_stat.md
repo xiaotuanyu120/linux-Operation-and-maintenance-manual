@@ -1,7 +1,7 @@
 ---
 title: tomcat 4.2.0 管理-web界面查看tomcat状态
 date: 2016-12-05 11:54:00
-categories: linux/java
+categories: linux/java_env
 tags: [linux,java,tomcat,stat]
 ---
 ### tomcat 4.2.0 管理-web界面查看tomcat状态
