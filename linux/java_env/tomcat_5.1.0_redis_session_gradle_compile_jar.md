@@ -14,7 +14,7 @@ tags: [linux,tomcat,redis,session,tomcat-redis-session-manager]
 - jedis-${version}.jar
 - commons-pool2-${version}.jar
 不知道什么原因，作者提供的tomcat-redis-session-manager-tomcat6.jar会出错，当时为了找tomcat6的包，还是百般搜索，在作者github的issue中找到了一个jar包。  
-但是，最近公司线上要升级tomcat6到tomcat7，又遇到了同样的问题，于是痛定思痛，决定找到一个能从根源上解决问题的方法
+但是，最近公司线上要升级tomcat6到tomcat7，又遇到了同样的问题(ClassNotFoundException: org.apache.commons.pool.impl.GenericObjectPool$Config)，于是痛定思痛，决定找到一个能从根源上解决问题的方法
 
 ---
 
