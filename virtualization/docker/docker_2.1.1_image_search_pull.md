@@ -1,5 +1,5 @@
 ---
-title: DOCKER 2.1.1 镜像-查找与下载镜像
+title: 2.1.1 镜像-查找与下载镜像
 date: 2015-12-12 16:30:00
 categories: virtualization/docker
 tags: [docker,image]

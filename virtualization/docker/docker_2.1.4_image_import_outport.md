@@ -1,5 +1,5 @@
 ---
-title: DOCKER 2.1.4 镜像-镜像的导入和导出
+title: 2.1.4 镜像-镜像的导入和导出
 date: 2015-12-12 16:30:00
 categories: virtualization/docker
 tags: [docker,image]

@@ -1,5 +1,5 @@
 ---
-title: DOCKER 2.1.3 镜像-镜像的删除
+title: 2.1.3 镜像-镜像的删除
 date: 2015-12-12 16:30:00
 categories: virtualization/docker
 tags: [docker,image]

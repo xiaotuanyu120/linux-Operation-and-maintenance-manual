@@ -1,5 +1,5 @@
 ---
-title: DOCKER 1.1.0 安装(Centos7)
+title: 1.1.0 安装(Centos7)
 date: 2015-12-12 16:06:00
 categories: virtualization/docker
 tags: [docker]

@@ -1,5 +1,5 @@
 ---
-title: DOCKER 2.1.2 镜像-镜像信息的查看与管理
+title: 2.1.2 镜像-镜像信息的查看与管理
 date: 2015-12-12 16:30:00
 categories: virtualization/docker
 tags: [docker,image]
