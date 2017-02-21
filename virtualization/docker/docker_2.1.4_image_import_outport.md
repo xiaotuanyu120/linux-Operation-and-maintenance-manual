@@ -12,11 +12,9 @@ tags: [docker,image]
 #### 1) 导出镜像文件
 ``` bash
 docker save -o centos7-x64.tar centos:7-x64
-ll -h centos7-x64.tar
--rw-r--r--. 1 root root 411M Dec 13 00:30 centos7-x64.tar
 ```
 
 #### 2) 导入镜像文件
 ``` bash
 docker load < centos7-x64.tar
-# 这样就方便在不同机器之间转移docker镜像文件了```
+# 这样就方便在不同机器之间转移docker镜像文件了```
