@@ -37,14 +37,13 @@ yum -y remove docker-selinux
 yum install -y yum-utils
 yum-config-manager \
     --add-repo \
-    https://docs.docker.com/engine/installation/linux/repo_files/centos/docker.repo
+    https://download.docker.com/linux/centos/docker-ce.repo
 
 # 关闭testing源(默认为关闭)
 yum-config-manager --disable docker-testing
-********************************
 
 # 安装docker
-yum -y install docker-engine
+yum -y install docker-ce
 ```
 
 ---
