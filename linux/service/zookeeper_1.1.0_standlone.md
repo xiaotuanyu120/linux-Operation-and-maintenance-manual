@@ -9,10 +9,10 @@ tags: [zookeeper]
 ---
 
 ### 0. 环境
-OS: centos6.7
-jdk: 1.7.0_79
-zookeeper: 3.4.9
-[zookeeper3.4.9官方文档](http://zookeeper.apache.org/doc/r3.4.9/zookeeperStarted.html)
+OS: centos6.7  
+jdk: 1.7.0_79  
+zookeeper: 3.4.9  
+[zookeeper3.4.9官方文档](http://zookeeper.apache.org/doc/r3.4.9/zookeeperStarted.html)  
 
 ---
 
@@ -32,6 +32,7 @@ tickTime=2000
 dataDir=/var/lib/zookeeper
 clientPort=2181
 *************************************
+mkdir /var/lib/zookeeper
 ```
 > 配置文件的名称是自定义的，不过一般情况下创建为conf/zoo.cfg
 - tickTime, zookeeper中的基本时间单元，单位是微秒。被用于心跳功能，最短会话超时时间是两倍的tickTime
