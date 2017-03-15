@@ -11,7 +11,8 @@ tags: [redis,session,tomcat,nginx]
 ### 1. 环境介绍
 **软件版本**
 - nginx: 1.10.1
-- tomcat: 6.0.45
+- jdk: 6.0.45
+- tomcat: 6.0.41
 - redis: 2.8.24
 
 **软件架构**
@@ -189,9 +190,9 @@ daemonize yes
 
 #### 4) 拷贝jar包到tomcat
 ``` bash
-wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/tomcat-redis-session-manager-1.2.jar
-wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/jedis-2.1.0.jar
-wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat6_redis2.8/master/commons-pool-1.6.jar
+wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat_redis_session_jar/master/tomcat6/tomcat-redis-session-manager-1.2.jar
+wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat_redis_session_jar/master/tomcat6/jedis-2.1.0.jar
+wget https://raw.githubusercontent.com/xiaotuanyu120/nginx_tomcat_redis_session_jar/master/tomcat6/commons-pool-1.6.jar
 
 mv tomcat-redis-session-manager-1.2.jar jedis-2.1.0.jar commons-pool-1.6.jar /usr/local/tomcat/lib/
 ```
