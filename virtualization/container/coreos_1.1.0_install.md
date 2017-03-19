@@ -23,12 +23,3 @@ https://coreos.com/os/docs/latest/booting-with-iso.html
 wget https://raw.githubusercontent.com/coreos/init/master/bin/coreos-install
 
 ```
-
-
----
-
-### 2. 选择channel
-
----
-
-### 3. cloud-config
