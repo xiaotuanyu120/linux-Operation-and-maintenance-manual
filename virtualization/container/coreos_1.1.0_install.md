@@ -49,6 +49,9 @@ ip a
 #### 3) 获取安装脚本
 ``` bash
 wget https://raw.githubusercontent.com/coreos/init/master/bin/coreos-install
+
+# 给coreos-install添加执行权限
+chmod +x coreos-install
 ```
 
 #### 4) 配置cloud-config
@@ -66,6 +69,22 @@ ssh-keygen -t rsa -b 1024
 curl https://discovery.etcd.io/new?size=3
 https://discovery.etcd.io/2126a604d62d838d22b7e81f4b370e38
 # 获得了这个token后，我们可以将其配置在cloud-config中
+
+# 3. 确定网卡名称，用于配置cloud-config中的网卡配置
+ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:a1:ab:02 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.27/24 brd 192.168.0.255 scope global dynamic enp0s3
+       valid_lft 604385sec preferred_lft 604385sec
+    inet6 fe80::a00:27ff:fea1:ab02/64 scope link
+       valid_lft forever preferred_lft forever
+# 获取网卡名称enp0s3
 
 vim cloud-config.yaml
 *******************************************************
@@ -86,11 +105,11 @@ coreos:
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://192.168.0.25:2380
   units:
-    - name: 00-eth0.network
+    - name: static.network
       runtime: true
       content: |
         [Match]
-        Name=eth0
+        Name=enp0s3
 
         [Network]
         DNS=8.8.8.8
@@ -116,10 +135,21 @@ coreos:
 
 #### 5) 安装coreos系统
 ``` bash
-# 给coreos-install添加执行权限
-chmod +x coreos-install
+# 使用fdisk -l命令发现目标磁盘
+fdisk -l
+Disk /dev/loop0: 236.9 MiB, 248406016 bytes, 485168 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
 
-# 使用fdisk -l命令发现目标磁盘，-C选择系统版本(我们选择稳定版)，-c指定配置文件
+
+Disk /dev/sda: 8 GiB, 8589934592 bytes, 16777216 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+# 获得磁盘文件名称/dev/sda
+
+# -C选择系统版本(我们选择稳定版)，-c指定配置文件
 ./coreos-install -d /dev/sda -C stable -c ./cloud-config.yaml
 2017/03/25 13:41:38 Checking availability of "local-file"
 2017/03/25 13:41:38 Fetching user-data from datasource of type "local-file"
