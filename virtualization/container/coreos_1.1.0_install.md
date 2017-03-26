@@ -92,7 +92,7 @@ vim cloud-config.yaml
 
 # include one or more SSH public keys
 ssh_authorized_keys:
-  - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAnIZFP4F+IW5+ii9X59ggYpZqIEG7OryZQcqgXTpQ5ePt8awxRYxMARhR2yKYGZtBHb/E7eCTqL+b2R08oduW3HB/VFE0/GSnDcaIgKWaDBMBY1fblqA3jzBeZqvrGaYii4B3a4jrlt85JdOphowZLQGpdcq0c1hhkfJNEi26+Pc= root@zack.xiao5tech.com
+  - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAnIZFP4F+IW5+ii9X59ggYpZqIEG7OryZQ...
 coreos:
   etcd2:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
