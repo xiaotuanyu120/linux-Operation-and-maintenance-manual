@@ -50,6 +50,19 @@ vagrant up --provider virtualbox
 vagrant ssh
 # 默认帐号密码是vagrant:vagrant
 
+# 查看虚拟机ssh配置信息
+vagrant ssh-config
+Host default
+  HostName 127.0.0.1
+  User vagrant
+  Port 2201
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile D:/vmware-data/vagrant/centos02/.vagrant/machines/default/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+
 # 虚拟机挂起和关机
 vagrant suspend
 vagrant halt
