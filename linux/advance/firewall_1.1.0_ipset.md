@@ -20,6 +20,10 @@ ipset create myset hash:net
 
 # ipset给set添加ip
 ipset add myset 172.16.0.0/16
+
+# 清空set中的所有规则
+ipset flush
+ipset flush set_name
 ```
 关于ipset的详细配置文档和set的不同类型，参见下列文档：  
 [ipset精品博客](http://bigsec.net/one/tool/ipset.html)  
