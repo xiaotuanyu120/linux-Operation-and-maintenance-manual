@@ -63,6 +63,7 @@ vim /etc/confd/templates/myconfig.conf.tmpl
 database_url = \{\{getv "/test"}}
 *************************************
 ```
+> "\{\{"是因为flask使用的jinja模板问题，必须要转义，实际不需要"\\"这个转义符
 
 #### 4) etcd上设置key
 ``` bash
