@@ -60,7 +60,7 @@ keys = [
 vim /etc/confd/templates/myconfig.conf.tmpl
 *************************************
 [myconfig]
-database_url = {{getv "/test"}}
+database_url = \{\{getv "/test"}}
 *************************************
 ```
 
