@@ -1,104 +1,90 @@
-KVM: 脚本复制VM+启动错误
-2016年4月5日
-14:54
- 
-VM复制-原理
-=====================================================
-1、拷贝img和xml文件
-# cp /etc/libvirt/qemu/controller.xml /etc/libvirt/qemu/compute-node01.xml
-# cp /data/kvm/images/controller.img /data/kvm/images/compute-node01.img
- 
-2、编辑xml文件
-# vim compute-node01.xml
+---
+title: KVM 1.2.2 创建VM-脚本复制VM
+date: 2016-04-05 14:54:00
+categories: virtualization/kvm
+tags: [kvm]
+---
+### KVM 1.4.0 kvm自动化-脚本复制VM
+
+---
+
+### 1. VM复制-原理
+首先创建模板xml和img文件(就是安装一个模板系统)，然后拷贝配置文件和镜像文件，编辑配置文件后，重新加载它，就实现了vm复制的效果
+
+#### 1) 拷贝img和xml文件
+``` bash
+cp /etc/libvirt/qemu/controller.xml /etc/libvirt/qemu/compute-node01.xml
+cp /data/kvm/images/controller.img /data/kvm/images/compute-node01.img
+```
+
+#### 2) 编辑xml文件
+``` bash
+vim compute-node01.xml
 **************************************************************************
-## 修改名称
+# 修改名称
 <name>compute-node01</name>
- 
-## 修改UUID
+
+# 修改UUID
   <uuid>3a356102-a046-4cdc-adf2-86a738abf75b</uuid>
- 
-## 修改img路径
+
+# 修改img路径
 <source file='/data/kvm/images/compute-node01.img'/>
- 
-## 修改外网网卡mac
+
+# 修改外网网卡mac
 <mac address='fa:95:89:fd:ce:a9'/>
- 
-## 修改内网网卡mac
+
+# 修改内网网卡mac
 <mac address='52:54:3e:65:38:8a'/>
- 
-## 修改vnc端口
+
+# 修改vnc端口
 <graphics type='vnc' port='5997' autoport='no' listen='0.0.0.0'>
 *************************************************************************
- 
-3、定义并启动虚机
-# virsh define compute-node01.xml
-# virsh start compute-node01
- 
-VM复制-脚本
-=================================================
-## 基础语句（基于自己设计的模板，见后面）
-## VM NAME修改语句
-# NAME=controller01
-# sed -i "s#%NAME%#$NAME#g" controller01.xml
- 
-## UUID修改语句
-# UUID=`uuidgen`
-# sed -i "s#%UUID%#$UUID#g" controller01.xml
- 
-## 修改img文件语句
-# IMAGE_PATH=/data/kvm/images/controller01.img  
-# sed -i "s#%IMAGE_PATH%#$IMAGE_PATH#g" controller01.xml
- 
-## 生成mac地址
-# MAC=fa:95:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
-# MAC2=52:54:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
-# sed -i "s#%MAC%#$MAC#g" controller01.xml
-# sed -i "s#%MAC2%#$MAC2#g" controller01.xml
-## 内部局域网的MAC地址多以52:54开头
-## 外部网络桥接的MAC地址多以fa:95开头
- 
-## 修改vnc端口
-# VNC_PORT=5998
-# sed -i "s#%VNC_PORT%#$VNC_PORT#g" controller01.xml
- 
-VM复制-脚本
-=======================================================
-1、脚本所在路径包含磁盘镜像centos6-template.img
-2、脚本所在路径包含配置模版template.xml
-*****************************************************
-#!/bin/bash
- 
-IMAGE_BASE_PATH=/data/kvm/images
- 
-VMNAME=$1
-VNC_PORT=$2
- 
- 
+```
+
+#### 3) 加载并启动虚机
+``` bash
+virsh define compute-node01.xml
+virsh start compute-node01
+```
+
+---
+
+### 2. VM复制-脚本化
+#### 1) 脚本形成的基本命令
+``` bash
+# 基础语句（基于自己设计的模板，见后面）
+# VM NAME修改语句
+NAME=controller01
+sed -i "s#%NAME%#$NAME#g" controller01.xml
+
+# UUID修改语句
 UUID=`uuidgen`
-IMAGE_PATH=${IMAGE_BASE_PATH}/${VMNAME}.img
+sed -i "s#%UUID%#$UUID#g" controller01.xml
+
+# 修改img文件语句
+IMAGE_PATH=/data/kvm/images/controller01.img  
+sed -i "s#%IMAGE_PATH%#$IMAGE_PATH#g" controller01.xml
+
+# 生成mac地址
 MAC=fa:95:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
 MAC2=52:54:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
- 
-cp -f ./template.xml ${VMNAME}.xml
-cp -f ./centos6-template.img ${IMAGE_PATH}
- 
-sed -i "s#%NAME%#$VMNAME#g" ${VMNAME}.xml
-sed -i "s#%UUID%#$UUID#g" ${VMNAME}.xml
-sed -i "s#%IMAGE_PATH%#$IMAGE_PATH#g" ${VMNAME}.xml
-sed -i "s#%MAC%#$MAC#g" ${VMNAME}.xml
-sed -i "s#%MAC2%#$MAC2#g" ${VMNAME}.xml
-sed -i "s#%VNC_PORT%#$VNC_PORT#g" ${VMNAME}.xml
- 
-virsh define ${VMNAME}.xml
-virsh start $VMNAME
- 
-VM复制-模版文件
-======================================================
+sed -i "s#%MAC%#$MAC#g" controller01.xml
+sed -i "s#%MAC2%#$MAC2#g" controller01.xml
+# 内部局域网的MAC地址多以52:54开头
+# 外部网络桥接的MAC地址多以fa:95开头
+
+# 修改vnc端口
+VNC_PORT=5998
+sed -i "s#%VNC_PORT%#$VNC_PORT#g" controller01.xml
+```
+
+#### 2) VM复制-模版文件
 template.xml
 - vnc接口
 - br0和br1双网卡
 - selinux关闭
-*************************************************************************
+
+``` xml
 <domain type='kvm' id='41'>
   <name>%NAME%</name>
   <uuid>%UUID%</uuid>
@@ -135,7 +121,7 @@ template.xml
     <emulator>/usr/libexec/qemu-kvm</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='%IMAGE_PATH%'/>
+      <source file='%IMAGE_FULL_PATH%'/>
       <backingStore/>
       <target dev='vda' bus='virtio'/>
       <alias name='virtio-disk0'/>
@@ -228,29 +214,47 @@ template.xml
     <imagelabel>system_u:object_r:svirt_image_t:s0:c421,c1001</imagelabel>
   </seclabel>
 </domain>
-*************************************************************************
- 
-VM复制-问题
-====================================================================
-错误：
-error: unsupported configuration: Unable to find security driver for model selinux
-解决办法：
-virsh edit domain
-**************************
-删掉seclable那一块的selinux设定
-**************************
- 
-问题描述：
-# virsh start compute-node01
-error: Failed to start domain compute-node01
-error: internal error: process exited while connecting to monitor: 2016-04-07T09:06:59.054829Z qemu-kvm: -chardev socket,id=charchannel0,path=/var/lib/libvirt/qemu/channel/target/domain-controller/org.qemu.guest_agent.0,server,nowait: Failed to bind socket: Permission denied
-2016-04-07T09:06:59.054904Z qemu-kvm: -chardev socket,id=charchannel0,path=/var/lib/libvirt/qemu/channel/target/domain-controller/org.qemu.guest_agent.0,server,nowait: chardev: opening backend "socket" failed
- 
-问题分析：
-看报错信息，知道是权限错误，具体的权限是/var/lib/libvirt/qemu下的权限不对
-网上查到信息，/etc/libvirt/qemu.conf中默认是qemu用户的权限，我的这个新虚机是拷贝原有的虚机而来，现在两台都无法启动
-把配置文件中的用户修改成root，依然无法启动
- 
-问题解决：
-## 后来发现原来虚机也有seclable配置，会使用selinux来防护权限
-## 关闭selinux，保证qemu.conf中配置的用户和/var/lib/libvirt/qemu目录权限一致即可启动虚机
+```
+> 这里是根据模板系统的xml进行了相应修改，增加了变量标识符：  
+%NAME%  
+%UUID%  
+%IMAGE_FULL_PATH%  
+%MAC%  
+%MAC2%  
+%VNC_PORT%  
+
+
+#### 3) VM复制-脚本
+- 脚本所在路径包含磁盘镜像template.img
+- 脚本所在路径包含配置模版template.xml
+
+``` bash
+#!/bin/bash
+
+IMAGE_DIR=/data/kvm/images
+XML_DIR=/etc/libvirt/qemu
+
+VMNAME=$1
+VNC_PORT=$2
+XML_FILE=$VMNAME
+IMAGE_FILE=$VMNAME
+
+UUID=`uuidgen`
+XML_FULL_PATH=$XML_DIR/${VMNAME}.xml
+IMAGE_FULL_PATH=${IMAGE_DIR}/${VMNAME}.img
+MAC=fa:95:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
+MAC2=52:54:$(dd if=/dev/urandom count=1 2>/dev/null |md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')
+
+cp -f ./template.xml ${XML_FULL_PATH}
+cp -f ./template.img ${IMAGE_FULL_PATH}
+
+sed -i "s#%NAME%#$VMNAME#g" ${XML_FULL_PATH}
+sed -i "s#%UUID%#$UUID#g" ${XML_FULL_PATH}
+sed -i "s#%IMAGE_FULL_PATH%#$IMAGE_FULL_PATH#g" ${XML_FULL_PATH}
+sed -i "s#%MAC%#$MAC#g" ${XML_FULL_PATH}
+sed -i "s#%MAC2%#$MAC2#g" ${XML_FULL_PATH}
+sed -i "s#%VNC_PORT%#$VNC_PORT#g" ${XML_FULL_PATH}
+
+virsh define ${XML_PATH}
+virsh start $VMNAME
+```
