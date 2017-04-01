@@ -1,5 +1,5 @@
 ---
-tilte: KVM 1.1.0 安装(centos7)
+title: KVM 1.1.0 安装(centos7)
 date: 2015-03-22 23:25:00
 categories: virtualization/kvm
 tags: [kvm,centos]
