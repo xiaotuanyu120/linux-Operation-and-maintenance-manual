@@ -25,12 +25,7 @@ vim /etc/libvirt/qemu/vm3-win-clone.xml
 **************************************************
     <graphics type='vnc' port='5900' autoport='yes' listen='0.0.0.0'>
 **************************************************
-# 同样也修改一下uuid（用"uuidgen"命令自动生成uuid值），
+# 同样也修改一下uuid（用"uuidgen"命令自动生成uuid值）和mac地址
 
-## 使用virt-edit来修改img镜像内的文件
-命令安装：yum install libguestfs-tools-c -y
-若是linux系统，记得去修改ifcfg-eth0网卡文件：
-o 修改HWADDR为和"--mac 52:54:00:34:11:57"一致
-o 修改IPADDR避免ip冲突
-
-## 因为这里是windows，启动vnc连接上去设置一下网络就好了
+## 因为这里是windows，启动vnc连接上去设置一下网络就好了
+```
