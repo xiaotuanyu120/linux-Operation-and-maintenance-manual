@@ -1,10 +1,10 @@
 ---
-title: network: 18.1.1 理解TCP三次握手和四次挥手
+title: network: 理解TCP三次握手和四次挥手
 date: 2016-08-02 08:36:00
 categories: linux/advance
 tags: [network,wireshark,tshark,tcp]
 ---
-### network: 18.1.1 理解TCP三次握手和四次挥手
+### network: 理解TCP三次握手和四次挥手
 
 ---
 

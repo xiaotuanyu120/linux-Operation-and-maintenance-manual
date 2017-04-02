@@ -1,10 +1,10 @@
 ---
-title: network: 1.3.0 vmware克隆Centos6后的网络设置
+title: network: vmware克隆Centos6后的网络设置
 date: 2015-11-06 10:28:00
 categories: linux/advance
 tags: [vmware,network]
 ---
-### network: 1.3.0 vmware克隆Centos6后的网络设置
+### network: vmware克隆Centos6后的网络设置
 
 ---
 

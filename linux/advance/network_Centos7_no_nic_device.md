@@ -1,10 +1,10 @@
 ---
-title: network: 1.4.0 Centos7 没有可用的网络设备
+title: network: Centos7 没有可用的网络设备
 date: 2015-06-18 13:55:00
 categories: linux/advance
 tags: [linux,network,centos7]
 ---
-### network: 1.4.0 Centos7 没有可用的网络设备
+### network: Centos7 没有可用的网络设备
 
 ---
 
