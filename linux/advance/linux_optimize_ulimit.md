@@ -1,23 +1,20 @@
 ---
-title: 39.1: 调优-ulimit
-date: Tuesday, 23 August 2016
-categories: 3:04 PM
----
- 
----
-title: ulimit调优
-date: 2016-08-23 17:15:00
-categories: linux
+title: linux: ulimit优化
+date: 2016-08-23 03:04:00
+categories: linux/advance
 tags: [linux,ulimit]
 ---
-## ulimit简介
-linux系统有文件句柄限制的概念，其配置就是ulimit来管理的。
- 
+### linux: ulimit优化
+
+---
+
+### 0. ulimit简介
+linux系统有文件句柄限制的概念，其配置就是ulimit来管理的。  
 这个限制的含义就是，linux使用其来对shell进程及其子进程使用资源进行的一种限制。
- 
-<!--more-->
- 
-**ulimit信息查看**
+
+---
+
+### 1. ulimit信息查看
 ``` bash
 # 查看所有信息
 ulimit -a
@@ -37,30 +34,34 @@ cpu time               (seconds, -t) unlimited
 max user processes              (-u) 3876
 virtual memory          (kbytes, -v) unlimited
 file locks                      (-x) unlimited
- 
+
 # 查看针对当前用户的软限制
 ulimit -Sn
 1024
- 
+
 # 查看针对当前用户的硬限制
 ulimit -Hn
 1024
 ```
 其中open files对应的配置数目是最大打开文件数目，默认是1024，生产环境下，这个参数会影响到某些程序的并发数量，例如mysql。
- 
-**系统总文件句柄查看**
+
+---
+
+### 2. 系统总文件句柄查看
 ``` bash
 # 查看系统总的文件句柄限制
-cat /proc/sys/fs/file-max 
+cat /proc/sys/fs/file-max
 97984
- 
+
 # 查看目前系统使用的文件句柄数量
-cat /proc/sys/fs/file-nr 
+cat /proc/sys/fs/file-nr
 512 0 97984
 ```
- 
-## ulimit配置
-**通过配置文件来修改**
+
+---
+
+### 3. ulimit配置
+#### 1) 通过配置文件来修改
 ``` bash
 # 修改/etc/security/limits.conf
 ********************
@@ -69,16 +70,16 @@ cat /proc/sys/fs/file-nr
 ********************
 ## 重点需要注意 ##
 # 后来发现编辑此文件并没有改变ulimit -a 中的open files值，原来是因为，当我们用'*'入口来配置时，会被/etc/security/limits.d/90-nproc.conf中的配置所覆盖，此时只需要去更改此默认值就可以了
- 
- 
+
+
 # limits.conf实际是linux pam中的pam_limits.so的配置文件，针对于单个会话
 # 编辑/etc/pam.d/login
 ********************
 session    required     /lib64/security/pam_limits.so
 ********************
 ```
- 
-limits.conf的详细说明
+
+#### 2) limits.conf的详细说明
 ``` bash
 # /etc/security/limits.conf
 #
@@ -120,7 +121,7 @@ limits.conf的详细说明
 #
 #<domain>      <type>  <item>         <value>
 #
- 
+
 #*               soft    core            0
 #*               hard    rss             10000
 #@student        hard    nproc           20
@@ -128,11 +129,11 @@ limits.conf的详细说明
 #@faculty        hard    nproc           50
 #ftp             hard    nproc           0
 #@student        -       maxlogins       4
- 
+
 # End of file
 ```
- 
-**通过ulimit命令来修改**
+
+#### 3) 通过ulimit命令来修改
 ``` bash
 # 将ulimit命令添加到rc.local中
 echo "ulimit -SHn 65535" >> /etc/rc.local
