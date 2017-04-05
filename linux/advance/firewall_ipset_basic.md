@@ -9,7 +9,9 @@ tags: [linux,iptables,ipset,firewall]
 ---
 
 ### 1. ipset安装
+``` bash
 yum install ipset -y
+```
 
 ---
 
