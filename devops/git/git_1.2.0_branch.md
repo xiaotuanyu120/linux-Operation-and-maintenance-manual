@@ -1,5 +1,5 @@
 ---
-tile: git: 1.2.0 分支
+title: git: 1.2.0 分支
 date: 2016-03-01 16:03:00
 categories: devops/git
 tags: [git,branch]
