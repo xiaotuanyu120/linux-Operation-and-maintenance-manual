@@ -1,10 +1,10 @@
 ---
-title: gitlab 1.1.0 安装(centos6)
+title: gitlab: 1.1.0 安装(centos6)
 date: 2016-08-26 15:19:00
 categories: devops/git
 tags: [devops,gitlab,git]
 ---
-### gitlab 1.1.0 安装(centos6)
+### gitlab: 1.1.0 安装(centos6)
 
 ---
 

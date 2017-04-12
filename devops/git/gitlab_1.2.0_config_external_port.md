@@ -1,10 +1,10 @@
 ---
-title: gitlab 1.2.0 配置gitlab访问端口
+title: gitlab: 1.2.0 配置gitlab访问端口
 date: 2017-03-09 14:05:00
 categories: devops/git
 tags: [gitlab]
 ---
-### gitlab 1.2.0 配置gitlab访问端口
+### gitlab: 1.2.0 配置gitlab访问端口
 
 ---
 

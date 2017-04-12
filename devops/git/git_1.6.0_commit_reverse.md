@@ -1,10 +1,10 @@
 ---
-title: git: 撤销操作
+title: git: 1.6.0 撤销操作
 date: 2016-12-09 18:32:00
 categories: devops/git
 tags: [git,reverse]
 ---
-### git: 撤销操作
+### git: 1.6.0 撤销操作
 
 ---
 
