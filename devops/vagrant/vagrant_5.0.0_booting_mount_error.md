@@ -19,6 +19,7 @@ tags: [devops,vagrant]
 
 ### 2. 解决办法
 ``` bash
+yum install gcc make kernel-devel kernel-headers
 cd /opt/VBoxGuestAdditions-5.0.26/init
 sudo ./vboxadd setup
 ```
