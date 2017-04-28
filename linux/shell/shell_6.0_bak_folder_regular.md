@@ -1,8 +1,8 @@
 ---
 title: shell脚本：控制特殊名称的目录最大为3个
 date: 2016-07-26 10:37:00
-categories: shell
-tags: shell
+categories: linux/shell
+tags: [shell]
 ---
 ### 0. 需求
 控制目标目录中以20开头的子目录不超过10个  
