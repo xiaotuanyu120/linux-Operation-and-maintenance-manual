@@ -1,10 +1,10 @@
 ---
-title: coreos 2.2.0 pxe引导coreos启动
+title: coreos 2.2.0 pxe引导coreos启动(cloudinit)
 date: 2017-04-28 13:08:00
 categories: virtualization/container
 tags: [container,coreos,pxe]
 ---
-### coreos 2.2.0 pxe引导coreos启动
+### coreos 2.2.0 pxe引导coreos启动(cloudinit)
 
 ---
 

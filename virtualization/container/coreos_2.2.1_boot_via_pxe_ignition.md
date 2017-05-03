@@ -1,10 +1,10 @@
 ---
-title: coreos 2.2.0 ignition+pxe安装coreos集群
+title: coreos 2.2.1 pxe引导coreos启动(ignition)
 date: 2017-04-28 13:08:00
 categories: virtualization/container
-tags: [container,coreos,ignition，pxe]
+tags: [container,coreos,ignition,pxe]
 ---
-### coreos 2.2.0 ignition+pxe安装coreos集群
+### coreos 2.2.1 pxe引导coreos启动(ignition)
 
 ---
 
