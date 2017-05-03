@@ -24,17 +24,17 @@ allow booting;
 allow bootp;
 ddns-update-style interim;
 ignore client-updates;
-subnet 172.17.8.0 netmask 255.255.255.0 {
+subnet 192.168.33.0 netmask 255.255.255.0 {
     option subnet-mask 255.255.255.0;
-    option broadcast-address 172.17.8.255;
-    range dynamic-bootp 172.17.8.200 172.17.8.240;
-    next-server 172.17.8.10;
+    option broadcast-address 192.168.33.255;
+    range dynamic-bootp 192.168.33.200 192.168.33.240;
+    next-server 192.168.33.50;
     filename "pxelinux.0";
 }
 *************************************************
 ```
-> centos6本机ip为172.17.8.10  
-dhcp ip范围为172.17.8.200-172.17.8.240
+> centos6本机ip为192.168.33.50  
+dhcp ip范围为192.168.33.200-192.168.33.240
 
 #### 2) tftp-server准备文件
 ``` bash
@@ -61,14 +61,14 @@ label coreos
   menu default
   kernel coreos_production_pxe.vmlinuz
   initrd coreos_production_pxe_image.cpio.gz
-  append coreos.first_boot=1 coreos.config.url=http://172.17.8.10/pxe-config.ign
+  append coreos.first_boot=1 coreos.config.url=http://192.168.33.50/pxe.ign
 *************************************************
 ```
 > coreos.config.url配置项里的文件是ignition文件，后面会提到
 
 #### 4) 配置ignition
 ``` bash
-vim /usr/share/nginx/html/pxe-config.ign
+vim /usr/share/nginx/html/pxe.ign
 *************************************************
 {
   "ignition": {
@@ -76,14 +76,7 @@ vim /usr/share/nginx/html/pxe-config.ign
     "config": {}
   },
   "storage": {},
-  "systemd": {
-    "units": [
-      {
-        "name": "etcd2.service",
-        "enable": true
-      }
-    ]
-  },
+  "systemd": {},
   "networkd": {},
   "passwd": {
     "users": [
@@ -98,7 +91,7 @@ vim /usr/share/nginx/html/pxe-config.ign
 }
 *************************************************
 ```
-> 配置了etcd2服务和core用户的ssh认证，其中key信息请提供ssh公钥内容
+> 配置了core用户的ssh认证，其中key信息请提供ssh公钥内容
 
 #### 5) 启动nginx、dhcp、xinetd、tftp
 ``` bash
@@ -107,3 +100,5 @@ service xinetd start
 chkconfig tftp on
 service nginx start
 ```
+> 接下来就可以从pxe启动机器了，启动完毕就会是coreos的登陆界面  
+我们可以使用ssh core@ip连接coreos进行操作了
