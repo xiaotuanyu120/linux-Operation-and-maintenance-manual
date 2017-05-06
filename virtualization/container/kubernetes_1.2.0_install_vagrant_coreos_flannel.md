@@ -1,10 +1,10 @@
 ---
-title: kubernetes 1.2.0 裸机离线安装(coreos,flannel)
+title: kubernetes 1.2.0 vagrant+coreos(flannel)
 date: 2017-03-19 14:30:00
 categories: virtualization/container
 tags: [container,docker,kubernetes,coreos,flannel]
 ---
-### kubernetes 1.2.0 裸机离线安装(coreos,flannel)
+### kubernetes 1.2.0 vagrant+coreos(flannel)
 
 ---
 
