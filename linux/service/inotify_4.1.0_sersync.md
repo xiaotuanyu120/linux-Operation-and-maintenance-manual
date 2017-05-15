@@ -175,3 +175,8 @@ watch path is: /home/webserver
 
 # 从启动输出中可以看出,其实sersync调用的就是rsync命令
 ```
+
+---
+
+### 3. 如何同步多个local_path
+多写几个配置文件，每个配置文件配置不同的local_path，然后多起几个进程（指定不同配置文件）
