@@ -17,20 +17,21 @@ tags: [etcd,container,coreos]
 #### 2) 系统环境
 hostname|ip|OS|usage
 ---|---|---|---
-coreos-01|172.17.8.101|coreos 1353.7.0|discovery service
-coreos-02|172.17.8.102|coreos 1353.7.0|infra0
-coreos-03|172.17.8.103|coreos 1353.7.0|infra1
-coreos-04|172.17.8.104|coreos 1353.7.0|infra2
+core-01|172.17.8.101|coreos 1353.7.0|discovery service
+core-02|172.17.8.102|coreos 1353.7.0|infra0
+core-03|172.17.8.103|coreos 1353.7.0|infra1
+core-04|172.17.8.104|coreos 1353.7.0|infra2
 
 #### 3) discovery介绍
 etcd的discovery服务只能用于集群引导阶段，不可以用于runtime修改配置或者集群监控中。
 一个discovery的URL定义一个独一无二的etcd集群，无法重用于生成另外一个etcd集群。
 
 etcd提供两种discovery服务：  
-- 公用etcd discovery服务, 通过访问"https://discovery.etcd.io/new?size=3"获取discovery URL
+- 公用etcd discovery服务, 通过访问`https://discovery.etcd.io/new?size=3`获取discovery URL
 - 自建etcd discovery服务, 使用现存的etcd服务来生成新etcd集群bootstrap过程需要的discovery URL
 
 ---
+
 ### 1. 使用自建的discovery服务来bootstrap新etcd集群
 #### 1) 创建自建的discovery服务
 ``` bash
@@ -38,7 +39,7 @@ etcd2 --name etc-server \
   --listen-client-urls http://172.17.8.101:2379,http://localhost:2379 \
   --advertise-client-urls http://172.17.8.101:2379
 
-# 在coreos-01创建一个URL
+# 在core-01创建一个URL
 UUID=$(uuidgen)
 curl -X PUT http://172.17.8.101:2379/v2/keys/_etcd/registry/${UUID}/_config/size -d value=3
 {"action":"set","node":{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff/_config/size","value":"3","modifiedIndex":2038,"createdIndex":2038}}
@@ -70,7 +71,7 @@ etcd2 --name infra2 --initial-advertise-peer-urls http://172.17.8.104:2380 \
 ```
 > 根据文章开头的issue链接内容所述，官方文档上的命令是有误的，我们应该使用etcd2命令来启动服务。etcd命令是version1版本，没有--listen-peer-urls等这些选项。
 
-#### 3) 在coreos-01检查节点信息
+#### 3) 在core-01检查节点信息
 ``` bash
 curl -X GET http://172.17.8.101:2379/v2/keys/_etcd/registry/${UUID}/_config/size
 {"action":"get","node":{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff/_config/size","value":"3","modifiedIndex":2038,"createdIndex":2038}}
@@ -79,7 +80,7 @@ curl -X GET http://172.17.8.101:2379/v2/keys/_etcd/registry/${UUID}/
 {"action":"get","node":{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff","dir":true,"nodes":[{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff/325be18af4ccbb60","value":"infra0=http://172.17.8.102:2380","modifiedIndex":2084,"createdIndex":2084},{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff/7187606a0f15cdd1","value":"infra1=http://172.17.8.103:2380","modifiedIndex":2129,"createdIndex":2129},{"key":"/_etcd/registry/6cae8517-12ad-4dd8-a247-02838f82f4ff/82856cded7eb183e","value":"infra2=http://172.17.8.104:2380","modifiedIndex":2135,"createdIndex":2135}],"modifiedIndex":2038,"createdIndex":2038}}
 ```
 
-#### 4) 在coreos-02(或其他两个节点)检查etcd集群信息
+#### 4) 在core-02(或其他两个节点)检查etcd集群信息
 ``` bash
 etcdctl member list
 325be18af4ccbb60: name=infra0 peerURLs=http://172.17.8.102:2380 clientURLs=http://172.17.8.102:2379 isLeader=false
