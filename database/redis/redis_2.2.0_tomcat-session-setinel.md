@@ -1,7 +1,7 @@
 ---
 title: redis: 2.2.0 redis集群实现session共享
 date: 2016-09-29 10:42:00
-categories: linux/service
+categories: database/redis
 tags: [redis,session,tomcat,nginx]
 ---
 ### redis: 2.2.0 redis集群实现session共享

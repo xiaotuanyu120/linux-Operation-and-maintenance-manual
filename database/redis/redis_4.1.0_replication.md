@@ -1,8 +1,8 @@
 ---
 title: redis: 4.1.0 主从配置
 date: 2016-09-28 09:14:00
-categories: linux/service
-tags: [redis,replication,linux]
+categories: database/redis
+tags: [redis,replication,database]
 ---
 ### redis: 4.1.0 主从配置
 

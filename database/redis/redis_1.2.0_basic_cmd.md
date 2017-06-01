@@ -1,8 +1,8 @@
 ---
 title: redis: 1.2.0 基本管理命令
 date: 2016-11-14 13:45:00
-categories: linux/service
-tags: [linux,redis]
+categories: database/redis
+tags: [database,redis]
 ---
 ### redis: 1.2.0 基本命令
 

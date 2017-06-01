@@ -1,7 +1,7 @@
 ---
 title: redis: 1.2.1 将redis执行结果输出到文件
 date: 2017-05-25 17:43:00
-categories: linux/service
+categories: database/redis
 tags: [linux,redis]
 ---
 ### redis: 1.2.1 将redis执行结果输出到文件

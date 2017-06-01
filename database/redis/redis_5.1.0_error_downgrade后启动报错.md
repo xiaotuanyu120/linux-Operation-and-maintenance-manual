@@ -1,7 +1,7 @@
 ---
 title: redis: 5.1.0 错误-降级后启动报错
 date: 2016-09-28 11:06:00
-categories: linux/service
+categories: database/redis
 tags: [redis,error]
 ---
 ### redis：5.1.0 错误-降级后启动报错

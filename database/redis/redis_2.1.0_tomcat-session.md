@@ -1,7 +1,7 @@
 ---
 title: redis: 2.1.0 tomcat-session共享
 date: 2016-09-27 12:59:00
-categories: linux/service
+categories: database/redis
 tags: [redis,session,tomcat,nginx]
 ---
 ### redis: 2.1.0 tomcat-session共享
