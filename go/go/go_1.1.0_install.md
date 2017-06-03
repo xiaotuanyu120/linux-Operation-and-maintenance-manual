@@ -24,6 +24,7 @@ tar -C /usr/local -xzf go1.8.linux-amd64.tar.gz
 vim /etc/profile
 ****************************************
 export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$(go env GOPATH)
 ****************************************
 ```
 > go默认使用/usr/local/go作为GOROOT变量的值  
@@ -32,5 +33,6 @@ export PATH=$PATH:/usr/local/go/bin
 ****************************************
 export GOROOT=$HOME/go1.X
 export PATH=$PATH:$GOROOT/bin
+export GOPATH=$(go env GOPATH)
 ****************************************
 ```
