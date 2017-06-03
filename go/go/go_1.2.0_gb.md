@@ -1,5 +1,5 @@
 ---
-title: go 1.2.0 build tools-gb
+title: GO 1.2.0 build tools-gb
 date: 2017-03-28 14:21:00
 categories: go/go
 tags: [go,gb]
