@@ -43,7 +43,7 @@ vim /etc/httpd/conf.d/web.git.conf
 ```
 
 #### 3) 测试访问
-![测试访问](/static/images/devops-git-git1.3.0.png)
+![测试访问](/static/images/docs/devops/git/devops-git-git1.3.0.png)
 
 ---
 
