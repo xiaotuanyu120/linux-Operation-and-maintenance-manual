@@ -2,7 +2,7 @@
 title: svn: 1.2.1 svn-tools
 date: 2017-06-15 15:10:00
 categories: linux/service
-tags: [svn]
+tags: [svn,svnauthz-validate,svnauthz]
 ---
 ### svn: 1.2.1 svn-tools
 
