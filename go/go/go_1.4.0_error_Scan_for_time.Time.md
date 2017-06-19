@@ -14,7 +14,7 @@ tags: [go,sql]
 sql: Scan error on column index 10: unsupported Scan, storing driver.Value type []uint8 into type *time.Time
 ```
 sql报错相关go语句
-``` golang
+``` go
 // 数据库记录类型
 type server struct {
 	UUID         string
@@ -115,7 +115,7 @@ for rows.Next() {
 
 ### 2. 解决方案
 https://github.com/Go-SQL-Driver/MySQL/issues/9
-``` golang
+``` go
 // 按照issues里面的提示修改db连接语句，增加?parseTime=true
 db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/assets?parseTime=true")
 ```
