@@ -9,7 +9,7 @@ tags: [go,iterate,struct]
 ---
 
 ### 1. 使用reflect遍历struct的fields
-``` golang
+``` go
 package main
 
 import (

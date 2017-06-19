@@ -14,7 +14,7 @@ tags: [go,sql]
 sql: Scan error on column index 10: unsupported Scan, storing driver.Value type []uint8 into type *time.Time
 ```
 sql报错相关go语句
-``` golang
+``` go
 // 数据库记录类型
 type server struct {
 	UUID         string
