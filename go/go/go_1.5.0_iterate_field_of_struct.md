@@ -52,6 +52,7 @@ func main() {
 	}
 }
 ```
+> 我们在`s := reflect.ValueOf(&ser).Elem()`中使用了`Elem()`，因为我们传入的是`&ser`，同时也可以使用`s := reflect.ValueOf(ser)`
 
 ---
 
