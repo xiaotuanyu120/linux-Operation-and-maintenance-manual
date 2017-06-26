@@ -272,6 +272,7 @@ CDH-5.11.1-1.cdh5.11.1.p0.4-el6.parcel  CDH-5.11.1-1.cdh5.11.1.p0.4-el6.parcel.s
 #### 1) 官方英文文档
 - [主要参考的官文 pathB](https://www.cloudera.com/documentation/enterprise/latest/topics/cm_ig_install_path_b.html#cmig_topic_6_6_1)
 - [mysql 安装配置官文](https://www.cloudera.com/documentation/enterprise/latest/topics/cm_ig_mysql.html)
+
 #### 2) 其他文档
 - [CDH5安装指南-图文](http://www.jianshu.com/p/57179e03795f)
 - [中国大数据cloudera](http://www.thebigdata.cn/Hadoop/29063.html)
