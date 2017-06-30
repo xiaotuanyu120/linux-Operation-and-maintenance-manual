@@ -175,6 +175,11 @@ gpgcheck = 1
 yum install oracle-j2sdk1.7
 yum install cloudera-manager-daemons cloudera-manager-server
 ```
+> 或者可以使用非生产环境下的手动安装(pathA)
+- 下载http://archive.cloudera.com/cm5/redhat/6/x86_64/cm/5.11.1/RPMS/x86_64/下的rpm包安装
+- 下载http://archive.cloudera.com/cm5/installer/5.11.1/下的安装二进制文件执行安装  
+会自动创建postgresql数据库
+
 #### 3) 配置数据库连接
 `vim /etc/cloudera-scm-server/db.properties`
 ```
