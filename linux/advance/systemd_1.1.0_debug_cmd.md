@@ -2,7 +2,7 @@
 title: systemd 1.1.0 排查错误使用的命令
 date: 2017-07-31 10:44:00
 categories: linux/advance
-tag: [systemd,debug]
+tags: [systemd,debug]
 ---
 ### systemd 1.1.0 排查错误使用的命令
 
