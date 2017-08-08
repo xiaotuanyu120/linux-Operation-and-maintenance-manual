@@ -30,11 +30,11 @@ flannel给kubernetes提供了网络支持（可选，也有其他选择，详细
 #### 3) 节点规划
 hostname|ip address|service|comment
 ---|---|---|---
-centos-master|192.168.33.30|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,flannel,docker,kubelet,kube-proxy|主节点
+centos-master|192.168.33.30|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,flannel,docker|主节点
 centos-minion-1|192.168.33.31|flannel,docker,kubelet,kube-proxy|node 1
 centos-minion-2|192.168.33.32|flannel,docker,kubelet,kube-proxy|node 2
 centos-minion-3|192.168.33.33|flannel,docker,kubelet,kube-proxy|node 3
-> 实际上kubernetes的master节点也可以当作minion节点（很多其他教程上严格区分了master和minion节点）  
+> 实际上kubernetes的master节点也可以当作minion节点  
 所有节点上都需要装flannel(网络),docker  
 主节点上装kubernetes的master服务、etcd  
 minion节点上装kubelet,kube-proxy
@@ -61,8 +61,7 @@ echo "192.168.33.30  centos-master
 ### 2. 规划和准备
 #### 0) 规划
 - 网络模型：使用flannel封装kubernetes的pod网络
-- 软件分布：根据节点规划中的描述，我们需要在所有节点上部署docker,kubelet,kube-proxy,flannel，而在master节点上需要额外部署etcd,kube-apiserver,kube-controller-manager,kube-scheduler。
-> 这里我们在master节点上也部署了minion节点需要的服务   
+- 软件分布：根据节点规划中的描述，我们需要在所有节点上部署docker,flannel，在所有minion节点增加部署kubelet,kube-proxy，而在master节点上需要额外部署etcd,kube-apiserver,kube-controller-manager,kube-scheduler   
 
 #### 1) 配置kubernetes环境变量（master节点）
 ``` bash
@@ -89,7 +88,7 @@ ll -h kubernetes/*/*-linux-amd64.tar.gz
 # 拷贝二进制文件到server端
 mkdir -p /usr/local/kubernetes/{bin,security}
 tar zxvf kubernetes/server/kubernetes-server-linux-amd64.tar.gz
-cp kubernetes/server/bin/{kube-apiserver,kube-scheduler,kube-controller-manager,kubectl,kubelet,kube-proxy} /usr/local/kubernetes/bin/
+cp kubernetes/server/bin/{kube-apiserver,kube-scheduler,kube-controller-manager,kubectl} /usr/local/kubernetes/bin/
 chmod 750 /usr/local/kubernetes/bin/*
 
 # 拷贝二进制文件到minion端
@@ -136,7 +135,73 @@ cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes
 ---
 
 ### 3. 配置和安装master节点
-#### 1) 部署etcd去存储kubernetes
+#### 1) 部署docker
+安装可参照[docker yum安装](http://linux.xiao5tech.com/virtualization/docker/docker_1.1.0_installation_centos7.html)和[docker 二进制安装](http://linux.xiao5tech.com/virtualization/docker/docker_1.1.1_installation_binary.html)，也可以使用发行版自己安装的docker版本(只要不是太旧)。
+> 二进制安装方法里面开启了selinux，这里可以关闭
+
+#### 2) 部署etcd去存储kubernetes
+```
+mkdir -p /var/lib/etcd
+export HostIP="192.168.33.30"
+docker run -d -v /var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \
+ --name etcd quay.io/coreos/etcd:v2.3.8 \
+ -name etcd0 \
+ -advertise-client-urls http://${HostIP}:2379,http://${HostIP}:4001 \
+ -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+ -initial-advertise-peer-urls http://${HostIP}:2380 \
+ -listen-peer-urls http://0.0.0.0:2380 \
+ -initial-cluster-token etcd-cluster-1 \
+ -initial-cluster etcd0=http://${HostIP}:2380 \
+ -initial-cluster-state new
+```
+> 为了测试，在主节点上只启动一个节点的etcd
+
+#### 3) 启动kubernets Apiserver, Controller Manager, 和 Scheduler服务
+
+#### 3) 部署flannel
+``` bash
+# 获取最新的etcd二进制包（主要是为了在master节点上直接etcdctl命令）
+wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
+tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
+cp etcd-v3.2.4-linux-amd64/etcdctl /usr/bin
+# 配置flannel的网络配置
+etcdctl --endpoints http://192.168.33.30:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
+
+wget https://github.com/coreos/flannel/releases/download/v0.8.0/flannel-v0.8.0-linux-amd64.tar.gz
+mkdir flannel
+tar zxvf flannel-v0.8.0-linux-amd64.tar.gz -C flannel
+cp flannel/flanneld /usr/bin
+mkdir -p /usr/libexec/flannel
+cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
+cat > /etc/sysconfig/flanneld << EOF
+FLANNELD_PUBLIC_IP="192.168.33.30"
+FLANNELD_ETCD_ENDPOINTS="http://192.168.33.30:2379"
+FLANNELD_ETCD_PREFIX="/kube-centos/network"
+# Any additional options that you want to pass
+FLANNELD_OPTIONS=""
+EOF
+
+cat > /usr/lib/systemd/system/flannel.service << EOF
+[Unit]
+Description=Flanneld overlay address etcd agent
+After=network.target
+After=network-online.target
+Wants=network-online.target
+After=etcd.service
+Before=docker.service
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/sysconfig/flanneld
+ExecStart=/usr/bin/flanneld \$FLANNELD_OPTIONS
+ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=docker.service
+EOF
+```
 
 ### 4. 配置和安装基本软件
 1. 在minion节点上操作（包含master节点，因为我们将其作为一个minion节点来对待）
