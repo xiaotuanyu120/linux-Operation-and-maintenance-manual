@@ -127,7 +127,7 @@ CONF="/etc/redis/sentinel.conf"
 # 修改启动命令为后台启动
 $EXEC $CONF &
 sleep 1
-echo `ps aux |grep redis-sentinel|grep -v grep|awk '{print $2}'` > $PIDFILE
+echo `ps aux |grep redis-sentinel|grep -v grep|grep ${REDISPORT}|awk '{print $2}'` > $PIDFILE
 
 # 在停止命令后面加上删除pidfile的动作
 echo "Redis stopped"

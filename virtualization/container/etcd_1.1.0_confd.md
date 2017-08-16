@@ -12,69 +12,100 @@ tags: [container,coreos,etcd,confd]
 [confd安装官方文档](https://github.com/kelseyhightower/confd/blob/master/docs/installation.md)  
 [confd quick-start-guide](https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md)  
 
-假设我们已经使用coreos启动了etcd服务
-``` bash
-# etcd就是coreos开发的一个服务，默认集成在coreos中
-systemctl enable etcd
-systemctl start etcd
+---
 
-# 检查监听端口
-netstat -lnpt|grep etcd
-tcp        0      0 172.17.8.101:7001       0.0.0.0:*               LISTEN      1094/etcd2
-tcp        0      0 172.17.8.101:2380       0.0.0.0:*               LISTEN      1094/etcd2
-tcp6       0      0 :::4001                 :::*                    LISTEN      1094/etcd2
-tcp6       0      0 :::2379                 :::*                    LISTEN      1094/etcd2
-```
+### 1. 安装etcd
+etcd的安装参照[centos6安装etcd集群](http://linux.xiao5tech.com/virtualization/container)
 
-此处我们使用coreos+etcd来提供etcd配置中心服务，然后使用centos+confd来作为客户端
+此处我们使用centos+etcd来提供etcd配置中心服务，然后使用centos+confd来作为客户端，另外etcd上采取ssl认证
 
 ---
 
-### 1. 安装confd
-#### 1) 准备confd需要的环境
-因为confd是使用go语言开发，所以需要go环境，具体安装参照[go环境安装](https://golang.org/doc/install)和[gb工具安装](https://getgb.io/docs/install/)
-
-#### 2) confd安装
+### 2. 安装confd
+#### 1) 安装confd
 ``` bash
-wget https://github.com/kelseyhightower/confd/archive/v0.11.0.tar.gz
-tar zxf v0.11.0.tar.gz
-cd confd-0.11.0
-./build
-./install
+wget https://github.com/kelseyhightower/confd/releases/download/v0.12.0/confd-0.12.0-linux-amd64
+mv confd-0.12.0-linux-amd64 /usr/local/bin/confd
+export PATH=$PATH:/usr/local/bin
 ```
 
 #### 3) 创建confd配置模板
 ``` bash
 mkdir -p /etc/confd/{conf.d,templates}
 
-vim /etc/confd/conf.d/myconfig.toml
+vim /etc/confd/conf.d/myapp-nginx.toml
 *************************************
 [template]
-src = "myconfig.conf.tmpl"
-dest = "/tmp/myconfig.conf"
+prefix = "/myapp"
+src = "nginx.conf.tmpl"
+dest = "/tmp/myapp.conf"
+owner = "nginx"
+mode = "0644"
 keys = [
-    "/test",
+  "/subdomain",
+  "/upstream",
 ]
+check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
+reload_cmd = "/usr/sbin/service nginx reload"
 *************************************
 
-vim /etc/confd/templates/myconfig.conf.tmpl
+vim /etc/confd/templates/nginx.conf.tmpl
 *************************************
-[myconfig]
-database_url = \{\{getv "/test"}}
+upstream {{getv "/subdomain"}} {
+{{range getvs "/upstream/*"}}
+    server {{.}};
+{{end}}
+}
+
+server {
+    server_name  {{getv "/subdomain"}}.example.com;
+    location / {
+        proxy_pass        http://{{getv "/subdomain"}};
+        proxy_redirect    off;
+        proxy_set_header  Host             $host;
+        proxy_set_header  X-Real-IP        $remote_addr;
+        proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+   }
+}
 *************************************
 ```
-> 转义符是因为flask使用的jinja模板问题，必须要转义，实际不需要转义符
+> 转义符是因为flask使用的jinja模板问题，必须要转义，实际不需要转义符，实际环境中记得一定要去掉两个转义符
 
 #### 4) etcd上设置key
 ``` bash
-etcdctl set /test test2
+./etcdctl --ca-file ./ca.pem --cert-file ./client.pem --key-file ./client-key.pem --endpoint https://69.172.86.20:2379 set /myapp/subdomain myapp
+./etcdctl --ca-file ./ca.pem --cert-file ./client.pem --key-file ./client-key.pem --endpoint https://69.172.86.20:2379 set /myapp/upstream/app1 192.168.0.1:80
+./etcdctl --ca-file ./ca.pem --cert-file ./client.pem --key-file ./client-key.pem --endpoint https://69.172.86.20:2379 set /myapp/upstream/app2 192.168.0.2:80
 ```
+> 这里特别需要注意的是，目前官方分支的confd不支持etcd api v3，所以我们需要使用v2的api来储存值，否则confd目前(<=0.12.0)是无法使用的。
 
-#### 5) 使用confd生成配置文件
+> 如果不采用认证的话，不需要指定各种认证文件
+
+#### 5) 手动执行confd生成配置文件
 confd有两种生成配置文件的方式，一种是使用daemon，一种是手动一次性获取，这里为了演示我们使用手动一次性获取方式
 ``` bash
-confd -onetime -backend etcd -node http://172.17.8.101:4001
-cat /tmp/myconfig.conf
-[myconfig]
-database_url = test2
+confd -onetime -backend etcd -client-ca-keys ./ca.pem -client-cert ./client.pem -client-key ./client-key.pem -node https://69.172.86.20:2379
+cat /tmp/myapp.conf
+upstream myapp {
+
+    server 192.168.0.1:80;
+
+    server 192.168.0.2:80;
+
+}
+
+server {
+    server_name  myapp.example.com;
+    location / {
+        proxy_pass        http://myapp;
+        proxy_redirect    off;
+        proxy_set_header  Host             $host;
+        proxy_set_header  X-Real-IP        $remote_addr;
+        proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+   }
+}
+
 ```
+> 如果etcd没配置认证的话，可以去掉所有认证文件选项，另外-backend默认是etcd，也可以省略。
+
+> 想要持续后台运行，可执行 `confd -interval 10` 取代`confd -onetime`
