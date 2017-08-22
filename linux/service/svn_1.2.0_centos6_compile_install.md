@@ -101,18 +101,4 @@ svnserve -d -r /var/svn/repos
 ```
 
 #### 3) svn配置说明
-执行创建项目命令之后，会在svndata(举例项目目录为svndata)中产生初始化的相应文件，其中：
-- passwd，用户及密码文件
-  > ```
-  [users]
-  admin=123
-  # 语法是<code>admin=123</code>，用户是admin，密码是123
-  ```
-- authz，权限控制文件
-  > ```
-  # "[]"中是svn资源路径，下面跟着权限配置admin=rw
-  [devgroup:/B2B/bw_web/WebRoot]
-  @bw_web = rw
-  # "@"是用户组的意思
-  ```
-- conf/svnserve.conf，svn配置文件
+执行创建项目命令之后，会在svndata(举例项目目录为svndata)中产生初始化的相应文件，配置说明见[配置svn](http://linux.xiao5tech.com/linux/service/svn_1.3.0_configuration_basic.html)
