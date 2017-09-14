@@ -10,7 +10,11 @@ tags: [linux,iptables,ipset,firewall]
 
 ### 1. ipset安装
 ``` bash
+# centos6
 yum install ipset -y
+
+# centos7
+yum install ipset-service -y
 ```
 
 ---
@@ -35,6 +39,7 @@ ipset flush set_name
 ---
 
 ### 3. ipset ip集合的持久化
+**centos6**
 ``` bash
 # 启动ipset服务
 service ipset start
@@ -48,10 +53,17 @@ ipset list
 ipset list myset
 ```
 
+**centos7**
+``` bash
+systemctl start ipset
+ipset save
+systemctl restart ipset
+```
+
 ---
 
 ### 4. iptables中添加ipset规则
 ``` bash
 # 增加iptables规则
-iptables -I INPUT -p tcp -m set --match-set myset src --destination-port 443 -j ACCEPT
+-A INPUT -p tcp -m set --match-set myset src --destination-port 443 -j ACCEPT
 ```
