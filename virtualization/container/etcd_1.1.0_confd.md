@@ -45,22 +45,22 @@ keys = [
   "/subdomain",
   "/upstream",
 ]
-check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
+check_cmd = "/usr/sbin/nginx -t -c \{\{.src}}"
 reload_cmd = "/usr/sbin/service nginx reload"
 *************************************
 
 vim /etc/confd/templates/nginx.conf.tmpl
 *************************************
-upstream {{getv "/subdomain"}} {
-{{range getvs "/upstream/*"}}
-    server {{.}};
-{{end}}
+upstream \{\{getv "/subdomain"}} {
+\{\{range getvs "/upstream/*"}}
+    server \{\{.}};
+\{\{end}}
 }
 
 server {
-    server_name  {{getv "/subdomain"}}.example.com;
+    server_name  \{\{getv "/subdomain"}}.example.com;
     location / {
-        proxy_pass        http://{{getv "/subdomain"}};
+        proxy_pass        http://\{\{getv "/subdomain"}};
         proxy_redirect    off;
         proxy_set_header  Host             $host;
         proxy_set_header  X-Real-IP        $remote_addr;
