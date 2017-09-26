@@ -9,7 +9,7 @@ tags: [zookeeper]
 ---
 
 ### 0. 前言
-zookeeper在运行一段时间后，会占用大量的磁盘空间存储数据和文档，为了节省磁盘空间，我们可以选择删除过期的数据和日志  
+zookeeper主要使用内存来储存数据，但也会定期dump数据快照到本地进行持久化，在运行一段时间后，会占用大量的磁盘空间，为了节省磁盘空间，我们可以选择删除过旧的数据快照和日志  
 [zookeeper3.4.9高级设定官方文档](https://zookeeper.apache.org/doc/trunk/zookeeperAdmin.html#sc_advancedConfiguration)   
 
 ---
@@ -27,3 +27,5 @@ autopurge.snapRetainCount=
 autopurge.purgeInterval=
 ```
 配置完成后重启zookeeper服务即可
+
+> 不过这样配置虽然原生，但是无法准确的控制zk清除日志的时间点，如果要准确的将zk清除日志的时间与zk使用高峰避开，还是推荐配置autopurge.purgeInterval=0，关闭自动清除功能，使用crontab 脚本定时来清除。
