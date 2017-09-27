@@ -48,8 +48,8 @@ ZooKeeper -server host:port cmd args
 
 ---
 
-### 2. zookeeper启动脚本
-#### 1) 正确的配置日志位置和JAVA_HOME
+### 2. zookeeper配置优化
+#### 1) 正确的配置日志位置
 默认情况下，zk会在执行启动命令的当前目录去创建一个zookeeper.out的nohup stdout文件当做zk的日志，为了使用启动脚本时方便查看日志，我们需要将日志固定在一个位置
 ``` bash
 ZOOBINDIR=/home/server/zookeeper-3.4.9/bin
@@ -58,12 +58,28 @@ vim $ZOOBINDIR/zkEnv.sh
 ***************************************
 ZOO_LOG_DIR=${ZOOBINDIR}/../logs
 ZOO_LOG4J_PROP="INFO,CONSOLE"
-JAVA_HOME=/usr/local/java
 ***************************************
 ```
-> 配置JAVA_HOME是为了避免系统环境中没有JAVA_HOME这个变量
 
-#### 2) 启动脚本
+#### 2) 配置java.env
+zkServer.sh中会自动去寻找conf/java.env这个文件并进行初始化，我们可以在此配置jvm的相关变量
+```
+export JAVA_HOME=/usr/java/jdk
+export JVMFLAGS=”-Xms512m -Xmx1024m $JVMFLAGS”
+```
+> zk尽量避免和其他产品部署在一起，内存不要设置超过本机内存，按照服务器内存自己调节即可
+
+#### 3) zoo.cfg优化
+```
+maxClientCnxns=1000
+minSessionTimeout=30000
+maxSessionTimeout=60000
+```
+> 增加session过期时间，增大客户端连接数，避免连接瓶颈
+
+---
+
+### 3. zookeeper启动脚本
 创建启动脚本`/etc/init.d/zookeeper`
 ``` bash
 #!/bin/bash
