@@ -72,6 +72,27 @@ Return `true` if the `solution` represents the correct solution to the cryptarit
 **个人解法**
 ``` python
 def isCryptSolution(crypt, solution):
+    def wordTransfer(word, sl_dict):
+        nums = ""
+        for char in word:
+            nums += sl_dict[char]
+        return "" if len(nums) > 1 and nums[0] == "0" else int(nums)
+
+    sl_dict = {x[0]: x[1] for x in solution}
+    crypt_trans = [wordTransfer(x, sl_dict) for x in crypt]
+
+    if "" in crypt_trans:
+        return False
+    else:
+        if crypt_trans[0] + crypt_trans[1] == crypt_trans[2]:
+            return True
+        else:
+            return False
+```
+
+**python2精品解法**
+``` python
+def isCryptSolution(crypt, solution):
     sl_dict = {char: num for char, num in solution}
     crypt_trans = [reduce(lambda x,y: x+y,map(lambda x: sl_dict[x], word)) for word in crypt]
 
