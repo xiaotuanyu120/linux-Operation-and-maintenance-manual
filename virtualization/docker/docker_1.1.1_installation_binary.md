@@ -80,7 +80,7 @@ StartLimitInterval=60s
 WantedBy=multi-user.target
 EOF
 
-cat > docker.socket << EOF
+cat > /usr/lib/systemd/system/docker.socket << EOF
 [Unit]
 Description=Docker Socket for the API
 PartOf=docker.service

@@ -10,7 +10,8 @@ tags: [container,docker,kubernetes,flannel]
 
 ### 0. 背景介绍
 #### 1) 参照文档
-[[Creating a Custom Cluster from Scratch]](https://kubernetes.io/docs/getting-started-guides/scratch/)  
+- 教程参照文档-[[Creating a Custom Cluster from Scratch]](https://kubernetes.io/docs/getting-started-guides/scratch/)
+- 网络参考-[理解Kubernetes网络之Flannel网络](http://tonybai.com/2017/01/17/understanding-flannel-network-for-kubernetes/)
 > 不参照[【CentOS】](https://kubernetes.io/docs/getting-started-guides/centos/centos_manual_config/)和[【Using kubeadm to Create a Cluster】](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)的原因是，前者已经废弃，后者在beta阶段。另外此文档只是一个大纲，这样能够更深入的了解kubernetes的组件和原理。  
 
 > 文档中有很多细节，实际操作之外的步骤大部分忽略掉了，推荐详读一遍文档。
@@ -19,7 +20,7 @@ tags: [container,docker,kubernetes,flannel]
 items|version|comment
 ---|---|---
 OS|centos7|
-kubernetes|1.7.2|20170727时的最新版本
+kubernetes|1.6.12|最新稳定版
 docker|17.06.0-ce|
 etcd||
 flannel||使用flannel搭配k8s完成pods间网络互通
@@ -30,10 +31,10 @@ flannel给kubernetes提供了网络支持（可选，也有其他选择，详细
 #### 3) 节点规划
 hostname|ip address|service|comment
 ---|---|---|---
-centos-master|192.168.33.30|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,flannel,docker|主节点
-centos-minion-1|192.168.33.31|flannel,docker,kubelet,kube-proxy|node 1
-centos-minion-2|192.168.33.32|flannel,docker,kubelet,kube-proxy|node 2
-centos-minion-3|192.168.33.33|flannel,docker,kubelet,kube-proxy|node 3
+centos-master|192.168.56.10|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,flannel,docker|主节点
+centos-minion-1|192.168.56.11|flannel,docker,kubelet,kube-proxy|node 1
+centos-minion-2|192.168.56.12|flannel,docker,kubelet,kube-proxy|node 2
+centos-minion-3|192.168.56.13|flannel,docker,kubelet,kube-proxy|node 3
 > 实际上kubernetes的master节点也可以当作minion节点  
 所有节点上都需要装flannel(网络),docker  
 主节点上装kubernetes的master服务、etcd  
@@ -48,10 +49,10 @@ minion节点上装kubelet,kube-proxy
 - 关闭iptables-services和firewalld
 - 设定hostname到hosts文件中
 ``` bash
-echo "192.168.33.30  centos-master
-192.168.33.31  centos-minion-1
-192.168.33.32  centos-minion-2
-192.168.33.33  centos-minion-3" >> /etc/hosts
+echo "192.168.56.10  centos-master
+192.168.56.11  centos-minion-1
+192.168.56.12  centos-minion-2
+192.168.56.13  centos-minion-3" >> /etc/hosts
 ```
 - 设定sysctl中的net.ipv4.ip_forward = 1
 > net.ipv4.ip_forward = 1的配置确保了可以通过映射docker容器端口到外网，否则我们无法通过外网ip访问容器
@@ -65,14 +66,17 @@ echo "192.168.33.30  centos-master
 
 #### 1) 配置kubernetes环境变量（master节点）
 ``` bash
-echo "export MASTER_IP=192.168.33.30
-export SERVICE_CLUSTER_IP_RANGE=172.17.8.1/24
+echo "export MASTER_IP=192.168.56.10
+export SERVICE_CLUSTER_IP_RANGE=172.17.8.0/24
 export CLUSTER_NAME=KubeTest" > /etc/profile.d/kubernetes
 source /etc/profile.d/kubernetes
 ```
+> `MASTER_IP`是master节点的ip；  
+`SERVICE_CLUSTER_IP_RANGE`是kubeapiserver启动时需要指定的参数（--service-cluster-ip-range），用来分配给service的ip范围；    
+`CLUSTER_NAME`是集群名称
 
 #### 2) 获取kubernetes（master节点）
-kubernetes的二进制包里面包含了kubernetes的二进制文件和支持的etcd版本
+kubernetes的二进制包里面包含了kubernetes的二进制文件和支持的etcd版本，同时也包含了kube-apiserver, kube-controller-manager 和 kube-scheduler的docker image镜像
 ``` bash
 # 下载kubernetes
 wget https://github.com/kubernetes/kubernetes/releases/tag/v1.7.2
@@ -103,7 +107,7 @@ scp kubernetes/server/bin/{kubelet,kube-proxy} root@centos-minion-3:/usr/local/b
 - 如果用http，安装简单，但需要使用防火墙去控制访问
 - 如果用https，配置安全认证文件即可，推荐使用
 
-准备安全认证文件(master节点做https服务器)
+准备certs(master节点做https服务器)
 ``` bash
 # 获取easyrsa
 curl -L -O https://storage.googleapis.com/kubernetes-release/easy-rsa/easy-rsa.tar.gz
@@ -113,14 +117,11 @@ tar xzf easy-rsa.tar.gz
 cd easy-rsa-master/easyrsa3
 ./easyrsa init-pki
 
-init-pki complete; you may now create a CA or requests.
-Your newly created PKI dir is: /root/easy-rsa-master/easyrsa3/pki
-
 # 生成ca.key
 ./easyrsa --batch "--req-cn=${MASTER_IP}@`date +%s`" build-ca nopass
 
 # 生成server.key和server.crt
-./easyrsa --subject-alt-name="IP:${MASTER_IP}" build-server-full server nopass
+./easyrsa --subject-alt-name="IP:${MASTER_IP}" --days=10000 build-server-full server nopass
 
 # 拷贝认证文件到自定义目录
 cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes/security
@@ -130,14 +131,30 @@ cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes
 --tls-cert-file=/yourdirectory/server.crt
 --tls-private-key-file=/yourdirectory/server.key
 
-> [使用easyrsa生成认证文件的文档](https://kubernetes.io/docs/admin/authentication/#easyrsa)
+> [使用easyrsa生成认证文件的文档](https://kubernetes.io/docs/concepts/cluster-administration/certificates/#easyrsa)
 
 ---
 
-### 3. 配置和安装master节点
+### 3. 安装docker（master和minion节点）
 #### 1) 部署docker
-安装可参照[docker yum安装](http://linux.xiao5tech.com/virtualization/docker/docker_1.1.0_installation_centos7.html)和[docker 二进制安装](http://linux.xiao5tech.com/virtualization/docker/docker_1.1.1_installation_binary.html)，也可以使用发行版自己安装的docker版本(只要不是太旧)。
-> 二进制安装方法里面开启了selinux，这里可以关闭
+为了保证kubelet和docker兼容，我们参照[docker 二进制安装](http://linux.xiao5tech.com/virtualization/docker/docker_1.1.1_installation_binary.html)方法安装最新版本的docker，同时也需要按照以下参数优化以下docker。
+- 增加
+> 二进制安装方法里面开启了selinux，这里请关闭
+
+---
+
+### 4. 在minion上配置和安装基础软件
+我们需要配置和安装四个服务
+    - flannel
+    - docker
+    - kubelet
+    - kube-proxy
+#### flannel安装
+
+---
+
+### 5. 配置和安装master节点
+
 
 #### 2) 部署etcd去存储kubernetes
 ```
@@ -202,12 +219,3 @@ WantedBy=multi-user.target
 RequiredBy=docker.service
 EOF
 ```
-
-### 4. 配置和安装基本软件
-1. 在minion节点上操作（包含master节点，因为我们将其作为一个minion节点来对待）
-2. 我们需要配置和安装四个服务
-    - flannel
-    - docker
-    - kubelet
-    - kube-proxy
-#### flannel安装
