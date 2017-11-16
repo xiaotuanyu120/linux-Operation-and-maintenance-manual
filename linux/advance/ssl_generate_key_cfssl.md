@@ -79,6 +79,7 @@ cfssl gencert -initca ca-csr.json | cfssljson -bare ca -
 ca-key.pem  
 ca.csr  
 ca.pem - 最重要的文件，可以用它生成任何认证文件  
+
 #### 5) 生成服务器用的www的证书
 生成默认配置
 ``` bash
