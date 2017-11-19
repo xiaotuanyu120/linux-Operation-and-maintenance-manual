@@ -20,6 +20,7 @@ service postfix start
 chkconfig postfix on
 lokkit -s http -s ssh
 ```
+> lokkit 会修改防火墙规则，如果是线上已经使用中的机器，记得备份iptables规则
 
 #### 2) Add the GitLab package server and install the package
 ``` bash

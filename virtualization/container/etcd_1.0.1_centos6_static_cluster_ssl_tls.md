@@ -18,7 +18,7 @@ tags: [etcd]
 参照[etcd集群的static启动方法](http://linux.xiao5tech.com/virtualization/container/etcd_1.0.0_centos6_static_cluster.html)，这里不再赘述。
 
 #### 2) 生成认证文件
-生成认证文件详细操作参照[使用cfssl生成认证文件的文档](http://linux.xiao5tech.com/virtualization/container/etcd_1.0.0_centos6_static_cluster.html)，这里仅提及必要的内容，生成配置文件可在任意linux系统中生成，只需要在生成之后把相应的认证文件拷贝到相应节点即可。  
+生成认证文件详细操作参照[使用cfssl生成认证文件的文档](https://github.com/coreos/docs/blob/master/os/generate-self-signed-certificates.md)，这里仅提及必要的内容，生成配置文件可在任意linux系统中生成，只需要在生成之后把相应的认证文件拷贝到相应节点即可。  
 
 etcd里面可以做的认证包括：
 - 客户端验证服务端身份，需要在服务端提供服务器认证文件，例如server.pem，server-key.pem

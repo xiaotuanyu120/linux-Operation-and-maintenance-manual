@@ -10,7 +10,8 @@ tags: [container,docker,kubernetes,flannel]
 
 ## 0. 背景介绍
 ### 1) 参照文档
-[[Creating a Custom Cluster from Scratch]](https://kubernetes.io/docs/getting-started-guides/scratch/)  
+- 教程参照文档-[[Creating a Custom Cluster from Scratch]](https://kubernetes.io/docs/getting-started-guides/scratch/)
+- 网络参考-[理解Kubernetes网络之Flannel网络](http://tonybai.com/2017/01/17/understanding-flannel-network-for-kubernetes/)
 > 不参照[【CentOS】](https://kubernetes.io/docs/getting-started-guides/centos/centos_manual_config/)和[【Using kubeadm to Create a Cluster】](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)的原因是，前者已经废弃，后者在beta阶段。另外此文档只是一个大纲，这样能够更深入的了解kubernetes的组件和原理。  
 
 > 文档中有很多细节，实际操作之外的步骤大部分忽略掉了，推荐详读一遍文档。
@@ -131,7 +132,7 @@ scp kubernetes/server/bin/{kubelet,kube-proxy} root@node3:/usr/local/bin
 - 如果用http，安装简单，但需要使用防火墙去控制访问
 - 如果用https，配置安全认证文件即可，推荐使用
 
-准备安全认证文件(master节点做https服务器)
+准备certs(master节点做https服务器)
 ``` bash
 # 获取easyrsa
 curl -L -O https://storage.googleapis.com/kubernetes-release/easy-rsa/easy-rsa.tar.gz
@@ -145,7 +146,7 @@ cd easy-rsa-master/easyrsa3
 ./easyrsa --batch "--req-cn=${MASTER_IP}@`date +%s`" build-ca nopass
 
 # 生成server.key和server.crt
-./easyrsa --subject-alt-name="IP:${MASTER_IP}" build-server-full server nopass
+./easyrsa --subject-alt-name="IP:${MASTER_IP}" --days=10000 build-server-full server nopass
 
 # 拷贝认证文件到自定义目录
 cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes/security
