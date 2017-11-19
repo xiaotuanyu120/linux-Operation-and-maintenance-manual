@@ -17,7 +17,7 @@ tags: [docker]
 - git版本是 1.7 或更高, `git --version`
 - 可执行的ps命令, `rpm -qa |grep procps; which ps`
 - XZ Utils版本是 4.9 或更高, `xz --version`
-- 挂载合适的cgroupfs 分层, `yum install libcgroup libcgroup-tools;systemctl enable cgconfig;systemctl start cgconfig`
+- 挂载合适的cgroupfs 分层, `yum install -y libcgroup libcgroup-tools;systemctl enable cgconfig;systemctl start cgconfig`
 
 #### 2) 增强安全
 为了增强安全性，系统需要开启selinux，开启selinux后，docker会自动在创建容器时配置selinux的context，也就是说，我们只要开启selinux就好，其他的docker来做了。  
@@ -80,7 +80,7 @@ StartLimitInterval=60s
 WantedBy=multi-user.target
 EOF
 
-cat > docker.socket << EOF
+cat > /usr/lib/systemd/system/docker.socket << EOF
 [Unit]
 Description=Docker Socket for the API
 PartOf=docker.service

@@ -13,7 +13,9 @@ tags: [docker]
 docker run -it -d --name <instance_name> --rm container_name[:tag]
 ```
 > 这里的启动时创建一个新的容器实例并启动它  
---rm参数加上后，停止容器时会自动删除容器实例
+--rm参数加上后，停止容器时会自动删除容器实例  
+--interactive , -i		Keep STDIN open even if not attached  
+--tty , -t		Allocate a pseudo-TTY
 
 ### 2. 启动/停止容器
 ``` bash

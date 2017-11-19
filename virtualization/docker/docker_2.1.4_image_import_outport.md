@@ -17,4 +17,6 @@ docker save -o centos7-x64.tar centos:7-x64
 #### 2) 导入镜像文件
 ``` bash
 docker load < centos7-x64.tar
-# 这样就方便在不同机器之间转移docker镜像文件了```
+# 这样就方便在不同机器之间转移docker镜像文件了
+# 和docker load -i centos7-x64.tar等价
+```
