@@ -1,8 +1,8 @@
 ---
 title: fluentd 1.1.0 efk(elasticsearch+kibana) + docker
-date: 2017-08-08 09:19:00
+date: 2017-11-20 09:19:00
 categories: linux/service
-tags: [ffmpeg]
+tags: [fluentd,elasticsearch,kibana]
 ---
 ### fluentd 1.1.0 efk(elasticsearch+kibana) + docker
 
