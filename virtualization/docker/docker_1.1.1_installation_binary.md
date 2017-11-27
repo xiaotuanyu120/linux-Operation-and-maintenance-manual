@@ -37,6 +37,11 @@ tar zxvf docker-17.06.0-ce.tgz
 
 # step 3 拷贝二进制文件到PATH变量的路径中
 cp docker/* /usr/bin/
+
+# step 4 安装docker-compose
+wget https://github.com/docker/compose/releases/download/1.17.1/docker-compose-Linux-x86_64
+mv docker-compose-Linux-x86_64 /usr/bin/docker-compose
+chmod 755 /usr/bin/docker-compose
 ```
 
 ---
