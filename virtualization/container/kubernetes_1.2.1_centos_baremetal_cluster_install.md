@@ -34,21 +34,16 @@ flannel||使用flannel做overlay网络，支持不同主机间pods间网络互�
 ### 3) 节点规划
 hostname|ip address|service|comment
 ---|---|---|---
-master|172.16.1.100|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,flannel,docker|主节点
+master|172.16.1.100|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,docker|主节点
 node1|172.16.1.101|flannel,docker,kubelet,kube-proxy|node 1
 node2|172.16.1.102|flannel,docker,kubelet,kube-proxy|node 2
 node3|172.16.1.103|flannel,docker,kubelet,kube-proxy|node 3
-> 实际上kubernetes的master节点也可以当作node节点，但生产环境中最好分开  
-所有node节点上都需要装flannel(网络),docker，这是基础组件  
-主节点上装kubernetes的master服务kube-apiserver,kube-controller-manager,kube-scheduler  
-etcd生产环境中需要单独部署集群，做高可用，此处测试环境只启用单节点  
-node节点上装kubelet,kube-proxy
 
 ---
 
 ## 1. 主机环境
 为了将系统环境和软件环境对安装的影响度降低，需要确保以下几项需求满足
-- 安装"Development tools"和base包  
+- 安装必要的工具包  
 `yum install -y wget vim iptables iptables-services`
 
 - 关闭selinux  
@@ -57,8 +52,9 @@ sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
 setenforce 0
 ```
 
-- 关闭iptables-services和firewalld
-`systemctl stop firewalld;systemctl stop iptables`
+- 关闭iptables-services和firewalld  
+`systemctl stop firewalld;systemctl stop iptables`  
+> 防火墙后期需要开启，并开放api服务的端口
 
 - 设定hostname到hosts文件中
 ``` bash
@@ -89,13 +85,13 @@ export MASTER_KEY=/usr/local/kubernetes/security/server.key" > /etc/profile.d/ku
 source /etc/profile.d/kubernetes
 ```
 > 规划集群中需要重复使用的内容为变量
-- MASTER_IP kubernetes master的静态ip
-- SERVICE_CLUSTER_IP_RANGE service对象使用的ip范围
-- CLUSTER_NAME kubernetes集群的名称
+- `MASTER_IP kubernetes` - master的静态ip
+- `SERVICE_CLUSTER_IP_RANGE` - service对象使用的ip范围
+- `CLUSTER_NAME` - kubernetes集群的名称
 - 认证变量（后面https支持会用到）：
-    - CA_CERT 放在apiserver节点上
-    - MASTER_CERT 放在apiserver节点上
-    - MASTER_KEY 放在apiserver节点上
+    - `CA_CERT` - 放在apiserver节点上
+    - `MASTER_CERT` - 放在apiserver节点上
+    - `MASTER_KEY` - 放在apiserver节点上
 
 ### 2) 获取kubernetes（master节点）
 kubernetes的二进制包里面包含了kubernetes的二进制文件和支持的etcd版本
@@ -125,7 +121,10 @@ scp kubernetes/server/bin/{kubelet,kube-proxy} root@node2:/usr/local/bin
 scp kubernetes/server/bin/{kubelet,kube-proxy} root@node3:/usr/local/bin
 ```
 > 因为kubernetes这个项目是使用go语言编写，而go语言程序的部署方式很简单，就是拷贝二进制文件就可以，所以在这里，我们通过简单的复制各服务的二进制文件，就可以通过启动它们来启动相应的服务。  
-本文开头的参照文档中说，node需要运行的kubelet,kube-proxy,docker，推荐直接在系统层面上启动服务，而对于etcd, kube-apiserver, kube-controller-manager, 和 kube-scheduler，它推荐我们使用容器来运行它们，文档中给出了几种镜像的获取方式，当然，我们下载的二进制文件中也有这样的镜像文件（bin目录中tar结尾的文件）可以本地加载（使用docker load命令）
+
+> 本文开头的参照文档中说:  
+node需要运行的kubelet,kube-proxy,docker，推荐直接在系统层面上启动服务;  
+而对于etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler，推荐我们使用容器来运行它们，文档中给出了几种镜像的获取方式，当然，我们下载的二进制文件中也有这样的镜像文件（bin目录中tar结尾的文件）可以本地加载（使用docker load命令）镜像到本机的docker中。
 
 ### 3) 安全策略（master节点）
 #### (1) 准备https安全证书
@@ -158,10 +157,6 @@ cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes
 
 > [使用easyrsa生成认证文件的文档](https://k8smeetup.github.io/docs/admin/authentication/#easyrsa)
 
-#### 4) 准备凭证（admin）
-``` bash
-```
-
 ---
 
 ### 4). 配置和安装kubernetes master服务
@@ -175,14 +170,14 @@ mkdir -p /var/lib/etcd
 export HostIP="172.16.1.100"
 docker run -d -v /var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \
  --name etcd quay.io/coreos/etcd:v2.3.8 \
- -name etcd0 \
- -advertise-client-urls http://${HostIP}:2379,http://${HostIP}:4001 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
- -initial-advertise-peer-urls http://${HostIP}:2380 \
- -listen-peer-urls http://0.0.0.0:2380 \
- -initial-cluster-token etcd-cluster-1 \
- -initial-cluster etcd0=http://${HostIP}:2380 \
- -initial-cluster-state new
+ -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
+
+ # 获取最新的etcd二进制包（主要是为了在master节点上直接etcdctl命令）
+ wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
+ tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
+ cp etcd-v3.2.4-linux-amd64/etcdctl /usr/bin
+ # 配置flannel的网络配置
+ etcdctl --endpoints http://172.16.1.100:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
 ```
 > 为了测试，在主节点上只启动一个节点的etcd，etcd集群参照[etcd集群安装](http://linux.xiao5tech.com/virtualization/container/etcd_1.3.0_discovery_systemd.html)
 
@@ -227,18 +222,9 @@ docker run -d --name=scheduler gcr.io/google_containers/kube-scheduler:v1.8.3 \
     - docker
     - kubelet
     - kube-proxy
-#### flannel安装
 
-
-#### 3) 部署flannel
+#### 1) 部署flannel
 ``` bash
-# 获取最新的etcd二进制包（主要是为了在master节点上直接etcdctl命令）
-wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
-tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
-cp etcd-v3.2.4-linux-amd64/etcdctl /usr/bin
-# 配置flannel的网络配置
-etcdctl --endpoints http://172.16.1.100:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
-
 wget https://github.com/coreos/flannel/releases/download/v0.8.0/flannel-v0.8.0-linux-amd64.tar.gz
 mkdir flannel
 tar zxvf flannel-v0.8.0-linux-amd64.tar.gz -C flannel
