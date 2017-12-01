@@ -170,7 +170,8 @@ mkdir -p /var/lib/etcd
 export HostIP="172.16.1.100"
 docker run -d -v /var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \
  --name etcd quay.io/coreos/etcd:v2.3.8 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
+ --advertise-client-urls http://$HostIP:2379 \
+ --listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
 
  # 获取最新的etcd二进制包（主要是为了在master节点上直接etcdctl命令）
  wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
