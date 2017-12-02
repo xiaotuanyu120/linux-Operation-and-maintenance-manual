@@ -76,13 +76,14 @@ sysctl -p
 ## 2. kubernetes master节点
 ### 1) 配置kubernetes环境变量（master节点）
 ``` bash
-echo "export MASTER_IP=172.16.1.100
-export SERVICE_CLUSTER_IP_RANGE=172.17.8.1/24
+echo 'export MASTER_IP=172.16.1.100
+export SERVICE_CLUSTER_IP_RANGE=10.254.0.0/16
 export CLUSTER_NAME=KubeTest
 export CA_CERT=/usr/local/kubernetes/security/ca.crt
 export MASTER_CERT=/usr/local/kubernetes/security/server.crt
-export MASTER_KEY=/usr/local/kubernetes/security/server.key" > /etc/profile.d/kubernetes
-source /etc/profile.d/kubernetes
+export MASTER_KEY=/usr/local/kubernetes/security/server.key
+export PATH=$PATH:/usr/local/kubernetes/bin' > /etc/profile.d/kubernetes.sh
+source /etc/profile.d/kubernetes.sh
 ```
 > 规划集群中需要重复使用的内容为变量
 - `MASTER_IP kubernetes` - master的静态ip
@@ -108,11 +109,10 @@ ll -h kubernetes/*/*-linux-amd64.tar.gz
 -rw-r--r--. 1 root root 386M Nov 19 05:03 kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 
 # 拷贝二进制文件到server端
-mkdir -p /usr/local/kubernetes/{bin,security}
+mkdir -p /usr/local/kubernetes/{bin,security,conf}
 tar zxvf kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 cp kubernetes/server/bin/{kube-apiserver,kube-scheduler,kube-controller-manager,kubectl} /usr/local/kubernetes/bin/
 chmod 750 /usr/local/kubernetes/bin/*
-export PATH=$PATH:/usr/local/kubernetes/bin
 # 如果使用docker启动kube-apiserver,kube-scheduler,kube-controller-manager这三个服务的话，不需要拷贝它们的二进制文件，只需要拷贝kubectl即可
 
 # 拷贝二进制文件到node端
@@ -165,64 +165,227 @@ cp pki/ca.crt pki/issued/server.crt pki/private/server.key /usr/local/kubernetes
 > 二进制安装方法里面开启了selinux，这里需要关闭
 
 #### 2) 部署etcd
-``` bash
-mkdir -p /var/lib/etcd
-export HostIP="172.16.1.100"
-docker run -d -v /var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd quay.io/coreos/etcd:v2.3.8 \
- --advertise-client-urls http://$HostIP:2379 \
- --listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
+在`kubernetes/cluster/images/etcd/Makefile`中查找到对应的etcd版本  
 
- # 获取最新的etcd二进制包（主要是为了在master节点上直接etcdctl命令）
- wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
- tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
- cp etcd-v3.2.4-linux-amd64/etcdctl /usr/bin
- # 配置flannel的网络配置
- etcdctl --endpoints http://172.16.1.100:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
+etcd 单点的安装可以参照[etcd install single node with systemd](http://linux.xiao5tech.com/virtualization/container/etcd_1.1.2_install_single_node_systemd.html)  
+
+配置flannel的网络配置
+``` bash
+# mkdir -p /var/lib/etcd
+# export HostIP="172.16.1.100"
+# docker run -d -v /var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \
+#  --name etcd quay.io/coreos/etcd:v2.3.8 \
+#  --advertise-client-urls http://$HostIP:2379 \
+#  --listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
+
+etcdctl --endpoints http://172.16.1.100:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
 ```
-> 为了测试，在主节点上只启动一个节点的etcd，etcd集群参照[etcd集群安装](http://linux.xiao5tech.com/virtualization/container/etcd_1.3.0_discovery_systemd.html)
+> 为了测试，在主节点上只启动一个节点的etcd，etcd集群参照[etcd 集群文档](http://linux.xiao5tech.com/virtualization/container)
 
 #### 3) 启动kubernets Apiserver, Controller Manager, 和 Scheduler服务
 ``` bash
-docker load -i kubernetes/server/bin/kube-apiserver.tar
-docker load -i kubernetes/server/bin/kube-controller-manager.tar
-docker load -i kubernetes/server/bin/kube-scheduler.tar
+# docker load -i kubernetes/server/bin/kube-apiserver.tar
+# docker load -i kubernetes/server/bin/kube-controller-manager.tar
+# docker load -i kubernetes/server/bin/kube-scheduler.tar
+#
+# docker run -d --name=apiserver -p 8080:8080 gcr.io/google_containers/kube-apiserver:v1.8.3 \
+#  kube-apiserver \
+#  --insecure-bind-address=0.0.0.0 \
+#  --insecure-port=8080 \
+#  --advertise-address=0.0.0.0 \
+#  --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE} \
+#  --etcd-servers=http://127.0.0.1:4001 \
+#  --service-node-port-range=1-65535 \
+#  # --client-ca-file=${CA_CERT} \
+#  # --tls-cert-file=${MASTER_CERT} \
+#  # --tls-private-key-file=${MASTER_KEY}
+#
+# docker run -d --name=ControllerM gcr.io/google_containers/kube-controller-manager:v1.8.3 \
+#  kube-controller-manager \
+#  --master=${MASTER_IP}:8080
+#
+# docker run -d --name=scheduler gcr.io/google_containers/kube-scheduler:v1.8.3 \
+#  kube-scheduler \
+#  --master=${MASTER_IP}:8080
+```
 
-docker run -d --name=apiserver -p 8080:8080 gcr.io/google_containers/kube-apiserver:v1.8.3 \
- kube-apiserver \
- --bind-address=${MASTER_IP} \
- --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE} \
- --etcd-servers=http://127.0.0.1:4001 \
- kube-apiserver \
- --token-auth-file=/dev/null \
- --bind-address=${MASTER_IP} \
- --insecure-bind-address=${MASTER_IP} \
- --insecure-port=8080 \
- --advertise-address=${MASTER_IP} \
- --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE} \
- --etcd-servers=http://127.0.0.1:4001 \
- --client-ca-file=${CA_CERT} \
- --tls-cert-file=${MASTER_CERT} \
- --tls-private-key-file=${MASTER_KEY}
+准备配置文件：
+- config, 通用配置
+- apiserver, kube-apiserver配置
+- controller-manager, kube-controller-manager配置
+- scheduler, kube-scheduler配置
 
-docker run -d --name=ControllerM gcr.io/google_containers/kube-controller-manager:v1.8.3 \
- kube-controller-manager \
- --master=${MASTER_IP}:8080
+``` bash
+cat > /usr/local/kubernetes/conf/config << EOF
+###
+# kubernetes system config
+#
+# The following values are used to configure various aspects of all
+# kubernetes services, including
+#
+#   kube-apiserver.service
+#   kube-controller-manager.service
+#   kube-scheduler.service
+#   kubelet.service
+#   kube-proxy.service
+# logging to stderr means we get it in the systemd journal
+KUBE_LOGTOSTDERR="--logtostderr=true"
 
-docker run -d --name=scheduler gcr.io/google_containers/kube-scheduler:v1.8.3 \
- kube-scheduler \
- --master=${MASTER_IP}:8080
+
+# journal message level, 0 is debug
+KUBE_LOG_LEVEL="--v=0"
+
+# Should this cluster be allowed to run privileged docker containers
+KUBE_ALLOW_PRIV="--allow-privileged=false"
+
+# How the controller-manager, scheduler, and proxy find the apiserver
+KUBE_MASTER="--master=http://127.0.0.1:8080"
+EOF
+
+cat > /usr/local/kubernetes/conf/apiserver << EOF
+###
+# kubernetes system config
+#
+# The following values are used to configure the kube-apiserver
+#
+
+# The address on the local server to listen to.
+KUBE_API_ADDRESS="--insecure-bind-address=127.0.0.1"
+
+# The port on the local server to listen on.
+KUBE_API_PORT="--insecure-port=8080"
+
+# Port minions listen on
+# KUBELET_PORT="--kubelet-port=10250"
+
+# Comma separated list of nodes in the etcd cluster
+KUBE_ETCD_SERVERS="--etcd-servers=http://127.0.0.1:2379,http://127.0.0.1:4001"
+
+# Address range to use for services
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=$SERVICE_CLUSTER_IP_RANGE"
+
+# default admission control policies
+KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
+
+# Add your own!
+KUBE_API_ARGS="--service-node-port-range=1-65535"
+EOF
+
+cat > /usr/local/kubernetes/conf/controller-manager << EOF
+###
+# The following values are used to configure the kubernetes controller-manager
+
+# defaults from config and apiserver should be adequate
+
+# Add your own!
+KUBE_CONTROLLER_MANAGER_ARGS=""
+EOF
+
+cat > /usr/local/kubernetes/conf/scheduler << EOF
+###
+# kubernetes scheduler config
+
+# default config should be adequate
+
+# Add your own!
+KUBE_SCHEDULER_ARGS=""
+EOF
+```
+
+准备systemd unit文件:
+- kube-apiserver.service
+- kube-controller-manager.service
+- kube-scheduler.service
+
+``` bash
+echo '[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=network.target
+After=etcd.service
+
+[Service]
+EnvironmentFile=-/usr/local/kubernetes/conf/config
+EnvironmentFile=-/usr/local/kubernetes/conf/apiserver
+User=kube
+ExecStart=/usr/local/kubernetes/bin/kube-apiserver \
+	    $KUBE_LOGTOSTDERR \
+	    $KUBE_LOG_LEVEL \
+	    $KUBE_ETCD_SERVERS \
+	    $KUBE_API_ADDRESS \
+	    $KUBE_API_PORT \
+	    $KUBELET_PORT \
+	    $KUBE_ALLOW_PRIV \
+	    $KUBE_SERVICE_ADDRESSES \
+	    $KUBE_ADMISSION_CONTROL \
+	    $KUBE_API_ARGS
+Restart=on-failure
+Type=notify
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target' > /usr/lib/systemd/system/kube-apiserver.service
+
+
+echo '[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+EnvironmentFile=-/usr/local/kubernetes/conf/config
+EnvironmentFile=-/usr/local/kubernetes/conf/controller-manager
+User=kube
+ExecStart=/usr/local/kubernetes/bin/kube-controller-manager \
+	    $KUBE_LOGTOSTDERR \
+	    $KUBE_LOG_LEVEL \
+	    $KUBE_MASTER \
+	    $KUBE_CONTROLLER_MANAGER_ARGS
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target' > /usr/lib/systemd/system/kube-controller-manager.service
+
+
+echo '[Unit]
+Description=Kubernetes Scheduler Plugin
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+EnvironmentFile=-/usr/local/kubernetes/conf/config
+EnvironmentFile=-/usr/local/kubernetes/conf/scheduler
+User=kube
+ExecStart=/usr/local/kubernetes/bin/kube-scheduler \
+	    $KUBE_LOGTOSTDERR \
+	    $KUBE_LOG_LEVEL \
+	    $KUBE_MASTER \
+	    $KUBE_SCHEDULER_ARGS
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target' > /usr/lib/systemd/system/kube-scheduler.service
+```
+
+依次启动`kube-apiserver.service`, `kube-controller-manager.service`, `kube-scheduler.service`
+``` bash
+# 重载systemd unit文件
+systemctl daemon-reload
+
+# 创建spawn服务的用户kube（在配置文件中配置）
+useradd -r -s /sbin/nologin kube
+chown :kube /usr/local/kubernetes/bin/*
+mkdir /var/run/kubernetes
+chown kube:kube /var/run/kubernetes
+
+systemctl start kube-apiserver.service
+systemctl start kube-controller-manager.service
+systemctl start kube-scheduler.service
 ```
 
 ---
 
 ## 3. node节点配置和安装基本软件
-1. 在node节点上操作
-2. 我们需要配置和安装四个服务
-    - flannel
-    - docker
-    - kubelet
-    - kube-proxy
 
 #### 1) 部署flannel
 ``` bash

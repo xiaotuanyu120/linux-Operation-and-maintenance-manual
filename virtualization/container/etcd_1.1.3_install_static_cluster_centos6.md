@@ -1,10 +1,10 @@
 ---
-title: etcd 1.0.0 etcd static cluster(centos6.5)
+title: etcd 1.1.3 etcd install static cluster(centos6)
 date: 2017-08-10 14:35:00
 categories: virtualization/container
 tags: [etcd]
 ---
-### etcd 1.0.0 etcd static cluster(centos6.5)
+### etcd 1.1.3 etcd install static cluster(centos6)
 
 ---
 

@@ -1,21 +1,21 @@
 ---
-title: etcd 1.0.1 etcd static cluster with ssl/tls(centos6.5)
+title: etcd 1.1.4 etcd install static cluster with ssl/tls
 date: 2017-08-10 14:35:00
 categories: virtualization/container
 tags: [etcd]
 ---
-### etcd 1.0.1 etcd static cluster with ssl/tls(centos6.5)
+### etcd 1.1.4 etcd install static cluster with ssl/tls
 
 ---
 
 ### 0. 安装etcd集群之前
-本文是在上一篇[etcd集群的static启动方法](http://linux.xiao5tech.com/virtualization/container/etcd_1.0.0_centos6_static_cluster.html)的基础上，增加[ssl/tls认证](https://github.com/coreos/etcd/blob/master/Documentation/op-guide/security.md)的内容。
+本文是在上一篇[etcd集群的static启动方法](http://linux.xiao5tech.com/virtualization/container/etcd_1.1.3_install_static_cluster_centos6.html))的基础上，增加[ssl/tls认证](https://github.com/coreos/etcd/blob/master/Documentation/op-guide/security.md)的内容。
 
 ---
 
 ### 1. 使用static方法启动etcd集群(ssl/tls)
 #### 1) 安装etcd
-参照[etcd集群的static启动方法](http://linux.xiao5tech.com/virtualization/container/etcd_1.0.0_centos6_static_cluster.html)，这里不再赘述。
+参照[etcd集群的static启动方法](http://linux.xiao5tech.com/virtualization/container/etcd_1.1.3_install_static_cluster_centos6.html)，这里不再赘述。
 
 #### 2) 生成认证文件
 生成认证文件详细操作参照[使用cfssl生成认证文件的文档](https://github.com/coreos/docs/blob/master/os/generate-self-signed-certificates.md)，这里仅提及必要的内容，生成配置文件可在任意linux系统中生成，只需要在生成之后把相应的认证文件拷贝到相应节点即可。  

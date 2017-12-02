@@ -1,10 +1,10 @@
 ---
-title: etcd 1.1.0 搭配confd做配置管理
+title: etcd 2.2.0 搭配confd做配置管理
 date: 2017-03-29 14:00:00
 categories: virtualization/container
 tags: [container,coreos,etcd,confd]
 ---
-### etcd 1.1.0 搭配confd做配置管理
+### etcd 2.2.0 搭配confd做配置管理
 
 ---
 

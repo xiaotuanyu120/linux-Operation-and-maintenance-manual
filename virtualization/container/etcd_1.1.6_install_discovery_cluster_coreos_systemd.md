@@ -1,17 +1,16 @@
 ---
-title: etcd 1.3.0 搭建discovery服务-systemd
+title: etcd 1.1.6 install discovery cluster(coreos)-systemd
 date: 2017-05-25 14:24:00
 categories: virtualization/container
 tags: [etcd,container,coreos]
 ---
-### etcd 1.3.0 搭建discovery服务-systemd
+### etcd 1.1.6 install discovery cluster(coreos)-systemd
 
 ---
 
 ### 0. 背景介绍
 #### 1) 参考文档
-此文档是沿承上一篇[搭建discovery服务](http://linux.xiao5tech.com/virtualization/container/etcd_1.2.0_discovery.html)，主要区别在于上一篇使用命令行启动服务，本篇需要将参数配置在systemd中。
-
+此文档是沿承上一篇[搭建discovery服务](http://linux.xiao5tech.com/virtualization/container/etcd_1.1.5_install_discovery_cluster_coreos.html)，主要区别在于上一篇使用命令行启动服务，本篇需要将参数配置在systemd中。
 
 #### 2) 系统环境
 hostname|ip|OS|usage
