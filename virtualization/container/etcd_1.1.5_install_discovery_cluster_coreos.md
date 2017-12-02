@@ -1,10 +1,10 @@
 ---
-title: etcd 1.1.5 install discovery cluster(coreos)
+title: etcd 1.1.5 etcd install discovery cluster(coreos)
 date: 2017-05-24 11:24:00
 categories: virtualization/container
 tags: [etcd,container,coreos]
 ---
-### etcd 1.1.5 etcd 1.1.5 install discovery cluster(coreos)
+### etcd 1.1.5 etcd install discovery cluster(coreos)
 
 ---
 
