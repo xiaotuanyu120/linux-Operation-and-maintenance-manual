@@ -1,15 +1,15 @@
 ---
-title: flannel 1.1.0 二进制安装（systemd）
+title: flannel 1.1.0 install flannel using binaries（systemd）
 date: 2017-07-31 13:49:00
 categories: virtualization/container
 tags: [flannel,docker,etcd]
 ---
-### flannel 1.1.0 二进制安装（systemd）
+### flannel 1.1.0 install flannel using binaries（systemd）
 
 ---
 
 ### 1. 安装etcd
-这里仅启动单节点的etcd，并且使用最简单快捷的手动命令启动方式，为的是快速的测试flannel，详细的etcd集群的搭建参照[这篇文档](http://linux.xiao5tech.com/virtualization/container/etcd_1.3.0_discovery_systemd.html)
+这里仅启动单节点的etcd，并且使用最简单快捷的手动命令启动方式，为的是快速的测试flannel，详细的etcd集群的搭建参照[这篇文档](http://linux.xiao5tech.com/virtualization/container/etcd_1.1.6_install_discovery_cluster_coreos_systemd.html)
 ``` bash
 # 下载etcd
 wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
@@ -30,7 +30,7 @@ tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
 wget https://github.com/coreos/flannel/releases/download/v0.8.0/flannel-v0.8.0-linux-amd64.tar.gz
 mkdir flannel
 tar zxvf flannel-v0.8.0-linux-amd64.tar.gz -C flannel
-cp flannel/flanneld /usr/bin
+cp flannel/flanneld /usr/local/bin
 mkdir -p /usr/libexec/flannel
 cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 
@@ -53,8 +53,7 @@ EOF
 ### 3. 启动flannel（systemd）
 ``` bash
 # 创建systemd unit file
-cat > /usr/lib/systemd/system/flannel.service << EOF
-[Unit]
+echo '[Unit]
 Description=Flanneld overlay address etcd agent
 After=network.target
 After=network-online.target
@@ -65,23 +64,34 @@ Before=docker.service
 [Service]
 Type=notify
 EnvironmentFile=/etc/sysconfig/flanneld
-ExecStart=/usr/bin/flanneld \$FLANNELD_OPTIONS
+ExecStart=/usr/local/bin/flanneld $FLANNELD_OPTIONS
 ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
-RequiredBy=docker.service
-EOF
+RequiredBy=docker.service' > /usr/lib/systemd/system/flannel.service
 
 # 可选，如果开启了selinux，需要执行此命令
-chcon -u system_u /usr/lib/systemd/system/flannel.service
+# chcon -u system_u /usr/lib/systemd/system/flannel.service
 
 # 启动flannel
 systemctl daemon-reload
 systemctl start flannel
+```
+> `ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c`这个配置是在flannel启动之后生成docker的配置文件，默认在/run/docker_opts.env  
+```
+OPTIONS:
+	-f	Path to flannel env file. Defaults to /run/flannel/subnet.env
+	-d	Path to Docker env file to write to. Defaults to /run/docker_opts.env
+	-i	Output each Docker option as individual var. e.g. DOCKER_OPT_MTU=1500
+	-c	Output combined Docker options into DOCKER_OPTS var
+	-k	Set the combined options key to this value (default DOCKER_OPTS=)
+	-m	Do not output --ip-masq (useful for older Docker version)
+```
 
-# 启动flannel发生了什么？
+**启动flannel发生了什么？**
+``` bash
 # 首先生成了每个节点不同的flannel网络配置文件
 cat /var/run/flannel/subnet.env
 FLANNEL_NETWORK=10.5.0.0/16
@@ -100,16 +110,6 @@ ip a |grep flannel -A 5
 # 然后根据上面的配置文件通过mk-docker-opts.sh脚本生成docker使用的配置文件
 cat /run/docker_opts.env
 DOCKER_OPTS=" --bip=10.5.56.1/24 --ip-masq=true --mtu=1450"
-```
-> `ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c`这个配置是在flannel启动之后生成docker的配置文件，默认在/run/docker_opts.env  
-```
-OPTIONS:
-	-f	Path to flannel env file. Defaults to /run/flannel/subnet.env
-	-d	Path to Docker env file to write to. Defaults to /run/docker_opts.env
-	-i	Output each Docker option as individual var. e.g. DOCKER_OPT_MTU=1500
-	-c	Output combined Docker options into DOCKER_OPTS var
-	-k	Set the combined options key to this value (default DOCKER_OPTS=)
-	-m	Do not output --ip-masq (useful for older Docker version)
 ```
 
 ---

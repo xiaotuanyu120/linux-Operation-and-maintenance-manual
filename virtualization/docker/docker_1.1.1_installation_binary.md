@@ -48,8 +48,7 @@ chmod 755 /usr/bin/docker-compose
 
 ### 2. 启动dockerd（systemd）
 ``` bash
-cat > /usr/lib/systemd/system/docker.service << EOF
-[Unit]
+echo '[Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
 After=network-online.target docker.socket firewalld.service
@@ -82,11 +81,9 @@ StartLimitBurst=3
 StartLimitInterval=60s
 
 [Install]
-WantedBy=multi-user.target
-EOF
+WantedBy=multi-user.target' > /usr/lib/systemd/system/docker.service
 
-cat > /usr/lib/systemd/system/docker.socket << EOF
-[Unit]
+echo '[Unit]
 Description=Docker Socket for the API
 PartOf=docker.service
 
@@ -97,8 +94,7 @@ SocketUser=root
 SocketGroup=docker
 
 [Install]
-WantedBy=sockets.target
-EOF
+WantedBy=sockets.target' > /usr/lib/systemd/system/docker.socket
 
 # 按照docker.socket中指定的增加docker组
 groupadd docker
