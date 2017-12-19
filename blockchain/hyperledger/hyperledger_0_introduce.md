@@ -19,7 +19,7 @@ tags: [blockchain,hyperledger]
 - Distributed Ledger Technology (DLT)
 - Bitcoin and Ethereum Blockchains
 - Exploring Permissionless Blockchains
-- Consensus Algorithmss
+- Consensus Algorithms
 - Other Open Source Distributed Ledgers
 - Hyperledger
 - Challenges in the Adoption/Deployment of Distributed Ledger Technologies
