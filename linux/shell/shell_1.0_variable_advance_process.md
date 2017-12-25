@@ -54,11 +54,11 @@ h
 echo ${file: -1}
 z
 
-# 去除第一个字符
+# 去除最后一个字符
 echo ${file%?}
 http://www.python.org/test.php?pip.tar.g
 
-# 去除最后一个字符
+# 去除第一个字符
 echo ${file#?}
 ttp://www.python.org/test.php?pip.tar.gz
 ```
