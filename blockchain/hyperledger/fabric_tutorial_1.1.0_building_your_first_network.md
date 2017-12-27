@@ -115,99 +115,7 @@ org2.example.com
 ```
 > -c 参数可以改变channel名称，默认为mychannel
 
-在`crypto-config`目录中生成了各种认证文件，而且生成了`docker-compose-e2e.yaml`文件，里面挂载了`crypto-config`中的认证文件到docker里。
-``` yaml
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
-
-version: '2'
-
-networks:
-  byfn:
-services:
-  ca0:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org1
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/9cc10eb1454b155fd9c725b396f84662ddc7dcfd4c8efa9f60a778f71a38ab9f_sk
-    ports:
-      - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/9cc10eb1454b155fd9c725b396f84662ddc7dcfd4c8efa9f60a778f71a38ab9f_sk -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg1
-    networks:
-      - byfn
-
-  ca1:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org2
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/c8c31c11e60461161435488d0f060f36f70d7a5a6bbd2417321c312daa5ba9f6_sk
-    ports:
-      - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/c8c31c11e60461161435488d0f060f36f70d7a5a6bbd2417321c312daa5ba9f6_sk -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg2
-    networks:
-      - byfn
-
-  orderer.example.com:
-    extends:
-      file:   base/docker-compose-base.yaml
-      service: orderer.example.com
-    container_name: orderer.example.com
-    networks:
-      - byfn
-
-  peer0.org1.example.com:
-    container_name: peer0.org1.example.com
-    extends:
-      file:  base/docker-compose-base.yaml
-      service: peer0.org1.example.com
-    networks:
-      - byfn
-
-  peer1.org1.example.com:
-    container_name: peer1.org1.example.com
-    extends:
-      file:  base/docker-compose-base.yaml
-      service: peer1.org1.example.com
-    networks:
-      - byfn
-
-  peer0.org2.example.com:
-    container_name: peer0.org2.example.com
-    extends:
-      file:  base/docker-compose-base.yaml
-      service: peer0.org2.example.com
-    networks:
-      - byfn
-
-  peer1.org2.example.com:
-    container_name: peer1.org2.example.com
-    extends:
-      file:  base/docker-compose-base.yaml
-      service: peer1.org2.example.com
-    networks:
-      - byfn
-```
-> 里面定义了如下内容：
-- network：byfn
-- fabric-ca：2
-- ordered：1
-- org1：2
-- org2：2
-
+> 在`crypto-config`目录中生成了各种认证文件，而且生成了`docker-compose-e2e.yaml`文件，里面挂载了`crypto-config`中的认证文件到docker里。
 
 ### 3. 启动第一个网络
 ``` bash
@@ -672,11 +580,3 @@ Deleted: sha256:4fe67ea9f6d90866cc83df6d4b6384415bb64c8cce30ac91bb7ffec3a5ae53df
 Deleted: sha256:222840c8d52f01f451e0b5dab8e154af57fb4d131aa3b7c950d774feffa6c6df
 Deleted: sha256:3edd307aba48e9551c5e0ddb2b31278638995e58ace57114738ee87d6562fc75
 ```
-
-
-### 5. Crypto Generator(加密生成器)
-我们将使用cryptogen工具为我们的各种网络实体生成密码资料（x509证书和签名密钥）。 这些证书是身份的代表，它们允许在我们的实体进行通信和交易时进行签名/验证身份验证。
-#### 1) 它是如何工作的？
-Cryptogen使用包含网络拓扑的文件 - crypto-config.yaml，并允许我们为组织和组织内的组件生成一组证书和密钥。 每个组织都配备了一个独有的根证书（ca-cert），将特定的组件（同行和订购者）绑定到该组织。 通过为每个组织分配一个唯一的CA证书，我们正在模拟一个典型的网络，其中每个参与成员将使用自己的证书颁发机构。 Hyperledger Fabric中的事务和通信由实体的私钥（keystore）签名，然后通过公钥（signcerts）进行验证。
-
-你会注意到这个文件中的一个count变量。 我们用这个来指定每个组织的节点的数量; 在我们的案例中，每个组织有两个节点。
