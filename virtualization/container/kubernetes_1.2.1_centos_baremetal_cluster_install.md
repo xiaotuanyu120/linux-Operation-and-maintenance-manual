@@ -432,7 +432,7 @@ cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 
 # 准备flannel配置文件
 cat > /etc/sysconfig/flanneld << EOF
-FLANNELD_PUBLIC_IP="172.16.1.100"
+FLANNELD_PUBLIC_IP="172.16.1.101"
 FLANNELD_ETCD_ENDPOINTS="http://172.16.1.100:2379"
 FLANNELD_ETCD_PREFIX="/kube-centos/network"
 # Any additional options that you want to pass
@@ -462,6 +462,8 @@ systemctl daemon-reload
 systemctl enable flannel
 systemctl start flannel
 ```
+> 每个节点的flannel需要根据自己情况来填写配置文件
+
 > flannel启动后生成了以下文件：  
 - /var/run/flannel/subnet.env, 从etcd中获取信息然后生成的flanneld配置文件
 - /run/docker_opts.env, flannel service文件中指定的/usr/libexec/flannel/mk-docker-opts.sh生成的docker环境变量文件
