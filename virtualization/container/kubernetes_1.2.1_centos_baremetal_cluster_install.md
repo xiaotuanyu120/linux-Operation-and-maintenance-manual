@@ -296,7 +296,8 @@ KUBE_ETCD_SERVERS="--etcd-servers=http://127.0.0.1:2379,http://127.0.0.1:4001"
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=$SERVICE_CLUSTER_IP_RANGE"
 
 # default admission control policies
-KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
+# KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
+KUBE_ADMISSION_CONTROL=""
 
 # Add your own!
 KUBE_API_ARGS="--service-node-port-range=1-65535"
@@ -322,6 +323,7 @@ cat > /usr/local/kubernetes/conf/scheduler << EOF
 KUBE_SCHEDULER_ARGS=""
 EOF
 ```
+> [错误: No API token found for service account "default", retry after the token](https://github.com/kubernetes/kubernetes/issues/33714)，解决办法是配置`KUBE_ADMISSION_CONTROL=""`禁用`KUBE_ADMISSION_CONTROL`
 
 准备systemd unit文件:
 - kube-apiserver.service
