@@ -21,7 +21,7 @@ tags: [container,docker,kubernetes,flannel]
 items|version|comment
 ---|---|---
 OS|centos7|
-kubernetes|1.8.3|最新稳定版本
+kubernetes|1.9.1|最新稳定版本
 docker|17.09.0-ce|
 etcd|3.0.7|
 flannel||使用flannel做overlay网络，支持不同主机间pods间网络互通
@@ -86,6 +86,19 @@ swapoff -a
 echo 'export MASTER_IP=172.16.1.100
 export SERVICE_CLUSTER_IP_RANGE=10.254.0.0/16
 export CLUSTER_NAME=KubeTest
+export PATH=$PATH:/usr/local/kubernetes/bin' > /etc/profile.d/kubernetes.sh
+source /etc/profile.d/kubernetes.sh
+```
+> 规划集群中需要重复使用的内容为变量
+- `MASTER_IP` - master的静态ip
+- `SERVICE_CLUSTER_IP_RANGE` - service对象使用的ip范围
+- `CLUSTER_NAME` - kubernetes集群的名称
+
+<!--
+``` bash
+echo 'export MASTER_IP=172.16.1.100
+export SERVICE_CLUSTER_IP_RANGE=10.254.0.0/16
+export CLUSTER_NAME=KubeTest
 export CA_CERT=/usr/local/kubernetes/security/ca.crt
 export MASTER_CERT=/usr/local/kubernetes/security/server.crt
 export MASTER_KEY=/usr/local/kubernetes/security/server.key
@@ -100,12 +113,13 @@ source /etc/profile.d/kubernetes.sh
     - `CA_CERT` - 放在apiserver节点上
     - `MASTER_CERT` - 放在apiserver节点上
     - `MASTER_KEY` - 放在apiserver节点上
+-->
 
 ### 2) 获取kubernetes（master节点）
 kubernetes的二进制包里面包含了kubernetes的二进制文件和支持的etcd版本
 ``` bash
 # 下载kubernetes
-wget https://github.com/kubernetes/kubernetes/releases/download/v1.8.3/kubernetes.tar.gz
+wget https://github.com/kubernetes/kubernetes/releases/download/v1.9.1/kubernetes.tar.gz
 tar zxvf kubernetes.tar.gz
 
 # 下载二进制文件
@@ -406,9 +420,10 @@ systemctl start kube-scheduler.service
 ### 1) 部署flannel(node节点)
 ``` bash
 # 下载flannel
-wget https://github.com/coreos/flannel/releases/download/v0.8.0/flannel-v0.8.0-linux-amd64.tar.gz
+FLANNEL_VER=v0.9.1
+wget https://github.com/coreos/flannel/releases/download/v0.9.1/flannel-${FLANNEL_VER}-linux-amd64.tar.gz
 mkdir flannel
-tar zxvf flannel-v0.8.0-linux-amd64.tar.gz -C flannel
+tar zxvf flannel-${FLANNEL_VER}-linux-amd64.tar.gz -C flannel
 cp flannel/flanneld /usr/local/bin
 mkdir -p /usr/libexec/flannel
 cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
@@ -479,7 +494,7 @@ Type=notify
 # exists and systemd currently does not support the cgroup feature set required
 # for containers run by docker
 EnvironmentFile=/run/docker_opts.env
-ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
+ExecStart=/usr/local/bin/dockerd -H fd:// $DOCKER_OPTS
 ExecReload=/bin/kill -s HUP $MAINPID
 LimitNOFILE=1048576
 # Having non-zero Limit*s causes performance problems due to accounting overhead
