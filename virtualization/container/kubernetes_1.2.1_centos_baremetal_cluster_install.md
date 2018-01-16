@@ -75,6 +75,12 @@ sysctl -p
 - 关闭系统swap  
 ``` bash
 swapoff -a
+
+# 注释swap的开机挂载项
+vim /etc/fstab
+**********************************
+#/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+**********************************
 ```
 > 关闭系统swap，是为了严格的按照cpu和内存的限制，这样scheduler在规划pod的时候就不会把pod放进swap中了，这是为了性能考虑。
 
@@ -359,6 +365,11 @@ LimitNOFILE=65536
 [Install]
 WantedBy=multi-user.target' > /usr/lib/systemd/system/kube-apiserver.service
 
+mkdir /usr/lib/systemd/system/kube-apiserver.service.d
+echo '[Service]
+PermissionsStartOnly=yes
+ExecStartPre=/usr/bin/mkdir -p /var/run/kubernetes
+ExecStartPre=/usr/bin/chown kube.kube /var/run/kubernetes' > /usr/lib/systemd/system/kube-apiserver.service.d/pre-start.conf
 
 echo '[Unit]
 Description=Kubernetes Controller Manager
@@ -408,9 +419,10 @@ systemctl daemon-reload
 # 创建spawn服务的用户kube（在配置文件中配置）
 useradd -r -s /sbin/nologin kube
 chown :kube /usr/local/kubernetes/bin/*
-mkdir /var/run/kubernetes
-chown kube:kube /var/run/kubernetes
 
+systemctl enable kube-apiserver.service
+systemctl enable kube-controller-manager.service
+systemctl enable kube-scheduler.service
 systemctl start kube-apiserver.service
 systemctl start kube-controller-manager.service
 systemctl start kube-scheduler.service
@@ -431,12 +443,16 @@ mkdir -p /usr/libexec/flannel
 cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 
 # 准备flannel配置文件
+## !!重点!! ##
+# -iface，根据实际情况设定
+# FLANNELD_PUBLIC_I，每个节点不同
+#############
 cat > /etc/sysconfig/flanneld << EOF
 FLANNELD_PUBLIC_IP="172.16.1.101"
 FLANNELD_ETCD_ENDPOINTS="http://172.16.1.100:2379"
 FLANNELD_ETCD_PREFIX="/kube-centos/network"
 # Any additional options that you want to pass
-FLANNELD_OPTIONS=""
+FLANNELD_OPTIONS="-iface=eth1"
 EOF
 
 # 准备flannel systemd unit文件
