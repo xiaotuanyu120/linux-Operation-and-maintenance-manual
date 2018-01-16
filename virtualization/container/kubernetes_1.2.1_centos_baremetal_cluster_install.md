@@ -75,12 +75,10 @@ sysctl -p
 - 关闭系统swap  
 ``` bash
 swapoff -a
-
-# 注释swap的开机挂载项
-vim /etc/fstab
-**********************************
+```
+注释swap的开机挂载项，修改`/etc/fstab`
+```
 #/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
-**********************************
 ```
 > 关闭系统swap，是为了严格的按照cpu和内存的限制，这样scheduler在规划pod的时候就不会把pod放进swap中了，这是为了性能考虑。
 
