@@ -443,7 +443,7 @@ cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 # 准备flannel配置文件
 ## !!重点!! ##
 # -iface，根据实际情况设定
-# FLANNELD_PUBLIC_I，每个节点不同
+# FLANNELD_PUBLIC_IP，每个节点不同
 #############
 cat > /etc/sysconfig/flanneld << EOF
 FLANNELD_PUBLIC_IP="172.16.1.101"

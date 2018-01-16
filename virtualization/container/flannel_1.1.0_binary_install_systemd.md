@@ -27,18 +27,25 @@ tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
 
 ### 2. 安装配置flannel
 ``` bash
-wget https://github.com/coreos/flannel/releases/download/v0.8.0/flannel-v0.8.0-linux-amd64.tar.gz
+FLANNEL_VER=v0.9.1
+wget https://github.com/coreos/flannel/releases/download/v0.9.1/flannel-${FLANNEL_VER}-linux-amd64.tar.gz
 mkdir flannel
-tar zxvf flannel-v0.8.0-linux-amd64.tar.gz -C flannel
+tar zxvf flannel-${FLANNEL_VER}-linux-amd64.tar.gz -C flannel
 cp flannel/flanneld /usr/local/bin
 mkdir -p /usr/libexec/flannel
 cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 
+# 准备flannel配置文件
+## !!重点!! ##
+# -iface，根据实际情况设定
+# FLANNELD_PUBLIC_IP，每个节点不同
+#############
 cat > /etc/sysconfig/flanneld << EOF
+FLANNELD_PUBLIC_IP="172.16.1.101"
 FLANNELD_ETCD_ENDPOINTS="http://127.0.0.1:2379"
 FLANNELD_ETCD_PREFIX="/kube-centos/network"
 # Any additional options that you want to pass
-FLANNELD_OPTIONS=""
+FLANNELD_OPTIONS="-iface=eth1"
 EOF
 ```
 > `/etc/sysconfig/flanneld`会在systemd unit file中被用作环境变量文件  
@@ -58,7 +65,6 @@ Description=Flanneld overlay address etcd agent
 After=network.target
 After=network-online.target
 Wants=network-online.target
-After=etcd.service
 Before=docker.service
 
 [Service]
@@ -77,6 +83,7 @@ RequiredBy=docker.service' > /usr/lib/systemd/system/flannel.service
 
 # 启动flannel
 systemctl daemon-reload
+systemctl enable flannel
 systemctl start flannel
 ```
 > `ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c`这个配置是在flannel启动之后生成docker的配置文件，默认在/run/docker_opts.env  
