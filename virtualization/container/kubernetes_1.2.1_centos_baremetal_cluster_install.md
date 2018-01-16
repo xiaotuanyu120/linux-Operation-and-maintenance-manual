@@ -36,9 +36,9 @@ flannel||使用flannel做overlay网络，支持不同主机间pods间网络互�
 hostname|ip address|service|comment
 ---|---|---|---
 master|172.16.1.100|etcd,kube-apiserver,kube-controller-manager,kube-scheduler,docker|主节点
-node1|172.16.1.101|flannel,docker,kubelet,kube-proxy|node 1
-node2|172.16.1.102|flannel,docker,kubelet,kube-proxy|node 2
-node3|172.16.1.103|flannel,docker,kubelet,kube-proxy|node 3
+node01|172.16.1.101|flannel,docker,kubelet,kube-proxy|node 1
+node02|172.16.1.102|flannel,docker,kubelet,kube-proxy|node 2
+node03|172.16.1.103|flannel,docker,kubelet,kube-proxy|node 3
 
 ---
 
@@ -60,9 +60,9 @@ setenforce 0
 - 设定hostname到hosts文件中
 ``` bash
 echo "172.16.1.100  master
-172.16.1.101  node1
-172.16.1.102  node2
-172.16.1.103  node3" >> /etc/hosts
+172.16.1.101  node01
+172.16.1.102  node02
+172.16.1.103  node03" >> /etc/hosts
 ```
 
 - 设定sysctl中的net.ipv4.ip_forward = 1
