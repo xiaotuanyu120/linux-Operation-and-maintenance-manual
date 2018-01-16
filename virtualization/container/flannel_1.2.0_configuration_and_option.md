@@ -22,12 +22,18 @@ tags: [flannel]
 - `--iface=""`: 用于主机间通信的interface(IP or name)。默认为机器上默认路由的接口。这个选项可以指定多次，flannel会按照顺序去查找，并返回第一个找到的接口。
 - `--iface-regex=""`: 和`--iface`的区别在于，用正则的方式去寻找匹配用于主机间通信接口，也可以被指定多次，但优先级低于iface，只有iface全部未匹配才会生效。
 - `--subnet-file=/run/flannel/subnet.env`: 环境变量写入文件路径
-- `--subnet-lease-renew-margin=60`: 子网租赁续租时间, 单位是分钟.
+- `--subnet-lease-renew-margin=60`: 子网租赁renew时间, 单位是分钟.
 - `--ip-masq=false`: setup IP masquerade for traffic destined for outside the flannel network. Flannel assumes that the default policy is ACCEPT in the NAT POSTROUTING chain.
 - `-v=0`: log level for V logs. Set to 1 to see messages related to data path.
 - `--healthz-ip="0.0.0.0"`: The IP address for healthz server to listen (default "0.0.0.0")
 - `--healthz-port=0`: The port for healthz server to listen(0 to disable)
 - `--version`: print version and exit
+
+> 子网租赁默认是24小时，默认一小时renew一次这个时间  
+
+> option也可以写成环境变量，默认规则就是将option大写，前面加上`FLANNELD_`,例如`--etcd-endpoints=http://10.0.0.2:2379`等同于`FLANNELD_ETCD_ENDPOINTS=http://10.0.0.2:2379`
+
+> flannel提供健康检查http端点healthz。 目前，当flannel运行时，这个端点将返回http状态ok（即200）。 这个功能默认是禁用的。 将healthz-port设置为非零值将启用flannel的healthz服务器。
 
 ### 2. flannel 网络配置
 `Network` (string): IPv4 network in CIDR format to use for the entire flannel network. (This is the only mandatory key.)
