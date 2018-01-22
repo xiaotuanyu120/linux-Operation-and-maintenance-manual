@@ -123,24 +123,16 @@ source /etc/profile.d/kubernetes.sh
 kubernetes的二进制包里面包含了kubernetes的二进制文件和支持的etcd版本
 ``` bash
 # 下载kubernetes
-wget https://github.com/kubernetes/kubernetes/releases/download/v1.9.1/kubernetes.tar.gz
-tar zxvf kubernetes.tar.gz
-
-# 下载二进制文件
-./kubernetes/cluster/get-kube-binaries.sh
-#检查下载的文件
-ll -h kubernetes/*/*-linux-amd64.tar.gz
--rw-r--r--. 1 root root  25M Nov 19 05:03 kubernetes/client/kubernetes-client-linux-amd64.tar.gz
--rw-r--r--. 1 root root 386M Nov 19 05:03 kubernetes/server/kubernetes-server-linux-amd64.tar.gz
+wget https://dl.k8s.io/v1.9.1/kubernetes-server-linux-amd64.tar.gz
+tar zxvf kubernetes-server-linux-amd64.tar.gz
 
 # 拷贝二进制文件到server端
 mkdir -p /usr/local/kubernetes/{bin,security,conf}
-tar zxvf kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 cp kubernetes/server/bin/{kube-apiserver,kube-scheduler,kube-controller-manager,kubectl} /usr/local/kubernetes/bin/
 chmod 750 /usr/local/kubernetes/bin/*
 # 如果使用docker启动kube-apiserver,kube-scheduler,kube-controller-manager这三个服务的话，不需要拷贝它们的二进制文件，只需要拷贝kubectl即可
 
-# 拷贝二进制文件到node端
+# 拷贝二进制文件到node端(提前做好ssh信任)
 scp kubernetes/server/bin/{kubelet,kube-proxy} root@node01:/usr/local/bin
 scp kubernetes/server/bin/{kubelet,kube-proxy} root@node02:/usr/local/bin
 scp kubernetes/server/bin/{kubelet,kube-proxy} root@node03:/usr/local/bin
