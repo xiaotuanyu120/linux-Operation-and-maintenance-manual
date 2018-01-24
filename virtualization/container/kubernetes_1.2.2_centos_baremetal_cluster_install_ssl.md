@@ -422,6 +422,10 @@ cfssl-certinfo -cert server.pem
 拷贝证书到指定位置
 ``` bash
 cp *.pem /usr/local/kubernetes/security
+for node in node01 node02 node03
+do
+  scp *.pem root@$node:/usr/local/kubernetes/security
+done
 ```
 > 路径可以随意指定，只要上下文中一致即可
 
@@ -469,7 +473,7 @@ cp token.csv /usr/local/kubernetes/
 **创建 kubelet bootstrapping kubeconfig 文件**
 ``` bash
 cd /usr/local/kubernetes
-export KUBE_APISERVER="https://127.0.0.1:6443"
+export KUBE_APISERVER="https://172.16.1.100:6443"
 
 # 设置集群参数
 kubectl config set-cluster KubeTest \
@@ -483,7 +487,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts: []
 current-context: ""
@@ -501,7 +505,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts: []
 current-context: ""
@@ -524,7 +528,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts:
 - context:
@@ -548,7 +552,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts:
 - context:
@@ -569,6 +573,8 @@ users:
 
 **创建 kube-proxy kubeconfig 文件**
 ``` bash
+export KUBE_APISERVER="https://172.16.1.100:6443"
+
 # 设置集群参数
 kubectl config set-cluster KubeTest \
   --certificate-authority=/usr/local/kubernetes/security/ca.pem \
@@ -581,7 +587,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts: []
 current-context: ""
@@ -601,7 +607,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts: []
 current-context: ""
@@ -625,7 +631,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts:
 - context:
@@ -649,7 +655,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: LS0t...LS0K
-    server: https://127.0.0.1:6443
+    server: https://172.16.1.100:6443
   name: KubeTest
 contexts:
 - context:
@@ -674,7 +680,7 @@ kube-proxy.pem 证书中 CN 为 system:kube-proxy，kube-apiserver 预定义的 
 ``` bash
 for node in node01 node02 node03
 do
-  scp bootstrap.kubeconfig kube-proxy.kubeconfig root@$node:/etc/kubernetes
+  scp bootstrap.kubeconfig kube-proxy.kubeconfig root@$node:/usr/local/kubernetes/conf
 done
 ```
 
@@ -704,11 +710,11 @@ User=etcd
 Type=notify
 Environment=ETCD_DATA_DIR=/var/lib/etcd
 Environment=ETCD_NAME=%m
-Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379,http://0.0.0.0:4001
-Environment=ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
-Environment=ETCD_trusted-ca-file=/usr/local/kubernetes/security/ca.pem
-Environment=ETCD_cert-file=/usr/local/kubernetes/security/server.pem
-Environment=ETCD_key-file=/usr/local/kubernetes/security/server-key.pem
+Environment=ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379,https://0.0.0.0:4001
+Environment=ETCD_ADVERTISE_CLIENT_URLS=https://0.0.0.0:2379
+Environment=ETCD_TRUSTED_CA_FILE=/usr/local/kubernetes/security/ca.pem
+Environment=ETCD_CERT_FILE=/usr/local/kubernetes/security/server.pem
+Environment=ETCD_KEY_FILE=/usr/local/kubernetes/security/server-key.pem
 ExecStart=/usr/local/bin/etcd
 Restart=always
 RestartSec=10s
@@ -743,34 +749,46 @@ etcdctl --endpoints http://$MASTER_IP:2379 set /kube-centos/network/config '{ "N
 ```
 > 为了测试，在主节点上只启动一个节点的etcd，etcd集群参照[etcd 集群文档](http://linux.xiao5tech.com/virtualization/container)
 
-#### 2) 启动kubernets Apiserver, Controller Manager, 和 Scheduler服务
-<!--
+> 后来启动etcd出错，是因为没有权限访问key文件，为了方便，临时给key加上777权限，生产环境时需要想办法解决
+
+#### 2) 配置kubectl
 ``` bash
-# docker load -i kubernetes/server/bin/kube-apiserver.tar
-# docker load -i kubernetes/server/bin/kube-controller-manager.tar
-# docker load -i kubernetes/server/bin/kube-scheduler.tar
-#
-# docker run -d --name=apiserver -p 8080:8080 gcr.io/google_containers/kube-apiserver:v1.8.3 \
-#  kube-apiserver \
-#  --insecure-bind-address=0.0.0.0 \
-#  --insecure-port=8080 \
-#  --advertise-address=0.0.0.0 \
-#  --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE} \
-#  --etcd-servers=http://127.0.0.1:4001 \
-#  --service-node-port-range=1-65535 \
-#  # --client-ca-file=${CA_CERT} \
-#  # --tls-cert-file=${MASTER_CERT} \
-#  # --tls-private-key-file=${MASTER_KEY}
-#
-# docker run -d --name=ControllerM gcr.io/google_containers/kube-controller-manager:v1.8.3 \
-#  kube-controller-manager \
-#  --master=${MASTER_IP}:8080
-#
-# docker run -d --name=scheduler gcr.io/google_containers/kube-scheduler:v1.8.3 \
-#  kube-scheduler \
-#  --master=${MASTER_IP}:8080
+export KUBE_APISERVER="https://172.16.1.100:6443"
+
+# 设置集群参数
+kubectl config set-cluster KubeTest \
+  --certificate-authority=/usr/local/kubernetes/security/ca.pem \
+  --embed-certs=true \
+  --server=${KUBE_APISERVER}
+
+# 设置客户端认证参数
+kubectl config set-credentials admin \
+  --client-certificate=/usr/local/kubernetes/security/admin.pem \
+  --embed-certs=true \
+  --client-key=/usr/local/kubernetes/security/admin-key.pem
+
+# 设置上下文参数
+kubectl config set-context kubernetes \
+  --cluster=kubernetes \
+  --user=admin
+
+# 设置默认上下文
+kubectl config use-context kubernetes
 ```
--->
+- admin.pem 证书 OU 字段值为 system:masters，kube-apiserver 预定义的 RoleBinding cluster-admin 将 Group system:masters 与 Role cluster-admin 绑定，该 Role 授予了调用kube-apiserver 相关 API 的权限；
+- 生成的 kubeconfig 被保存到 ~/.kube/config 文件；
+
+> 注意：~/.kube/config文件拥有对该集群的最高权限，请妥善保管。
+
+kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要先将 bootstrap token 文件中的 kubelet-bootstrap 用户赋予 system:node-bootstrapper cluster 角色(role)， 然后 kubelet 才能有权限创建认证请求(certificate signing requests)：
+``` bash
+kubectl create clusterrolebinding kubelet-bootstrap \
+  --clusterrole=system:node-bootstrapper \
+  --user=kubelet-bootstrap
+```
+> --user=kubelet-bootstrap 是在 /etc/kubernetes/token.csv 文件中指定的用户名，同时也写入了 /etc/kubernetes/bootstrap.kubeconfig 文件；
+
+#### 2) 启动kubernets Apiserver, Controller Manager, 和 Scheduler服务
 
 准备配置文件：
 - config, 通用配置
@@ -799,10 +817,10 @@ KUBE_LOGTOSTDERR="--logtostderr=true"
 KUBE_LOG_LEVEL="--v=0"
 
 # Should this cluster be allowed to run privileged docker containers
-KUBE_ALLOW_PRIV="--allow-privileged=false"
+KUBE_ALLOW_PRIV="--allow-privileged=true"
 
 # How the controller-manager, scheduler, and proxy find the apiserver
-KUBE_MASTER="--master=http://127.0.0.1:8080"
+KUBE_MASTER="--master=http://172.16.1.100:8080"
 EOF
 
 cat > /usr/local/kubernetes/conf/apiserver << EOF
@@ -813,26 +831,25 @@ cat > /usr/local/kubernetes/conf/apiserver << EOF
 #
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--insecure-bind-address=0.0.0.0"
+KUBE_API_ADDRESS="--advertise-address=172.16.1.100 --bind-address=172.16.1.100 --insecure-bind-address=127.0.0.1"
 
 # The port on the local server to listen on.
-KUBE_API_PORT="--insecure-port=8080"
+#KUBE_API_PORT="--insecure-port=8080"
 
 # Port minions listen on
 # KUBELET_PORT="--kubelet-port=10250"
 
 # Comma separated list of nodes in the etcd cluster
-KUBE_ETCD_SERVERS="--etcd-servers=http://127.0.0.1:2379,http://127.0.0.1:4001"
+KUBE_ETCD_SERVERS="--etcd-servers=https://127.0.0.1:2379,https://127.0.0.1:4001"
 
 # Address range to use for services
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=$SERVICE_CLUSTER_IP_RANGE"
 
 # default admission control policies
-# KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
-KUBE_ADMISSION_CONTROL=""
+KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
 
 # Add your own!
-KUBE_API_ARGS="--service-node-port-range=1-65535"
+KUBE_API_ARGS="--authorization-mode=RBAC --runtime-config=rbac.authorization.k8s.io/v1beta1 --kubelet-https=true --enable-bootstrap-token-auth --token-auth-file=/usr/local/kubernetes/token.csv --service-node-port-range=30000-32767 --tls-cert-file=/usr/local/kubernetes/security/server.pem --tls-private-key-file=/usr/local/kubernetes/security/server-key.pem --client-ca-file=/usr/local/kubernetes/security/ca.pem --service-account-key-file=/usr/local/kubernetes/security/ca-key.pem --etcd-cafile=/usr/local/kubernetes/security/ca.pem --etcd-certfile=/usr/local/kubernetes/security/server.pem --etcd-keyfile=/usr/local/kubernetes/security/server-key.pem --enable-swagger-ui=true --apiserver-count=1 --audit-log-maxage=30 --audit-log-maxbackup=3 --audit-log-maxsize=100 --audit-log-path=/var/lib/audit.log --event-ttl=1h --storage-backend=etcd2"
 EOF
 
 cat > /usr/local/kubernetes/conf/controller-manager << EOF
@@ -842,7 +859,7 @@ cat > /usr/local/kubernetes/conf/controller-manager << EOF
 # defaults from config and apiserver should be adequate
 
 # Add your own!
-KUBE_CONTROLLER_MANAGER_ARGS=""
+KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 --service-cluster-ip-range=10.254.0.0/16 --cluster-name=KubeTest --cluster-signing-cert-file=/usr/local/kubernetes/security/ca.pem --cluster-signing-key-file=/usr/local/kubernetes/security/ca-key.pem  --service-account-private-key-file=/usr/local/kubernetes/security/ca-key.pem --root-ca-file=/usr/local/kubernetes/security/ca.pem --leader-elect=true"
 EOF
 
 cat > /usr/local/kubernetes/conf/scheduler << EOF
@@ -852,10 +869,10 @@ cat > /usr/local/kubernetes/conf/scheduler << EOF
 # default config should be adequate
 
 # Add your own!
-KUBE_SCHEDULER_ARGS=""
+KUBE_SCHEDULER_ARGS="--leader-elect=true --address=127.0.0.1"
 EOF
 ```
-> [错误: No API token found for service account "default", retry after the token](https://github.com/kubernetes/kubernetes/issues/33714)，解决办法是配置`KUBE_ADMISSION_CONTROL=""`禁用`KUBE_ADMISSION_CONTROL`
+> `--storage-backend=etcd2`，增加此option，是因为kube-api-server在增加了key认证之后，和etcd的交互有问题。[git issure 讲解](https://github.com/kubernetes/kubernetes/issues/43634)
 
 准备systemd unit文件:
 - kube-apiserver.service
@@ -952,6 +969,14 @@ systemctl enable kube-scheduler.service
 systemctl start kube-apiserver.service
 systemctl start kube-controller-manager.service
 systemctl start kube-scheduler.service
+
+# 检查集群状态
+kubectl get componentstatuses
+NAME                 STATUS    MESSAGE              ERROR
+scheduler            Healthy   ok
+controller-manager   Healthy   ok
+etcd-1               Healthy   {"health": "true"}
+etcd-0               Healthy   {"health": "true"}
 ```
 
 ---
@@ -975,10 +1000,10 @@ cp flannel/mk-docker-opts.sh /usr/libexec/flannel/
 #############
 cat > /etc/sysconfig/flanneld << EOF
 FLANNELD_PUBLIC_IP="172.16.1.101"
-FLANNELD_ETCD_ENDPOINTS="http://172.16.1.100:2379"
+FLANNELD_ETCD_ENDPOINTS="https://172.16.1.100:2379"
 FLANNELD_ETCD_PREFIX="/kube-centos/network"
 # Any additional options that you want to pass
-FLANNELD_OPTIONS="-iface=eth1"
+FLANNELD_OPTIONS="-iface=eth1 -etcd-cafile=/usr/local/kubernetes/security/ca.pem -etcd-certfile=/usr/local/kubernetes/security/server.pem -etcd-keyfile=/usr/local/kubernetes/security/server-key.pem"
 EOF
 
 # 准备flannel systemd unit文件
@@ -1125,7 +1150,7 @@ cat > /usr/local/kubernetes/conf/kubelet << EOF
 # kubernetes kubelet (minion) config
 
 # --kubeconfig for kubeconfig
-KUBELET_KUBECONFIG="--kubeconfig=/usr/local/kubernetes/conf/node-kubeconfig.yaml"
+KUBELET_KUBECONFIG="--kubeconfig=/usr/local/kubernetes/conf/kubelet.kubeconfig"
 
 # The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
 KUBELET_ADDRESS="--address=0.0.0.0"
@@ -1137,7 +1162,7 @@ KUBELET_ADDRESS="--address=0.0.0.0"
 KUBELET_HOSTNAME="--hostname-override="
 
 # Add your own!
-KUBELET_ARGS=""
+KUBELET_ARGS="--cluster-dns=10.254.0.2 --bootstrap-kubeconfig=/usr/local/kubernetes/conf/bootstrap.kubeconfig --cert-dir=/usr/local/kubernetes/security --cluster-domain=cluster.local --hairpin-mode promiscuous-bridge --serialize-image-pulls=false"
 EOF
 
 cat > /usr/local/kubernetes/conf/proxy << EOF
@@ -1147,21 +1172,7 @@ cat > /usr/local/kubernetes/conf/proxy << EOF
 # default config should be adequate
 
 # Add your own!
-KUBE_PROXY_ARGS=""
-EOF
-
-cat > /usr/local/kubernetes/conf/node-kubeconfig.yaml << EOF
-apiVersion: v1
-kind: Config
-clusters:
-- name: local
-  cluster:
-    server: http://master:8080
-contexts:
-- context:
-    cluster: local
-  name: kubelet-cluster.local
-current-context: kubelet-cluster.local
+KUBE_PROXY_ARGS="--bind-address=172.16.1.101 --hostname-override= --kubeconfig=/usr/local/kubernetes/conf/kube-proxy.kubeconfig --cluster-cidr=10.254.0.0/16"
 EOF
 ```
 
@@ -1228,4 +1239,18 @@ systemctl enable kubelet
 systemctl enable kube-proxy
 systemctl start kubelet
 systemctl start kube-proxy
+```
+
+``` bash
+kubectl get csr | awk '/Pending/ {print $1}' | xargs -i echo {}
+node-csr-IVYfMcoBJGmTyLVceabnuoDRpFbCxWiisev6pQ0ynYA
+node-csr-TGGZ3Gy4dxaApbOMSPGCsaZy4xKeuwu8Iuc8RWxYkro
+node-csr-TIZ6m0T5hZD6rgZBLCxzgdwp_O-p4DGvSTAZX3dQ3YU
+
+kubectl get csr | awk '/Pending/ {print $1}' | xargs -i kubectl certificate approve {}
+certificatesigningrequest "node-csr-IVYfMcoBJGmTyLVceabnuoDRpFbCxWiisev6pQ0ynYA" approved
+certificatesigningrequest "node-csr-TGGZ3Gy4dxaApbOMSPGCsaZy4xKeuwu8Iuc8RWxYkro" approved
+certificatesigningrequest "node-csr-TIZ6m0T5hZD6rgZBLCxzgdwp_O-p4DGvSTAZX3dQ3YU" approved
+
+
 ```
