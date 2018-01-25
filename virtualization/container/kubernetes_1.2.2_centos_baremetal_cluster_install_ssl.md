@@ -1,10 +1,10 @@
 ---
-title: kubernetes 1.2.1 kubernetes集群安装(centos7裸机)
-date: 2017-07-27 10:55:00
+title: kubernetes 1.2.2 kubernetes集群安装(centos7裸机)
+date: 2018-01-21 10:55:00
 categories: virtualization/container
 tags: [container,docker,kubernetes,flannel]
 ---
-### kubernetes 1.2.1 kubernetes集群安装(centos7裸机)
+### kubernetes 1.2.2 kubernetes集群安装(centos7裸机)
 
 ---
 
@@ -710,8 +710,8 @@ User=etcd
 Type=notify
 Environment=ETCD_DATA_DIR=/var/lib/etcd
 Environment=ETCD_NAME=%m
-Environment=ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379,https://0.0.0.0:4001
-Environment=ETCD_ADVERTISE_CLIENT_URLS=https://0.0.0.0:2379
+Environment=ETCD_LISTEN_CLIENT_URLS=https://172.16.1.100:2379,https://172.16.1.100:4001
+Environment=ETCD_ADVERTISE_CLIENT_URLS=https://172.16.1.100:2379
 Environment=ETCD_TRUSTED_CA_FILE=/usr/local/kubernetes/security/ca.pem
 Environment=ETCD_CERT_FILE=/usr/local/kubernetes/security/server.pem
 Environment=ETCD_KEY_FILE=/usr/local/kubernetes/security/server-key.pem
@@ -737,6 +737,7 @@ systemctl start etcd.service
 
 # 验证etcd
 etcdctl \
+  --endpoints=https://172.16.1.100:2379 \
   --ca-file=/usr/local/kubernetes/security/ca.pem \
   --cert-file=/usr/local/kubernetes/security/server.pem \
   --key-file=/usr/local/kubernetes/security/server-key.pem \
@@ -745,7 +746,12 @@ etcdctl \
 
 使用etcd储存flannel的网络配置
 ``` bash
-etcdctl --endpoints http://$MASTER_IP:2379 set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
+etcdctl \
+  --endpoints https://172.16.1.100:2379 \
+  --ca-file=/usr/local/kubernetes/security/ca.pem \
+  --cert-file=/usr/local/kubernetes/security/server.pem \
+  --key-file=/usr/local/kubernetes/security/server-key.pem \
+  set /kube-centos/network/config '{ "Network": "10.5.0.0/16", "Backend": {"Type": "vxlan"}}'
 ```
 > 为了测试，在主节点上只启动一个节点的etcd，etcd集群参照[etcd 集群文档](http://linux.xiao5tech.com/virtualization/container)
 
@@ -780,14 +786,6 @@ kubectl config use-context kubernetes
 
 > 注意：~/.kube/config文件拥有对该集群的最高权限，请妥善保管。
 
-kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要先将 bootstrap token 文件中的 kubelet-bootstrap 用户赋予 system:node-bootstrapper cluster 角色(role)， 然后 kubelet 才能有权限创建认证请求(certificate signing requests)：
-``` bash
-kubectl create clusterrolebinding kubelet-bootstrap \
-  --clusterrole=system:node-bootstrapper \
-  --user=kubelet-bootstrap
-```
-> --user=kubelet-bootstrap 是在 /etc/kubernetes/token.csv 文件中指定的用户名，同时也写入了 /etc/kubernetes/bootstrap.kubeconfig 文件；
-
 #### 2) 启动kubernets Apiserver, Controller Manager, 和 Scheduler服务
 
 准备配置文件：
@@ -820,7 +818,7 @@ KUBE_LOG_LEVEL="--v=0"
 KUBE_ALLOW_PRIV="--allow-privileged=true"
 
 # How the controller-manager, scheduler, and proxy find the apiserver
-KUBE_MASTER="--master=http://172.16.1.100:8080"
+KUBE_MASTER="--master=http://127.0.0.1:8080"
 EOF
 
 cat > /usr/local/kubernetes/conf/apiserver << EOF
@@ -840,10 +838,10 @@ KUBE_API_ADDRESS="--advertise-address=172.16.1.100 --bind-address=172.16.1.100 -
 # KUBELET_PORT="--kubelet-port=10250"
 
 # Comma separated list of nodes in the etcd cluster
-KUBE_ETCD_SERVERS="--etcd-servers=https://127.0.0.1:2379,https://127.0.0.1:4001"
+KUBE_ETCD_SERVERS="--etcd-servers=https://172.16.1.100:2379,https://172.16.1.100:4001"
 
 # Address range to use for services
-KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=$SERVICE_CLUSTER_IP_RANGE"
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=10.254.0.0/16"
 
 # default admission control policies
 KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
@@ -1111,6 +1109,15 @@ systemctl start docker
 > docker systemd
 
 ### 3) 安装kubelet(node节点)
+kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要先将 bootstrap token 文件中的 kubelet-bootstrap 用户赋予 system:node-bootstrapper cluster 角色(role)， 然后 kubelet 才能有权限创建认证请求(certificate signing requests)：
+``` bash
+# master节点执行
+kubectl create clusterrolebinding kubelet-bootstrap \
+  --clusterrole=system:node-bootstrapper \
+  --user=kubelet-bootstrap
+```
+> --user=kubelet-bootstrap 是在 /etc/kubernetes/token.csv 文件中指定的用户名，同时也写入了 /etc/kubernetes/bootstrap.kubeconfig 文件；
+
 准备配置文件：
 - config, 通用配置
 - kubelet, kubelet配置
@@ -1142,7 +1149,7 @@ KUBE_LOG_LEVEL="--v=0"
 KUBE_ALLOW_PRIV="--allow-privileged=false"
 
 # How the controller-manager, scheduler, and proxy find the apiserver
-KUBE_MASTER="--master=http://172.16.1.100:8080"
+KUBE_MASTER="--master=https://172.16.1.100:6443"
 EOF
 
 cat > /usr/local/kubernetes/conf/kubelet << EOF
