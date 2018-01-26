@@ -94,8 +94,11 @@ swapoff -a
 ```
 > 关闭系统swap，是为了严格的按照cpu和内存的限制，这样scheduler在规划pod的时候就不会把pod放进swap中了，这是为了性能考虑。
 
+<!--
 - 安装ipvsadm  
 `yum install ipvsadm -y`
+安装kube-router才需要这个
+-->
 
 ---
 
@@ -136,7 +139,7 @@ DOCKER_VER=17.09.0
 wget https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}-ce.tgz
 tar zxvf docker-${DOCKER_VER}-ce.tgz
 wget https://github.com/docker/compose/releases/download/1.17.1/docker-compose-Linux-x86_64 -O docker-compose
-cp docker-compose docker
+mv docker-compose docker
 cp docker/* k8s/base/bin
 ```
 
@@ -181,7 +184,7 @@ mkdir -p /root/k8s/{node,master,etcd,base}/service
 ### 1) 创建master所需unit文件
 需要各master节点根据自身调整ip地址
 ``` bash
-#kube-apiserver.service
+# kube-apiserver.service
 echo '[Unit]
 Description=Kubernetes API Server
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -225,7 +228,7 @@ LimitNOFILE=65536
 [Install]
 WantedBy=multi-user.target' > /root/k8s/master/service/kube-apiserver.service
 
-# #kube-controller-manager.service
+# kube-controller-manager.service
 echo '[Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -444,10 +447,10 @@ WantedBy=sockets.target' > /root/k8s/base/service/docker.socket
 mkdir -p /etc/docker
 cp /root/k8s/base/daemon.json /etc/docker
 cp /root/k8s/base/service/* /usr/lib/systemd/system
-for master in {master2,master3,node01,node02,node03};do
-  ssh root@$master "mkdir -p /etc/docker"
-  rsync -av /root/k8s/node/daemon.json ${master}:/etc/docker
-  rsync -av /root/k8s/node/service/} ${master}:/usr/lib/systemd/system
+for target in {master2,master3,node01,node02,node03};do
+  ssh root@$target "mkdir -p /etc/docker"
+  rsync -av /root/k8s/base/daemon.json ${target}:/etc/docker
+  rsync -av /root/k8s/base/service/ ${target}:/usr/lib/systemd/system
 done
 
 # 下发master unit文件
@@ -667,22 +670,19 @@ cd /root/k8s-ssl
 # 下发证书到master
 mkdir -p /etc/kubernetes/ssl
 cp {k8s-root-ca.pem,k8s-root-ca-key.pem,admin.pem,admin-key.pem,kubernetes.pem,kubernetes-key.pem} /etc/kubernetes/ssl
-for master in {master2,master3}
-do
+for master in {master2,master3};do
   ssh root@$master "mkdir -p /etc/kubernetes/ssl"
   scp {k8s-root-ca.pem,k8s-root-ca-key.pem,admin.pem,admin-key.pem,kubernetes.pem,kubernetes-key.pem} root@$master:/etc/kubernetes/ssl
 done
 
 # 下发证书到node
-for node in {node01,node02,node03}
-do
+for node in {node01,node02,node03};do
   ssh root@$node "mkdir -p /etc/kubernetes/ssl"
   scp {k8s-root-ca.pem,kube-proxy.pem,kube-proxy-key.pem,kubernetes.pem,kubernetes-key.pem} root@$node:/etc/kubernetes/ssl
 done
 
 # 下发证书到etcd
-for etcd in {etcd1,etcd2,etcd3}
-do
+for etcd in {etcd1,etcd2,etcd3};do
   ssh root@$etcd "mkdir -p /etc/kubernetes/ssl"
   scp {k8s-root-ca.pem,kubernetes.pem,kubernetes-key.pem} root@$etcd:/etc/kubernetes/ssl
 done
@@ -751,7 +751,7 @@ kubectl config set-credentials kube-proxy \
 
 # 设置上下文参数
 kubectl config set-context default \
-  --cluster=KubeTest \
+  --cluster=kubernetes \
   --user=kube-proxy \
   --kubeconfig=kube-proxy.kubeconfig
 
