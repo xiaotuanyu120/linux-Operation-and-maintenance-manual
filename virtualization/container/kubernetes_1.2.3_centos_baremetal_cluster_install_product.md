@@ -103,8 +103,9 @@ swapoff -a
 master1上准备二进制文件，统一下发给所有其他机器，所以提前做好ssh信任
 ### 0) 准备各节点二进制文件目录
 ``` bash
-mkdir -p /root/k8s/{node,master,etcd}/bin
+mkdir -p /root/k8s/{node,master,etcd,base}/bin
 ```
+> base目录存放flanneld和docker文件
 
 ### 1) 下载二进制文件
 ``` bash
@@ -128,8 +129,7 @@ FLANNEL_VER=v0.9.1
 wget https://github.com/coreos/flannel/releases/download/v0.9.1/flannel-${FLANNEL_VER}-linux-amd64.tar.gz
 mkdir flannel
 tar zxvf flannel-${FLANNEL_VER}-linux-amd64.tar.gz -C flannel
-cp flannel/{flanneld,mk-docker-opts.sh} k8s/node/bin
-cp flannel/{flanneld,mk-docker-opts.sh} k8s/master/bin
+cp flannel/{flanneld,mk-docker-opts.sh} k8s/base/bin
 
 # 下载docker
 DOCKER_VER=17.09.0
@@ -137,8 +137,7 @@ wget https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}
 tar zxvf docker-${DOCKER_VER}-ce.tgz
 wget https://github.com/docker/compose/releases/download/1.17.1/docker-compose-Linux-x86_64 -O docker-compose
 cp docker-compose docker
-cp docker/* k8s/node/bin
-cp docker/* k8s/master/bin
+cp docker/* k8s/base/bin
 ```
 
 ### 2) 分发二进制文件
@@ -146,6 +145,13 @@ cp docker/* k8s/master/bin
 chmod +x k8s/etcd/bin/*
 chmod +x k8s/node/bin/*
 chmod +x k8s/master/bin/*
+chmod +x k8s/base/bin/*
+
+# 下发flanneld和docker二进制文件到所有节点
+cp /root/k8s/base/bin/* /usr/local/bin
+for target in {master2,master3,node01,node02,node03};do
+  rsync -av /root/k8s/base/bin/ ${target}:/usr/local/bin
+done
 
 # 下发master二进制文件
 cp /root/k8s/master/bin/* /usr/local/bin
@@ -169,7 +175,7 @@ done
 ## 3. 准备master、node、etcd - systemd unit文件
 ### 0) 创建各节点unit文件目录
 ``` bash
-mkdir -p /root/k8s/{node,master,etcd}/service
+mkdir -p /root/k8s/{node,master,etcd,base}/service
 ```
 
 ### 1) 创建master所需unit文件
@@ -301,46 +307,6 @@ WantedBy=multi-user.target' > /root/k8s/etcd/service/etcd.service
 
 ### 3) 创建node所需unit文件
 ``` bash
-# docker配置文件
-echo "{
-  "storage-driver": "overlay2",
-  "storage-opts": [
-    "overlay2.override_kernel_check=true"
-  ]
-}" > /root/k8s/node/daemon.json
-
-# docker.service
-echo '[Unit]
-Description=Docker Application Container Engine
-Documentation=http://docs.docker.com
-After=network-online.target docker.socket flannel.service
-Wants=network-online.target
-Requires=docker.socket
-
-[Service]
-Type=notify
-NotifyAccess=all
-KillMode=process
-EnvironmentFile=/run/docker_opts.env
-Environment=GOTRACEBACK=crash
-Environment=DOCKER_HTTP_HOST_COMPAT=1
-Environment=PATH=/usr/libexec/docker:/usr/bin:/usr/sbin
-ExecStart=/usr/local/bin/dockerd \
-  --exec-opt native.cgroupdriver=systemd \
-  --config-file=/etc/docker/daemon.json \
-  -H fd:// $DOCKER_OPTS
-ExecReload=/bin/kill -s HUP $MAINPID
-LimitNOFILE=1048576
-LimitNPROC=1048576
-LimitCORE=infinity
-TimeoutStartSec=0
-Delegate=yes
-Restart=on-failure
-MountFlags=slave
-
-[Install]
-WantedBy=multi-user.target' > /root/k8s/node/service/docker.service
-
 # kubelet.service
 echo '[Unit]
 Description=Kubernetes Kubelet
@@ -353,7 +319,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address=172.16.1.79 \
   --hostname-override=node01 \
-  --pod-infra-container-image=k8s-registry.local/public/pod-infrastructure:sfv1 \
+  --pod-infra-container-image=k8s.gcr.io/pause-amd64:3.0 \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/ssl/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/ssl/kubelet.kubeconfig \
   --cert-dir=/etc/kubernetes/ssl \
@@ -371,6 +337,29 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target' > /root/k8s/node/service/kubelet.service
 
+echo '[Unit]
+Description=Kubernetes Kube-Proxy Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/kube-proxy \
+  --logtostderr=true \
+  --v=0 \
+  --master=https://172.16.1.73:6443 \
+  --bind-address=172.16.1.79 \
+  --hostname-override= \
+  --kubeconfig=/etc/kubernetes/ssl/kube-proxy.kubeconfig \
+  --cluster-cidr=10.254.0.0/16
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target' > /root/k8s/node/service/kube-proxy.service
+```
+
+### 4) 创建flanneld和docker unit文件
+``` bash
 # flanneld.service
 echo '[Unit]
 Description=Flanneld overlay address etcd agent
@@ -389,33 +378,87 @@ ExecStart=/usr/local/bin/flanneld \
   -etcd-endpoints=https://172.16.1.76:2379,https://172.16.1.77:2379,https://172.16.1.78:2379 \
   -etcd-prefix=/kubernetes/network \
   -iface=eth1
-ExecStartPost=/usr/libexec/flannel/mk-docker-opts.sh -c
+ExecStartPost=/usr/local/bin/mk-docker-opts.sh -c
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
-RequiredBy=docker.service' > /root/k8s/node/service/flanneld.service
+RequiredBy=docker.service' > /root/k8s/base/service/flanneld.service
+
+# docker配置文件
+echo '{
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}' > /root/k8s/node/daemon.json
+
+# docker.service
+echo '[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network-online.target docker.socket flannel.service
+Wants=network-online.target
+Requires=docker.socket
+
+[Service]
+Type=notify
+NotifyAccess=all
+KillMode=process
+EnvironmentFile=/run/docker_opts.env
+Environment=GOTRACEBACK=crash
+Environment=DOCKER_HTTP_HOST_COMPAT=1
+ExecStart=/usr/local/bin/dockerd \
+  --exec-opt native.cgroupdriver=systemd \
+  --config-file=/etc/docker/daemon.json \
+  -H fd:// $DOCKER_OPTS
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+TimeoutStartSec=0
+Delegate=yes
+Restart=on-failure
+MountFlags=slave
+
+[Install]
+WantedBy=multi-user.target' > /root/k8s/base/service/docker.service
+
+echo '[Unit]
+Description=Docker Socket for the API
+PartOf=docker.service
+
+[Socket]
+ListenStream=/var/run/docker.sock
+SocketMode=0660
+#SocketUser=root
+#SocketGroup=docker
+
+[Install]
+WantedBy=sockets.target' > /root/k8s/base/service/docker.socket
 ```
 
-### 4) 下发systemd unit文件
+### 5) 下发systemd unit文件
 ``` bash
-# 下发master unit文件
+# 下发flanneldhedocker文件
 mkdir -p /etc/docker
-cp /root/k8s/node/daemon.json /etc/docker
-cp /root/k8s/node/service/{flanneld.service,docker.service} /usr/lib/systemd/system
-cp /root/k8s/master/service/* /usr/lib/systemd/system
-for master in {master2,master3};do
+cp /root/k8s/base/daemon.json /etc/docker
+cp /root/k8s/base/service/* /usr/lib/systemd/system
+for master in {master2,master3,node01,node02,node03};do
   ssh root@$master "mkdir -p /etc/docker"
   rsync -av /root/k8s/node/daemon.json ${master}:/etc/docker
-  rsync -av /root/k8s/node/service/{flanneld.service,docker.service} ${master}:/usr/lib/systemd/system
+  rsync -av /root/k8s/node/service/} ${master}:/usr/lib/systemd/system
+done
+
+# 下发master unit文件
+cp /root/k8s/master/service/* /usr/lib/systemd/system
+for master in {master2,master3};do
   rsync -av /root/k8s/master/service/ ${master}:/usr/lib/systemd/system
 done
 #注意更改master里面的ip为各节点ip
 
 # 下发node unit文件
 for node in {node01,node02,node03};do
-  ssh root@$node "mkdir -p /etc/docker"
-  rsync -av /root/k8s/node/daemon.json ${node}:/etc/docker/
   rsync -av /root/k8s/node/service/ ${node}:/usr/lib/systemd/system
 done
 #注意更改node里面的ip为各节点ip
@@ -442,8 +485,8 @@ export PATH=$PATH:/usr/local/bin
 ### 2) 创建json文件
 创建k8s-ssl目录
 ``` bash
-mkdir ~/k8s-ssl
-cd ~/k8s-ssl
+mkdir /root/k8s-ssl
+cd /root/k8s-ssl
 ```
 > 此目录只是临时存放ca生成文件，可随意更换位置
 
@@ -745,32 +788,37 @@ kubectl config use-context kubernetes
 ``` bash
 cd /root/k8s-config/
 # 将bootstrap.kubeconfig和kube-proxy.kubeconfig分发到node节点
-for node in node01 node02 node03
-do
-  scp bootstrap.kubeconfig kube-proxy.kubeconfig root@$node:/etc/kubernetes/ssl
+for node in {node01,node02,node03};do
+  scp /root/k8s-config/{bootstrap.kubeconfig,kube-proxy.kubeconfig} root@$node:/etc/kubernetes/ssl
 done
 
 # 将master1节点上的admin配置分发到其他master上
-for master in master2 master3
-do
+cp /root/k8s-config/token.csv /etc/kubernetes/ssl
+for master in {master2,master3};do
   ssh root@$master "mkdir -p /root/.kube"
   scp /root/.kube/config root@$master:/root/.kube/
-  scp token.csv root@$master:/etc/kubernetes/ssl
+  scp /root/k8s-config/token.csv root@$master:/etc/kubernetes/ssl
 done
 ```
 
 ## 6. 启动服务
-**!!! 启动服务之前，务必检查systemd unit文件是否根据各节点自身情况进行修改 !!!**
 ### 1) etcd节点
+**!!! 启动服务之前，务必检查systemd unit文件是否根据各节点自身情况进行修改 !!!**
 ``` bash
-for etcd in {etcd1,etcd2,etcd3}
-do
+for etcd in {etcd1,etcd2,etcd3};do
   ssh root@$etcd "mkdir -p /var/lib/etcd"
   ssh root@$etcd "systemctl daemon-reload && systemctl enable etcd && systemctl start etcd"
 done
 
 etcdctl \
-  --endpoints https://172.16.1.73:2379,https://172.16.1.74:2379,https://172.16.1.75:2379 \
+  --endpoints https://172.16.1.76:2379,https://172.16.1.77:2379,https://172.16.1.78:2379 \
+  --ca-file=/etc/kubernetes/ssl/k8s-root-ca.pem \
+  --cert-file=/etc/kubernetes/ssl/kubernetes.pem \
+  --key-file=/etc/kubernetes/ssl/kubernetes-key.pem \
+  cluster-health
+
+etcdctl \
+  --endpoints https://172.16.1.76:2379,https://172.16.1.77:2379,https://172.16.1.78:2379 \
   --ca-file=/etc/kubernetes/ssl/k8s-root-ca.pem \
   --cert-file=/etc/kubernetes/ssl/kubernetes.pem \
   --key-file=/etc/kubernetes/ssl/kubernetes-key.pem \
@@ -778,17 +826,46 @@ etcdctl \
 ```
 
 ### 2) master节点
+**!!! 启动服务之前，务必检查systemd unit文件是否根据各节点自身情况进行修改 !!!**
 ``` bash
 systemctl daemon-reload
 systemctl start flanneld docker kube-apiserver kube-controller-manager kube-scheduler
 systemctl enable flanneld docker kube-apiserver kube-controller-manager kube-scheduler
-for master in {master2,master3}
-do
+for master in {master2,master3};do
   ssh root@$master "systemctl daemon-reload && systemctl start flanneld docker kube-apiserver kube-controller-manager kube-scheduler && systemctl enable flanneld docker kube-apiserver kube-controller-manager kube-scheduler"
 done
 ```
 
 ### 3) node节点
+kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要先将 bootstrap token 文件中的 kubelet-bootstrap 用户赋予 system:node-bootstrapper cluster 角色(role)， 然后 kubelet 才能有权限创建认证请求(certificate signing requests)：
 ``` bash
+# master节点执行
+kubectl create clusterrolebinding kubelet-bootstrap \
+  --clusterrole=system:node-bootstrapper \
+  --user=kubelet-bootstrap
+```
+> --user=kubelet-bootstrap 是在 /etc/kubernetes/token.csv 文件中指定的用户名，同时也写入了 /etc/kubernetes/bootstrap.kubeconfig 文件；
 
+**!!! 启动服务之前，务必检查systemd unit文件是否根据各节点自身情况进行修改 !!!**
+``` bash
+for node in {node01,node02,node03};do
+  ssh root@${node} "mkdir -p /var/lib/kubelet"
+  ssh root@${node} "systemctl daemon-reload && systemctl start flanneld docker kubelet kube-proxy && systemctl enable flanneld docker kubelet kube-proxy"
+done
+```
+
+### 4) 通过node节点的tls认证请求
+``` bash
+# 查看csr请求
+kubectl get csr | awk '/Pending/ {print $1}'
+
+# approve csr请求
+kubectl get csr | awk '/Pending/ {print $1}' | xargs kubectl certificate approve
+
+# 查看集群状态
+kubectl get nodes
+NAME      STATUS    ROLES     AGE       VERSION
+node01    Ready     <none>    40m       v1.9.1
+node02    Ready     <none>    3m        v1.9.1
+node03    Ready     <none>    3m        v1.9.1
 ```
