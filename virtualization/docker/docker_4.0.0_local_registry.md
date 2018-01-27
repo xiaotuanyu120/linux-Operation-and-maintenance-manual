@@ -14,15 +14,66 @@ tags: [docker,registry]
 
 ---
 
-### 1. 启动本地registry
+### 1. 准备文件
+准备文件目录结构
 ``` bash
-docker run -d -p 5000:5000 --restart=always --name registry registry:2
+mkdir -p /data/docker/nginx
 ```
-> 因为我们是第一次运行registry这个镜像，docker需要先从公共registry上去下载它，然后再运行它
+nginx 文件准备
+``` bash
+echo 'FROM nginx:stable
+RUN rm /etc/nginx/conf.d/default.conf
+ADD nginx.conf /etc/nginx/conf.d/' > /data/docker/nginx/Dockerfile
 
----
+echo '# Configuration for the server
+server {
+    charset utf-8;
+    listen 80;
+    client_max_body_size 1000M;
+    location / {
+        proxy_pass       http://reg:5000;
+        proxy_redirect   off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+        }
+    }' > /data/docker/nginx/nginx.conf
+```
+> client_max_body_size 1000M; 是为了防止上传时的413错误，这个错误提示客户端上传数据容量超过限制；
 
-### 2. 从docker HUB上拷贝镜像到本地registry
+docker-compose文件准备
+``` bash
+echo "# nginx:80 --> reg:5000
+version: '2'
+services:
+  nginx:
+    container_name: nginx
+    build: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - gitlab
+  reg:
+    image: 'registry:2'
+    container_name: reg
+    restart: always
+    volumes:
+      - '/data/registry:/var/lib/registry'" > /data/docker/docker-compose-registry-gitlab.yaml
+```
+
+### 2. 运行gitlab
+``` bash
+# 创建gitlab数据目录
+mkdir -p /data/registry
+
+# 使用docker-compose启动gitlab
+docker-compose -f /data/docker/docker-compose-registry-gitlab.yaml up -d
+```
+
+### 3. 从docker HUB上拷贝镜像到本地registry
 1. 从docker HUB上下载镜像
 ``` bash
 docker pull ubuntu:16.04
@@ -52,7 +103,7 @@ docker pull localhost:5000/my-ubuntu
 
 ---
 
-### 3. 关停registry
+### 4. 关停registry
 ``` bash
 docker stop registry
 ```
@@ -65,7 +116,7 @@ docker stop registry && docker rm -v registry
 
 ---
 
-### 4. registry服务配置
+### 5. registry服务配置
 1. 自动启动registry
 ``` bash
 docker run -d \
