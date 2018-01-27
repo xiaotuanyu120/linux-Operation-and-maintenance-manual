@@ -62,14 +62,14 @@ services:
       - '/data/jenkins_home:/var/jenkins_home'" > /data/docker/docker-compose-nginx-jenkins.yaml
 ```
 
-### 2. 运行gitlab
+### 2. 运行jenkins
 ``` bash
-# 创建gitlab数据目录
+# 创建jenkins数据目录
 mkdir -p /data/jenkins_home
 
 # 因为jenkins在container中的属主属组是jenkins，uid是1000，需要提前设定好属主属组，不然会报错
 chown -R 1000:1000 /data/jenkins_home
 
-# 使用docker-compose启动gitlab
+# 使用docker-compose启动jenkins
 docker-compose -f /data/docker/docker-compose-nginx-jenkins.yaml up -d
 ```

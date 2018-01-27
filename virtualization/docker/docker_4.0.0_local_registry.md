@@ -61,16 +61,16 @@ services:
     container_name: reg
     restart: always
     volumes:
-      - '/data/registry:/var/lib/registry'" > /data/docker/docker-compose-registry-gitlab.yaml
+      - '/data/registry:/var/lib/registry'" > /data/docker/docker-compose-registry.yaml
 ```
 
 ### 2. 运行gitlab
 ``` bash
-# 创建gitlab数据目录
+# 创建registry数据目录
 mkdir -p /data/registry
 
-# 使用docker-compose启动gitlab
-docker-compose -f /data/docker/docker-compose-registry-gitlab.yaml up -d
+# 使用docker-compose启动registry
+docker-compose -f /data/docker/docker-compose-registry.yaml up -d
 ```
 
 ### 3. 从docker HUB上拷贝镜像到本地registry
