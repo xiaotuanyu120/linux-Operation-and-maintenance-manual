@@ -73,3 +73,46 @@ chown -R 1000:1000 /data/jenkins_home
 # 使用docker-compose启动jenkins
 docker-compose -f /data/docker/docker-compose-nginx-jenkins.yaml up -d
 ```
+
+### 3. 用以上方式启动jenkins的问题，及解决方案
+使用以上方式启动jenkins，有几个问题  
+#### 1) 缺少组件
+- 没有git
+- 没有jdk
+- 没有mvn
+google搜索了解决方案
+``` bash
+mkdir jenkins
+cd jenkins
+echo 'FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update \
+      && apt-get install -y git maven sudo libltdl7 \
+      && rm -rf /var/lib/apt/lists/*
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+USER jenkins
+ADD jdk8.tar.gz /usr/local/
+ADD jenkins.sh /etc/profile.d' > Dockerfile
+```
+> jdk8 是下载的包解压后自己打的tar包，jenkins.sh里面是写了jdk8的环境变量，其他git和mvn是使用apt-get安装
+#### 2) 如何在jenkins(docker)中编译docker镜像
+jenkins本身就是docker中运行的，怎么在它里面完成编译docker镜像的任务呢，难道我需要在里面继续安装一个docker？  
+显然那样太low，网上参考google文档，找到了一种解决方案，就是通过mountdocker文件和socket文件去docker容器中，使jenkins可以调用host的docker命令和socket文件，来达到编译镜像的目的
+``` yaml
+version: '2'
+services:
+  jenkins:
+    #image: 'jenkins/jenkins:lts'
+    image: 'jenkins/jenkins:myjks'
+    container_name: jenkins
+    restart: always
+    volumes:
+      - /data/jenkins_home:/var/jenkins_home
+      - /var/run:/var/run:rw
+      - /usr/bin/docker:/usr/bin/docker
+```
+> jenkins/jenkins:myjks，是我按照上面的Dockerfile自己编译的docker镜像
+
+> 注意如果jenkins里面配置unix:///var/run/docker.sock时提示找不到，或者权限不足，可以改一下docker.sock的文件权限来解决
+
+> 注：[参考链接](https://renzedevries.wordpress.com/2016/06/30/building-containers-with-docker-in-docker-and-jenkins/)
