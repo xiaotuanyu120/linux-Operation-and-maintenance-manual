@@ -196,10 +196,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
-  tls:
-    - secretName: dc-chain-secret
-      hosts:
-        - example.com
+  #tls:
+  #  - secretName: dc-chain-secret
+  #    hosts:
+  #      - example.com
   rules:
   - host: example.com
     http:
