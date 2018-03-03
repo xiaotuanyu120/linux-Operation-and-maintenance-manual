@@ -11,12 +11,12 @@ tags: [python]
 ### 1. 安装python3
 ``` bash
 yum install epel-release -y
-yum groupinstall "Development tools" -y
-yum install python-devel openssl-devel -y
+yum install gcc gcc-c++ python-devel openssl-devel -y
 
-wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tar.xz
-tar -Jxf Python-3.5.2.tar.xz
-cd Python-3.5.2
+PY_VER=3.5.2
+wget https://www.python.org/ftp/python/${PY_VER}/Python-${PY_VER}.tar.xz
+tar -Jxf Python-${PY_VER}.tar.xz
+cd Python-${PY_VER}
 ./configure --prefix=/usr/local/python3
 make && make install
 ```
