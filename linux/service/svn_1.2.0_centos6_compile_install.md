@@ -24,6 +24,7 @@ yum install expat-devel
 ---
 
 ### 2. 安装apr
+版本号会更新，要根据安装时间来定
 ``` bash
 wget http://mirror.rise.ph/apache//apr/apr-1.5.2.tar.gz
 tar zxf apr-1.5.2.tar.gz
@@ -35,6 +36,7 @@ make && make install
 ---
 
 ### 3. 安装apr-iconv
+版本号会更新，要根据安装时间来定
 ``` bash
 wget http://mirror.rise.ph/apache//apr/apr-iconv-1.2.1.tar.gz
 tar zxf apr-iconv-1.2.1.tar.gz
@@ -46,6 +48,7 @@ make && make install
 ---
 
 ### 4. 安装apr-util
+版本号会更新，要根据安装时间来定
 ``` bash
 wget http://mirror.rise.ph/apache//apr/apr-util-1.5.4.tar.gz
 tar zxf apr-util-1.5.4.tar.gz
