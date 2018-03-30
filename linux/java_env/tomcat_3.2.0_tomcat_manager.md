@@ -1,10 +1,10 @@
 ---
-title: tomcat 7.1.0 tomcat manager
+title: tomcat 3.2.0 tomcat manager
 date: 2018-03-29 11:04:00
 categories: linux/java_env
 tags: [linux,tomcat]
 ---
-### tomcat 7.1.0 tomcat manager
+### tomcat 3.2.0 tomcat manager
 
 ---
 
@@ -21,7 +21,7 @@ tags: [linux,tomcat]
 </Context>
 ```
 > allow可以配置成`allow="^.*$"`来允许所有，但是强烈不推荐，有安全问题。  
-如果$CATALINA_BASE/conf/server.xml中在Host中配置了`deployXML="false"`，则必须配置manager.xml，否则无法加载manager应用。
+
 - `$CATALINA_BASE/conf/tomcat-users.xml`, 授权的tomcat manager用户配置。
 ```
 manager-gui — Access to the HTML interface.
@@ -40,4 +40,4 @@ manager-jmx — Access to JMX proxy interface and to the "Server Status" page.
 
 ### 3. tomcatmanager python
 [tomcatmanager github](https://github.com/tomcatmanager/tomcatmanager)  
-我们可以用这个库来使用`manager-script`角色的用户来管理tomcat
+我们可以用这个库来使用`manager-script`角色的用户来管理tomcat。原理就是利用了tomcat manager的`/manager/text/<command>[?parameters]`([官方文档](https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Supported_Manager_Commands))
