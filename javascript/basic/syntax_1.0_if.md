@@ -18,6 +18,13 @@ if (condition1) {
     block of code to be executed if the condition1 is false and condition2 is false
 }
 ```
+> 扩展：如何判断一个字符串为空或者null
+``` javascript
+x = ""
+if (!x) {
+  alert("string is empty");
+}
+```
 
 ---
 
