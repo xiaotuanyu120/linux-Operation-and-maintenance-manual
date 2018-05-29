@@ -55,7 +55,7 @@ services:
       - "80:80"
       - "443:443"
     links:
-      - gitlab
+      - reg
   reg:
     image: 'registry:2'
     container_name: reg
@@ -64,7 +64,7 @@ services:
       - '/data/registry:/var/lib/registry'" > /data/docker/docker-compose-registry.yaml
 ```
 
-### 2. 运行gitlab
+### 2. 运行reg
 ``` bash
 # 创建registry数据目录
 mkdir -p /data/registry
