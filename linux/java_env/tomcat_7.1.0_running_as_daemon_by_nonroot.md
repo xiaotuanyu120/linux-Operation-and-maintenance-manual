@@ -9,7 +9,7 @@ tags: [linux,tomcat]
 ---
 
 ### 0. 背景
-因为安全问题，在线上运行tomcat一般不用root权限来运行，而是采用非root用户来运行。
+因为安全问题，在线上运行tomcat一般不用root权限来运行，而是采用非root用户来运行。  
 [tomcat7 官方daemon运行文档](https://tomcat.apache.org/tomcat-7.0-doc/setup.html#Unix_daemon)  
 
 ### 1. 官方提供的daemon模式
@@ -52,7 +52,7 @@ cd $CATALINA_HOME
 ```
 可以使用`jsvc --help`查看更多选项，其中一个比较重要的选项就是`-user`，使用这个参数可以指定另外一个用户来启动tomcat daemon。
 
-#### 2) 自定义daemon.sh
+#### 2) daemon.sh参数介绍
 jsvc提供了`$CATALINA_HOME/bin/daemon.sh`文件来替代上面的命令行模式来启动tomcat.
 我们有两种定义它的方式，
 - 一种是直接修改它来达到自定义目的；
@@ -64,6 +64,7 @@ jsvc提供了`$CATALINA_HOME/bin/daemon.sh`文件来替代上面的命令行模�
 - `--catalina-base`，会传给jsvc的`-Dcatalina.base`，默认和--catalina-home值相同
 - `--tomcat-user`，回传给jsvc的`-user`，默认竟然是tomcat用户
 
+#### 3) 自定义启动脚本
 可以通过以下脚本放在`/etc/init.d/`中来充当tomcat的启动脚本
 ``` bash
 #!/bin/bash
