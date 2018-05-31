@@ -52,7 +52,7 @@ cd $CATALINA_HOME
 ```
 可以使用`jsvc --help`查看更多选项，其中一个比较重要的选项就是`-user`，使用这个参数可以指定另外一个用户来启动tomcat daemon。
 
-#### 2) daemon.sh参数介绍
+#### 2) daemon.sh参数介绍及自定义
 jsvc提供了`$CATALINA_HOME/bin/daemon.sh`文件来替代上面的命令行模式来启动tomcat.
 我们有两种定义它的方式，
 - 一种是直接修改它来达到自定义目的；
@@ -64,7 +64,26 @@ jsvc提供了`$CATALINA_HOME/bin/daemon.sh`文件来替代上面的命令行模�
 - `--catalina-base`，会传给jsvc的`-Dcatalina.base`，默认和--catalina-home值相同
 - `--tomcat-user`，回传给jsvc的`-user`，默认竟然是tomcat用户
 
-#### 3) 自定义启动脚本
+自定义部分
+``` bash
+# 自定义catalina.out日志位置
+# 注释下一行内容
+# test ".$CATALINA_OUT" = . && CATALINA_OUT="$CATALINA_BASE/logs/catalina-daemon.out"
+# 自定义为其他位置
+CATALINA_OUT="$CATALINA_BASE/logs/catalina-daemon.out"
+```
+
+#### 3) 准备tomcat用户
+``` bash
+# 增加tomcat用户
+groupadd tomcat
+useradd -s /sbin/nologin -g tomcat tomcat
+
+# 将tomcat目录属主和属组修改为刚创建的tomcat用户
+chown -R tomcat.tomcat /usr/local/tomcat
+```
+
+#### 4) 自定义启动脚本
 可以通过以下脚本放在`/etc/init.d/`中来充当tomcat的启动脚本
 ``` bash
 #!/bin/bash
@@ -76,9 +95,99 @@ CATALINA_BASE=$CATALINA_HOME
 TOMCAT_USER=tomcat
 JAVA_HOME=/usr/local/java
 
-${CATALINA_HOME}/bin/jsvc \
-    --java-home=$JAVA_HOME \
-    --catalina-home=$CATALINA_HOME \
-    --catalina-base=$CATALINA_BASE \
-    --tomcat-user=$TOMCAT_USER
+function jsvc_exec() {
+    ${CATALINA_HOME}/bin/daemon.sh \
+        --java-home $JAVA_HOME \
+        --catalina-home $CATALINA_HOME \
+        --catalina-base $CATALINA_BASE \
+        --tomcat-user $TOMCAT_USER \
+        $1
+}
+
+case "$1" in
+    start   )
+      jsvc_exec start
+      exit $?
+    ;;
+    stop    )
+      jsvc_exec stop
+      exit $?
+    ;;
+    restart  )
+      jsvc_exec stop
+      sleep 2
+      jsvc_exec start
+      exit $?
+    ;;
+    version    )
+      jsvc_exec version
+      exit $?
+    ;;
+    *       )
+      echo "Unknown command: \`$1'"
+      echo "commands:"
+      echo "  restart           Retart Tomcat"
+      echo "  start             Start Tomcat"
+      echo "  stop              Stop Tomcat"
+      echo "  version           What version of commons daemon and Tomcat"
+      echo "                    are you running?"
+      exit 1
+    ;;
+esac
+```
+> [脚本启动时会启动一个root进程和一个我们指定的user的解释](http://grokbase.com/t/tomcat/users/14aebxdq0j/how-can-tomcat-be-started-at-boot-time-as-a-non-root-user)  
+另外值得注意的是，root进程负责的是派生我们指定的user来运行的进程，如果杀掉user运行的进程，则root进程会持续派生新的进程出来。
+
+若希望用一个脚本来管理多个同样功能的tomcat，可使用下面的数组脚本
+``` bash
+#!/bin/bash
+# chkconfig: 2345 20 80
+# description: script for tomcat start
+
+CATALINA_HOMES=(/usr/local/tomcat01 /usr/local/tomcat02)
+TOMCAT_USER=tomcat
+JAVA_HOME=/usr/local/java
+
+function jsvc_exec() {
+    for CATALINA_HOME in ${CATALINA_HOMES[@]}
+    do
+        ${CATALINA_HOME}/bin/daemon.sh \
+            --java-home $JAVA_HOME \
+            --catalina-home $CATALINA_HOME \
+            --catalina-base $CATALINA_HOME \
+            --tomcat-user $TOMCAT_USER \
+            $1
+    done
+}
+
+case "$1" in
+    start   )
+      jsvc_exec start
+      exit $?
+    ;;
+    stop    )
+      jsvc_exec stop
+      exit $?
+    ;;
+    restart  )
+      jsvc_exec stop
+      sleep 2
+      jsvc_exec start
+      exit $?
+    ;;
+    version    )
+      jsvc_exec version
+      exit $?
+    ;;
+    *       )
+      echo "Unknown command: \`$1'"
+      echo "commands:"
+      echo "  restart           Retart Tomcat"
+      echo "  start             Start Tomcat"
+      echo "  stop              Stop Tomcat"
+      echo "  version           What version of commons daemon and Tomcat"
+      echo "                    are you running?"
+      exit 1
+    ;;
+esac
 ```
