@@ -273,7 +273,7 @@ elasticsearch.ssl.verificationMode: certificate
 
 #### 5) 安装logstash
 **用户**
-``` bashh
+``` bash
 groupadd logstash
 useradd -g logstash logstash
 ```
