@@ -457,6 +457,7 @@ tags: ["middleservice", "e68"]
 output.redis:
   hosts: ["192.168.86.138"]
   password: "my_password"
+  bulk_max_size: 1024
   key: "filebeat-midd"
   db: 0
   timeout: 5
@@ -466,3 +467,4 @@ output.redis:
 - `filebeat modules list`, 可查看启用的[modules](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules.html)
 - [general config docs](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-general-options.html)
 - redis的[datatype配置](https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_literal_datatype_literal)默认是list
+- [Failed to RPUSH to redis list with write tcp i/o timeout错误解决](https://discuss.elastic.co/t/filebeat-error-err-failed-to-publish-events-caused-by-read-tcp-i-o-timeout/68023)
