@@ -93,3 +93,20 @@ TCP会话的每一端都会维护一个32bit的序列号seq，该序列号seq用
 总结来讲：  
 seq是来计算自己发送数据包的序列号  
 ack是来确认接收到对方的数据包的序列号  
+
+#### 4) tcp连接过程中的状态转移
+阶段|动作|client端状态|server端状态
+---|---|---|---
+||LISTEN
+three way handshake|client发送SYN|SYN_SENT|SYN_RCVD
+three way handshake|server回复SYN,ACK|ESTABLISHED|SYN_RCVD
+three way handshake|client回复ACK|ESTABLISHED|ESTABLISHED
+---|---|---|---
+four way wavehand|client发送FIN|FIN_WAIT_1|CLOSE_WAIT
+four way wavehand|server回复ACK|FIN_WAIT_2|CLOSE_WAIT
+four way wavehand|server发送FIN|TIME_WAIT|LAST_ACK
+four way wavehand|client回复ACK||CLOSED
+
+> 完整状态图可以参照[这个IBM文章](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.halu101/constatus.htm)
+
+> 这只是最理想的状态，其实关闭的时候还有一个closing状态，关键在于client端和server端交互FIN和ACK标志位的顺序影响
