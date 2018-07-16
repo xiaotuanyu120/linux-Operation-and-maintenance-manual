@@ -21,10 +21,10 @@ yum install -y epel-release
 yum install -y dh-autoreconf curl-devel expat-devel gettext-devel \
   openssl-devel perl-devel zlib-devel
 yum install -y install asciidoc xmlto docbook2X
-yum install gnu-getopt
+yum install gnu-getopt -y
 ln -s /usr/bin/db2x_docbook2texi /usr/bin/docbook2x-texi
 
-https://mirrors.edge.kernel.org/pub/software/scm/git/git-1.8.4.5.tar.gz
+wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-1.8.4.5.tar.gz
 tar zxvf git-1.8.4.5.tar.gz
 cd git-1.8.4.5/
 make configure
