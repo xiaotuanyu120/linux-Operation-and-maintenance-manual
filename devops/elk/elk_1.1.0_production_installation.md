@@ -1,7 +1,7 @@
 ---
 title: elk 1.1.0: production installation
 date: 2018-05-14 09:38:00
-categories: linux/service
+categories: devops/elk
 tags: [elk, elasticsearch, filebeat, logstash, kibana, redis]
 ---
 ### elk 1.1.0: production installation
