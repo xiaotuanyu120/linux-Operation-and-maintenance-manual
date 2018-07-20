@@ -58,6 +58,10 @@ jsvc提供了`$CATALINA_HOME/bin/daemon.sh`文件来替代上面的命令行模�
 - 一种是直接修改它来达到自定义目的；
 - 另外一种是通过创建另外一个脚本，通过调用daemon.sh然后传入变量的方式来自定义。
 
+> `daemon.sh`其他重要参数：  
+- `CATALINA_OUT`, catalina.out的位置
+- `JAVA_OPTS`, jvm options
+
 个人推荐第二种，下面是可使用的自定义参数
 - `--java-home`，会传给jsvc的`-java-home`，默认使用系统环境java命令来判断JAVA_HOME
 - `--catalina-home`，会传给jsvc的`-Dcatalina.home`，默认使用当前daemon.sh脚本所在目录的上级目录作为catalina.home
