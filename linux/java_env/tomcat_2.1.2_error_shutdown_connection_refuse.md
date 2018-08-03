@@ -2,7 +2,7 @@
 title: tomcat 2.1.2 问题-tomcat7 shutdown 提示 connection refused
 date: 2018-08-03 15:47:00
 categories: linux/java_env
-tags: [linux,java_env,tomcat]
+tags: [linux,java_env,tomcat,iptables]
 ---
 ### tomcat 2.1.2 问题-tomcat7 shutdown 提示 connection refused
 
