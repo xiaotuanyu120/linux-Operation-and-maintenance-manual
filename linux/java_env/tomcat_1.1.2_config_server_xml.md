@@ -22,7 +22,7 @@ $CATALINA_HOME/conf/server.xml是tomcat的主要配置文件。
 - appBase，指定部署app的base目录，默认是webapps。
 - deployOnStart，设定为true时，在tomcat启动时去启动appBase目录下的app，默认是true。
 - autoDeploy，设定为true时，会定期检查app中文件是否被更新过或有新文件，若有更新和新增，则部署它们。用于热部署，默认是true。
-- deployXML，设定为true时，会加载应用中的/META-INF/context.xml文件。为了安全，推荐设定为false。当设定为false时，tomcat回去xmlBase下加载独立在app之外的上下文xml文件。默认为true
+- deployXML，设定为true时，会加载应用中的/META-INF/context.xml文件。为了安全，推荐设定为false。当设定为false时，tomcat会去xmlBase下加载独立在app之外的上下文xml文件。默认为true
 - xmlBase，上下文xml文件所在目录，默认为conf/<engine_name>/<host_name>。
 - deployIgnore，appBase中忽略启动的app，支持正则匹配。
 >``` xml
