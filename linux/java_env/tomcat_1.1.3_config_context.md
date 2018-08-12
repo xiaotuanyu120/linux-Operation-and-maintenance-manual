@@ -24,7 +24,7 @@ context元素可以配置多个，每个context的名称必须是唯一的。con
 Context Path|Context Version|Context Name|Base File Name|Example File Names (.xml, .war & directory)
 ---|---|---|---|---
 /foo|None|/foo|foo|foo.xml, foo.war, foo
-/foo/bar|None|/foo/bar|foo#bar foo#bar.xml, foo#bar.war, foo#bar
+/foo/bar|None|/foo/bar|foo#bar|foo#bar.xml, foo#bar.war, foo#bar
 Empty String|None|Empty String|ROOT|ROOT.xml, ROOT.war, ROOT
 /foo|42|/foo##42|foo##42|foo##42.xml, foo##42.war, foo##42
 /foo/bar|42|/foo/bar##42|foo#bar##42|foo#bar##42.xml, foo#bar##42.war, foo#bar##42
@@ -49,14 +49,15 @@ Empty String|42|##42|ROOT##42|ROOT##42.xml, ROOT##42.war, ROOT##42
 - $CATALINA_BASE/conf/[enginename]/[hostname]/context.xml.default中，会被指定的hostname的host中的所有web应用程序加载
 
 #### 属性
-有很多context种的具体属性，可参照[tomcat 7.0.90 context文档](https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Attributes)
+有很多context种的具体属性，可参照[tomcat 7.0.90 context文档 - atrributes](https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Attributes)
 
 > 其他更多详细信息，可以查看[tomcat 7.0.90 官方context文档](https://tomcat.apache.org/tomcat-7.0-doc/config/context.html)
 
 ### 2. context 配置实践
+#### 理论上推荐实践
 目的：
 - webapps下面的默认程序不自动启动
-- 不在server.xml中配置context
+- 不在server.xml中配置context，实现独立文件配置context
 
 server.xml
 ``` xml
@@ -73,8 +74,9 @@ Catalina/localhost/ROOT.xml
 > 1. path为空，代表是默认的context。
 2. docBase指向需要的工程路径。
 3. debug为0，按需开启
-4. reloadable默认即为false，代表修改工程目录中文件时，不去自动重载context，仅在重启tomcat时生效。
+4. reloadable默认即为false，代表修改工程目录中文件时，不去自动重载context，仅在重启tomcat时生效。有需要的话，可以配置为true
 
+#### 管理方便的实践
 当然，还有另外一种官方不推荐，但是相当简便的方法，就是直接在server.xml中配置context
 - host中将autoDeploy、deployOnStartup、deployXML配置为false
 - context中path为空，docBase设置为真正的war包或者目录路径
