@@ -61,3 +61,9 @@ networks:
 docker-compose up -d
 ```
 > [elastic官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/6.3/docker.html)
+
+### 2. 检查elastic集群状态
+``` bash
+curl http://127.0.0.1:9200/_cat/health
+1531540102 03:48:22 docker-cluster green 2 2 0 0 0 0 0 0 - 100.0%
+```
