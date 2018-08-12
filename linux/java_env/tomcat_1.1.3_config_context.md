@@ -72,9 +72,9 @@ Catalina/localhost/ROOT.xml
 <Context path="" docBase="/root/webfile/web" debug="0" reloadable="false"/>
 ```
 > 1. path为空，代表是默认的context。
-2. docBase指向需要的工程路径。
-3. debug为0，按需开启
-4. reloadable默认即为false，代表修改工程目录中文件时，不去自动重载context，仅在重启tomcat时生效。有需要的话，可以配置为true
+> 2. docBase指向需要的工程路径。
+> 3. debug为0，按需开启
+> 4. reloadable默认即为false，代表修改工程目录中文件时，不去自动重载context，仅在重启tomcat时生效。有需要的话，可以配置为true
 
 #### 管理方便的实践
 当然，还有另外一种官方不推荐，但是相当简便的方法，就是直接在server.xml中配置context
