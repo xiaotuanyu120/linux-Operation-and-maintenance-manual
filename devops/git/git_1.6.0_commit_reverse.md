@@ -134,6 +134,9 @@ newfile  version.txt
 ```
 > 可以看到reset可以更改commit信息，这样的操作不可用在公共仓库上，适用于私人仓库或还没有push的私有分支，因为我们不希望已经被团队接纳的操作再被私自撤回或修改，这样不利于团队配合
 
+#### 4) reset撤回到指定的commit
+工作中遇到这样一个问题，按照`reset --hard HEAD~1`回退，结果有一个是merge的commit，每一个merge的commit都有两个额外的commit标记(commit_num_1 commit_num_2)，此时reset撤回，如果不指定的话，直接默认是回退到commit_num_1上，如果我们想回退到第二个commit号上，就只能用`revert -m commit_num_2`。 然而revert是向前增加commit，reset是向后撤销commit。 我当时的需求是后面需要继续reset，也可以用一个简单的用法`reset --hard commit_num`, 直接指向更后面的comit号也可以。
+
 ---
 
 ### 3. revert撤回操作(适用于公共仓库)
@@ -212,3 +215,5 @@ Date:   Tue Apr 11 08:54:49 2017 +0000
     commit 1
 ```
 > 结果我们经过revert撤销操作，并没有修改以前的commit历史，这种操作适合公共仓库
+
+> 如果希望撤销多个commit，可使用`git revert -m commit_num`来操作
