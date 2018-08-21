@@ -407,7 +407,7 @@ output {
 }
 ```
 > - [input redis docs](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-redis.html)
-- [input redis example](https://doc.yonyoucloud.com/doc/logstash-best-practice-cn/input/redis.html)
+> - [input redis example](https://doc.yonyoucloud.com/doc/logstash-best-practice-cn/input/redis.html)
 
 > `"%{[fields][service]}"`是filebeat中的一个field，[如何在logstash中使用filebeat的field](https://discuss.elastic.co/t/how-to-use-filebeat-fields-name-value-in-logstash-config/79791/3)
 
