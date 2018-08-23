@@ -105,6 +105,7 @@ function jsvc_exec() {
         --catalina-home $CATALINA_HOME \
         --catalina-base $CATALINA_BASE \
         --tomcat-user $TOMCAT_USER \
+        --service-start-wait-time 50 \
         $1
 }
 
@@ -153,14 +154,18 @@ TOMCAT_USER=tomcat
 JAVA_HOME=/usr/local/java
 
 function jsvc_exec() {
+    retval=0
     for CATALINA_HOME in ${CATALINA_HOMES[@]}
     do
+        [ $retval -eq 0 ] || [ $retval -eq 255 ] || break
         ${CATALINA_HOME}/bin/daemon.sh \
             --java-home $JAVA_HOME \
             --catalina-home $CATALINA_HOME \
             --catalina-base $CATALINA_HOME \
             --tomcat-user $TOMCAT_USER \
+            --service-start-wait-time 50 \
             $1
+        retval=$?
     done
 }
 
@@ -195,3 +200,4 @@ case "$1" in
     ;;
 esac
 ```
+> `--service-start-wait-time 50`解决的是tomcat进程启动过慢时，jsvc返回为1的问题。 因为jsvc启动需要等到进程返回"I am ready"时才会返回。 如果这个wait的时间被超过，则返回为1（[参考文档](https://commons.apache.org/proper/commons-daemon/jsvc.html)）
