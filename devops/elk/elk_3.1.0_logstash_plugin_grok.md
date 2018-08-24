@@ -93,7 +93,8 @@ TZ (?:[PMCE][SD]T|UTC)
 DATESTAMP_RFC822 %{DAY} %{MONTH} %{MONTHDAY} %{YEAR} %{TIME} %{TZ}
 DATESTAMP_OTHER %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{TZ} %{YEAR}
 ```
-> 官方使用简单的年月日时间等pattern组合成了不同的复杂的日期格式的pattern
+> 官方使用简单的年月日时间等pattern组合成了不同的复杂的日期格式的pattern  
+> 在pattern组合嵌套的时候，也可以掺杂着写正则规则或字符串，例如` %{YEAR}-%{MONTHNUM}-%{MONTHDAY}`
 
 #### grok使用经验
 - 尽量给pattern分级别，例如简单的底层的pattern使用正则表示，这种属于底层pattern，上层表示业务逻辑的pattern是另外一个层级。这样嵌套起来逻辑非常清晰
