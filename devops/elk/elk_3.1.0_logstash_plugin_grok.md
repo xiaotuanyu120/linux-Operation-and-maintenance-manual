@@ -17,6 +17,7 @@ grok可以帮助我们将无结构散乱的日志整理成为可查询的结构�
 
 #### grok 语法
 `%{SYNTAX:SEMANTIC}`，换成更好理解的描述就是`%{pattern_name:result_name}`，举两个实际的例子：`%{NUMBER:duration}`, `%{IP:client}`。 详细解释来说，就是我们需要提前定义一个pattern，其名称为`NUMBER`，然后用NUMBER代表的pattern去匹配日志，匹配到的字段的key就是duration。  
+> 默认情况SEMANTIC全部保存为字符串，如果希望改变格式，可以显式指定`%{NUMBER:num:int}`，目前只支持两种string之外的格式`int`和`float`。
 
 例子：
 有一个这样的日志
