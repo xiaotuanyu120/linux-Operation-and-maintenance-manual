@@ -100,3 +100,30 @@ DATESTAMP_OTHER %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{TZ} %{YEAR}
 #### grok使用经验
 - 尽量给pattern分级别，例如简单的底层的pattern使用正则表示，这种属于底层pattern，上层表示业务逻辑的pattern是另外一个层级。这样嵌套起来逻辑非常清晰
 - logstash的日志里面并没有特别好的提供了grok的debug功能，kibana有提供debug的界面，但是我装的这个没有，难道是因为没有装x-pack的原因？不过也有一个[grok debugger的在线服务](https://grokdebug.herokuapp.com)。在这个debugger里面可以方便的提供日志示例，然后编写grok规则，实时查看匹配的效果。同时除了logstash提供的官方pattern之外，还可以增加自定义的pattern，非常方便使用。
+
+
+### 3. 示例
+#### tomcat日志
+```
+2018-08-28 16:57:09,698 INFO [com.gsmc.png.action.AGDataFeedAction] - getPlayerBetsByDate timeStart:2018-08-28 16:45:52 timeEnd:2018-08-28 16:57:09 loginname:ei_yby666
+```
+grok pattern
+```
+# regex basic
+JAVALOGMESSAGE (?:.*)
+
+# combined basic
+TOMCAT_DATESTAMP 20%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND})
+
+# real world logic
+AGRECORDTOMCATLOG %{TOMCAT_DATESTAMP:timestamp} %{LOGLEVEL:level} \[%{JAVACLASS:class}\] - %{JAVALOGMESSAGE:logmessage}
+```
+
+#### nginx日志
+```
+171.210.67.86 - - [28/Aug/2018:16:58:43 +0800] "GET /images/qtgames/EVP-thelegendofshaolin.png HTTP/1.1" 200 17762 "https://qy333.vip/mobile/app/gameLobby.jsp" "Mozilla/5.0 (Linux; Android 8.0.0; SAMSUNG SM-G9550 Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/7.0 Chrome/59.0.3071.125 Mobile Safari/537.36" "171.210.67.86" 127.0.0.1:16221 0.001 0.001
+```
+grok pattern
+```
+NGINXWEB %{IPORHOST:clientip} - - \[%{HTTPDATE:timestamp}\] "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})" %{NUMBER:status} (?:%{NUMBER:body_bytes_sent}|-) (?:"(?:%{URI:http_referer}|-)"|%{QS:http_referer}) %{QS:http_user_agent} %{QS:http_x_forwarded_for} %{URIHOST:upstream_addr} %{NUMBER:upstream_response_time} %{NUMBER:request_time}
+```
