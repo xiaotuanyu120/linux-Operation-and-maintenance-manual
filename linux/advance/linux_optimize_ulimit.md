@@ -56,7 +56,18 @@ cat /proc/sys/fs/file-max
 # 查看目前系统使用的文件句柄数量
 cat /proc/sys/fs/file-nr
 512 0 97984
+# 512   -> 分配并使用的文件句柄数
+# 0     -> 分配却未使用的文件句柄数
+# 97984 -> 内核级别的最大文件句柄数
 ```
+> **file-max vs ulimit**  
+`file-max`是linux内核级别的设定，影响的是linux内核最高可以打开的文件数限制；  
+`ulimit`是进程级别的设定，影响的是指定用户启动进程最高可以打开的文件数限制；
+
+> 参考文档:  
+[ulimit设定的是每个进程的属性，而不是该用户所有进程的总限制](https://unix.stackexchange.com/questions/55319/are-limits-conf-values-applied-on-a-per-process-basis)  
+[ulimit vs file-max](https://unix.stackexchange.com/questions/447583/ulimit-vs-file-max)  
+[如何计算最大文件打开数应该设定多少](https://stackoverflow.com/questions/6180569/need-to-calculate-optimum-ulimit-and-fs-file-max-values-according-to-my-own-se)
 
 ---
 
@@ -98,6 +109,7 @@ session    required     /lib64/security/pam_limits.so
 #<type> can have the two values:
 #        - "soft" for enforcing the soft limits
 #        - "hard" for enforcing hard limits
+#        - "-" for both enforcing hard and soft limits
 #
 #<item> can be one of the following:
 #        - core - limits the core file size (KB)
