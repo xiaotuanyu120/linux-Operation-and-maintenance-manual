@@ -159,3 +159,7 @@ cloudera推荐在生产环境中部署三到四种机器类型：
 - Worker Node, Runs the HDFS DataNode, YARN NodeManager, HBase RegionServer, Impala impalad, Search worker daemons and Kudu Tablet Servers.
 - Utility Node, Runs Cloudera Manager and the Cloudera Management Services. 也可以部署一个MySQL（或其他）数据库，用于Cloudera Manager, Hive, Sentry 和其他 Hadoop-related projects.
 - Edge Node, Contains all client-facing configurations and services, including gateway configurations for HDFS, YARN, Impala, Hive, and HBase. The edge node is also a good place for Hue, Oozie, HiveServer2, and Impala HAProxy. HiveServer2 and Impala HAProxy serve as a gateway to external applications such as Business Intelligence (BI) tools.
+
+
+### 4. 扩展阅读
+[before you install](https://www.cloudera.com/documentation/enterprise/6/6.0/topics/installation_reqts.html#pre-install)
