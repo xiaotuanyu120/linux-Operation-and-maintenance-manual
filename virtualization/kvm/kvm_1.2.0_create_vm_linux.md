@@ -30,7 +30,6 @@ mount -t cifs -o iocharset=utf8,username=desktop-zack,password=password,uid=0,di
 cp /mnt/*.iso /data/iso/
 ```
 
-
 ---
 
 ### 3. 安装虚拟机
@@ -49,7 +48,9 @@ virt-install \
 
 >> 如果需要双网卡的话就增加一个--network,相应的你需要在创建一个桥接网络  
 
->> 除了--location=光盘挂载路径，还可以选择用--cdrom /path/to/centos**.iso  
+>> 如果需要多磁盘的话，增加一个--disk指定一个新磁盘镜像就好了
+
+>> 除了`--location=光盘挂载路径`，还可以选择用`--cdrom /path/to/centos*.iso`  
 但不用--location时不可使用--extra-args，所以还是推荐--localtion=光盘镜像或挂载路径的方式；--extra-args主要是传递给linux kernel一些参数
 
 > 如果安装时卡在了escape(Escape character is '^]'.)符号处，可以检查kvm模块是否加载，或者是否增加了--extra-args参数

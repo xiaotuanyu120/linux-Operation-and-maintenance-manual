@@ -84,6 +84,13 @@ virsh list
  Id    Name                           State
 ----------------------------------------------------
  3     vm1                            running
+
+# 5. 连接虚拟机
+virsh console vm1
+# 如果连接时卡在了escape(Escape character is '^]'.)符号处，按下回车键即可进入登录界面
+
+# 6. 退出虚拟机console
+# 同时按下crtl+]
 ```
 
 #### 5) 删除虚拟机（先强制关机，然后undefine）
