@@ -327,6 +327,8 @@ INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.
 - CDH-6.0.0-1.cdh6.0.0.p0.537114-el7.parcel.sha256(需要更名)
 - manifest.json
 
+> 重点注意，此处下载的文件，后来实测发现用不上，还是会在线下载，原因未查明。
+
 ``` bash
 cd /opt/cloudera/parcel-repo/
 wget https://archive.cloudera.com/cdh6/6.0.0/parcels/CDH-6.0.0-1.cdh6.0.0.p0.537114-el7.parcel
