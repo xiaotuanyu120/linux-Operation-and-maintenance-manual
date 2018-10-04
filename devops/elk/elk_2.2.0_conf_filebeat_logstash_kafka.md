@@ -46,6 +46,8 @@ output.kafka:
 ```
 > [filebeat kafka output](https://www.elastic.co/guide/en/beats/filebeat/master/kafka-output.html)
 
+> filebeat默认从日志文件开头开始收集日志，如果希望filebeat从文件末尾开始收集日志，需要在日志源处配置`tail_files: true`。同时，filebeat会维护一个registry文件，来记录filebeat读取日志的位置，如果是中途增加了`tail_files: true`配置，需要关闭filebeat服务，删除这个registry文件，然后重新打开filebeat服务才可以。 rpm格式安装的filebeat的registry文件位于:`/var/lib/filebeat/registry`。 详细日志可以参考：[Update the registry file](https://www.elastic.co/guide/en/beats/filebeat/master/migration-registry-file.html)
+
 ### 2. 配置kafka为logstash的输入源
 ``` yaml
 input {
