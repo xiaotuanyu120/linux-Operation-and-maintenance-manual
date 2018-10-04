@@ -27,6 +27,8 @@ tags: [elk, elasticsearch, filebeat, logstash, kibana, redis]
 
 ### 1. 安装及配置
 #### 1) elasticsearch
+*在elasticsearch节点机器上执行以下命令*
+
 **用户**
 ``` bash
 groupadd elasticsearch
@@ -45,7 +47,7 @@ chown -R elasticsearch.elasticsearch /usr/local/elasticsearch
 
 **配置systemd文件**
 ``` bash
-[Unit]
+echo '[Unit]
 Description=Elasticsearch
 Documentation=http://www.elastic.co
 Wants=network-online.target
@@ -53,6 +55,8 @@ After=network-online.target
 
 [Service]
 RuntimeDirectory=elasticsearch
+Environment=JAVA_HOME=/usr/java/jdk1.8.0_144
+Environment=JRE_HOME=${JAVA_HOME}/jre
 Environment=ES_HOME=/usr/local/elasticsearch
 Environment=ES_PATH_CONF=/usr/local/elasticsearch/config
 Environment=PID_DIR=/usr/local/elasticsearch/var
@@ -107,13 +111,16 @@ SuccessExitStatus=143
 [Install]
 WantedBy=multi-user.target
 
-# Built for ${project.name}-${project.version} (${project.name})
+# Built for ${project.name}-${project.version} (${project.name})' > /usr/lib/systemd/system/elasticsearch.service
+
+systemctl daemon-reload
 ```
-> [SysV init file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/rpm/init.d/elasticsearch)  
-[elasticsearch systemd unit file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/common/systemd/elasticsearch.service)
+> 启动脚本：
+- [SysV init file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/rpm/init.d/elasticsearch)  
+- [elasticsearch systemd unit file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/common/systemd/elasticsearch.service)
 
 **配置elasticsearch.yml**
-```
+``` yaml
 cluster.name: dc-es
 node.name: node-1
 path.data: /home/es-data
@@ -122,7 +129,13 @@ bootstrap.memory_lock: true
 network.host: 0.0.0.0
 http.port: 9200
 ```
-> 当设定bootstrap.memory_lock: true锁定内存地址之后，容易出现`memory locking requested for elasticsearch process but memory is not locked`错误，解决办法是在`/etc/security/limits.conf`中配置如下`* soft memlock unlimited`和`* hard memlock unlimited`
+> 当设定bootstrap.memory_lock: true锁定内存地址之后，容易出现错误：`memory locking requested for elasticsearch process but memory is not locked`，解决办法是在`/etc/security/limits.conf`中配置如下`* soft memlock unlimited`和`* hard memlock unlimited`
+
+> data和log目录设定好以后，要记得创建并授权给elasticsearch
+``` bash
+mkdir -p /home/es-data
+chown -R elasticsearch.elasticsearch /home/es-data
+```
 
 **配置jvm.options**
 ```
@@ -216,6 +229,8 @@ xpack.security.http.ssl.certificate_authorities: [ "/usr/local/elasticsearch/con
 -->
 
 #### 3) 安装kibana
+*以下命令在kibana节点服务器上执行*
+
 **用户**
 ``` bash
 groupadd kibana
@@ -233,7 +248,7 @@ chown -R kibana.kibana /usr/local/kibana
 
 **配置systemd**
 ``` bash
-[Unit]
+echo '[Unit]
 Description=Kibana 6
 
 [Service]
@@ -245,19 +260,27 @@ Environment=NODE_ENV=production
 ExecStart=/usr/local/kibana/bin/kibana
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target' > /usr/lib/systemd/system/kibana.service
+
+systemctl daemon-reload
 ```
 
 **配置kibana.yml**
-```
+``` yaml
 server.port: 5601
-server.host: "192.168.100.68"
+server.host: "0.0.0.0"
+elasticsearch.url: "http://127.0.0.1:9200"
+```
+<!--
+**配置kibana.yml**
+``` yaml
+server.port: 5601
+server.host: "0.0.0.0"
 elasticsearch.url: "https://127.0.0.1:9200"
 elasticsearch.username: "kibana"
 elasticsearch.password: "kibana123"
 ```
 
-<!--
 #### 4) 给kibana安装x-pack
 ``` bash
 # step 1. 安装x-pack
@@ -272,6 +295,8 @@ elasticsearch.ssl.verificationMode: certificate
 -->
 
 #### 5) 安装logstash
+*以下命令在logstash节点服务器上执行*
+
 **用户**
 ``` bash
 groupadd logstash
@@ -280,6 +305,7 @@ useradd -g logstash logstash
 
 **安装**
 ``` bash
+cd /usr/local/src
 wget https://artifacts.elastic.co/downloads/logstash/logstash-6.2.4.tar.gz
 tar zxvf logstash-6.2.4.tar.gz
 mv logstash-6.2.4 /usr/local/logstash
@@ -291,19 +317,23 @@ chown -R logstash.logstash /home/logstash
 ```
 
 **配置systemd**
-```
-[Unit]
+``` bash
+echo '[Unit]
 Description=Logstash
 Documentation=https://www.elastic.co/products/logstash
 After=network.target
-ConditionPathExists=/etc/logstash.conf
+#ConditionPathExists=/etc/logstash.conf
 
 [Service]
+Environment=JAVA_HOME=/usr/java/jdk1.8.0_144
+Environment=JRE_HOME=${JAVA_HOME}/jre
 Environment=HOME=/usr/local/logstash
 ExecStart=/usr/local/logstash/bin/logstash
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target' > /usr/lib/systemd/system/logstash.service
+
+systemctl daemon-reload
 ```
 > HOME变量是为了解决一个[dotfile变量不存在问题](https://github.com/awesome-print/awesome_print/issues/316)
 
@@ -325,7 +355,7 @@ LS_OPTS="--path.settings ${LS_SETTINGS_DIR}"
 # Arguments to pass to java
 LS_JAVA_OPTS=""
 
-# pidfiles aren't used the same way for upstart and systemd; this is for sysv users.
+# pidfiles are not used the same way for upstart and systemd; this is for sysv users.
 LS_PIDFILE=/var/run/logstash.pid
 
 # user and group id to be invoked as
@@ -357,7 +387,7 @@ SERVICE_DESCRIPTION="logstash"
 ```
 
 **配置logstash.yml**
-```
+``` yaml
 # ------------ Data path ------------------
 path.data: /home/logstash/data
 # ------------ Pipeline Settings --------------
@@ -375,7 +405,7 @@ path.logs: /home/logstash/logs
 > 此配置主要是配置logstash的启动选项，在command line指定的选项会覆盖此配置文件中的配置
 
 **配置pipeline.yml**
-```
+``` yaml
 - pipeline.id: redis-pipe
   queue.type: persisted
   path.config: "/usr/local/logstash/config/redis-pipelines.conf"
@@ -401,8 +431,6 @@ output {
   elasticsearch {
     hosts => ["192.168.100.68:9200"]
     index => "%{[fields][service]}"
-    user => logstash_system
-    password => logstash_system123
   }
 }
 ```
@@ -410,6 +438,33 @@ output {
 > - [input redis example](https://doc.yonyoucloud.com/doc/logstash-best-practice-cn/input/redis.html)
 
 > `"%{[fields][service]}"`是filebeat中的一个field，[如何在logstash中使用filebeat的field](https://discuss.elastic.co/t/how-to-use-filebeat-fields-name-value-in-logstash-config/79791/3)
+
+> 遇到一个怪事，logstash中的input部分，redis的key是可以模糊匹配的，类似于`filebeat-*`，但是奇怪的是，我重新在测试环境使用这样配置的时候，竟然遇到logstash读不出redis的数据的情况，一旦我把`filebeat-*`改成`filebeat-midd`这种完整的配置，logstash就能正常读取数据。未查明原因，只能临时先写完整的key值。
+<!--
+```
+input {
+    redis {
+        data_type => "list"
+        key => "filebeat-*"
+        host => "192.168.86.138"
+        port => 6379
+        threads => 5
+        password => "my_password"
+    }
+}
+filter {
+
+}
+output {
+  elasticsearch {
+    hosts => ["192.168.100.68:9200"]
+    index => "%{[fields][service]}"
+    user => logstash_system
+    password => logstash_system123
+  }
+}
+```
+-->
 
 <!--
 #### 6) install x-pack for logstash
@@ -431,11 +486,12 @@ rpm -vi filebeat-6.2.4-x86_64.rpm
 ```
 
 **配置文件：/etc/filebeat/filebeat.yml**
-```
+``` yaml
 #=========================== Filebeat prospectors =============================
 filebeat.prospectors:
 - type: log
   enabled: true
+  tail_files: true
   paths:
     - /home/middleservice/blog_midd/logs/catalina.out
   fields:
@@ -452,7 +508,7 @@ setup.template.settings:
   index.number_of_shards: 3
 #================================ General =====================================
 name: 86.24
-tags: ["middleservice", "e68"]
+tags: ["middleservice", "service"]
 #================================ Outputs =====================================
 output.redis:
   hosts: ["192.168.86.138"]
@@ -468,3 +524,4 @@ output.redis:
 - [general config docs](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-general-options.html)
 - redis的[datatype配置](https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_literal_datatype_literal)默认是list
 - [Failed to RPUSH to redis list with write tcp i/o timeout错误解决](https://discuss.elastic.co/t/filebeat-error-err-failed-to-publish-events-caused-by-read-tcp-i-o-timeout/68023)
+- filebeat默认从日志文件开头开始收集日志，如果希望filebeat从文件末尾开始收集日志，需要在日志源处配置`tail_files: true`。同时，filebeat会维护一个registry文件，来记录filebeat读取日志的位置，如果是中途增加了`tail_files: true`配置，需要关闭filebeat服务，删除这个registry文件，然后重新打开filebeat服务才可以。 rpm格式安装的filebeat的registry文件位于:`/var/lib/filebeat/registry`。 详细日志可以参考：[Update the registry file](https://www.elastic.co/guide/en/beats/filebeat/master/migration-registry-file.html)
