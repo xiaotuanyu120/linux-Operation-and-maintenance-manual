@@ -439,7 +439,9 @@ output {
 
 > `"%{[fields][service]}"`是filebeat中的一个field，[如何在logstash中使用filebeat的field](https://discuss.elastic.co/t/how-to-use-filebeat-fields-name-value-in-logstash-config/79791/3)
 
-> 遇到一个怪事，logstash中的input部分，redis的key是可以模糊匹配的，类似于`filebeat-*`，但是奇怪的是，我重新在测试环境使用这样配置的时候，竟然遇到logstash读不出redis的数据的情况，一旦我把`filebeat-*`改成`filebeat-midd`这种完整的配置，logstash就能正常读取数据。未查明原因，只能临时先写完整的key值。
+> logstash中的input部分，redis的key是不可以模糊匹配的，只能写唯一值。 但是比较奇怪的是，好多中文甚至是英文文档里面，他们的配置举例里面都是带wildcard的类似于`test-*`这种写法，针对这种情况，我在elasticsearch的官方讨论区里面找到了一个elasticsearch团队的成员的确切回答，这边只能写唯一值(warkolm
+Mark Walkom Elastic Team Member May 24:I believe you can only input a single key there.)，链接在[这里:elasticsearch的讨论区](https://discuss.elastic.co/t/redis-input-wildcard-key-seems-not-working/132962)，还有[这里:谷歌讨论组](https://groups.google.com/forum/#!msg/logstash-users/GWNx5OFd5XQ/tTHrAmjshRgJ)
+
 <!--
 ```
 input {
