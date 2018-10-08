@@ -483,6 +483,7 @@ xpack.monitoring.elasticsearch.password: logstashpassword
 #### 7) 安装filebeat
 **安装**
 ``` bash
+cd /usr/local/src
 curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.2.4-x86_64.rpm
 rpm -vi filebeat-6.2.4-x86_64.rpm
 ```
