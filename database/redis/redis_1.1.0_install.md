@@ -10,9 +10,10 @@ tags: [database,redis]
 
 ### 1. redis源码安装
 ``` bash
-wget http://download.redis.io/releases/redis-2.8.24.tar.gz
-tar zxf redis-2.8.24.tar.gz
-cd redis-2.8.24
+REDIS_VER=2.8.24
+wget http://download.redis.io/releases/redis-${REDIS_VER}.tar.gz
+tar zxf redis-${REDIS_VER}.tar.gz
+cd redis-${REDIS_VER}
 make
 make install
 ```
