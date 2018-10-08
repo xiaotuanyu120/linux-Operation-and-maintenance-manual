@@ -256,7 +256,7 @@ xpack.monitoring.elasticsearch.ssl.ca: /usr/local/logstash/config/certs/ca.crt
 ```
 > xpack monitoring的配置参考：[es 6.2官方文档](https://www.elastic.co/guide/en/logstash/6.2/configuring-logstash.html)
 
-``` json
+```
 input {
   redis {
     data_type => "list"
@@ -283,6 +283,6 @@ output {
 
 ```
 > - [cacert 配置说明](https://www.elastic.co/guide/en/logstash/6.2/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-cacert)
-- [ssl 配置说明](https://www.elastic.co/guide/en/logstash/6.2/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-ssl)
+> - [ssl 配置说明](https://www.elastic.co/guide/en/logstash/6.2/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-ssl)
 
 > Failed to install template error
