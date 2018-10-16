@@ -31,7 +31,7 @@ Type曾是index的逻辑类别或分区，允许你在同一index中储存不同
 
 ### Document
 document是可以被索引的一个基本信息单元。例如，你可以为单个客户提供document、为单个产品提供document、为单个订单提供document。document使用JSON（JavaScript Object Notation）表示，它是一种普遍存在的互联网数据交换格式。  
-在同一个index中，你可以存储任意数量的document。值得注意的是，尽管document物理上是储存在index中，但是实际上是需要被索引或分配到index中的一个type中。
+在同一个index/type中，你可以存储任意数量的document。值得注意的是，尽管document物理上是储存在index中，但是实际上是需要被索引或分配到index中的一个type中。
 
 ### Shards & Replicas
 Index可能存储大量可能超过单个节点的硬件限制的数据。例如，占用1TB磁盘空间的十亿个documents的单个index可能不适合只使用单个节点的磁盘，或者可能在单个节点的磁盘去执行搜索请求时太慢。  
