@@ -15,6 +15,16 @@ xpack是一个集成了security, alerting, monitoring, reporting, 和 graph capa
 
 > 安装X-pack参考这篇[官方文档](https://www.elastic.co/guide/en/x-pack/current/installing-xpack.html)
 
+> **重点注意**
+- 先关闭logstash,kibana,elasticsearch
+- 按照下面步骤安装和配置x-pack
+- 启动elasticsearch，然后再启动kibana,logstash
+``` bash
+systemctl stop elasticsearch
+systemctl stop kibana
+systemctl stop logstash
+```
+
 #### 1) 在elasticsearch中安装X-pack
 > **重要：**   
 如果是在现存的es cluster中第一次安装X-pack，必须要整个es cluster来一次完整的重启。
@@ -284,5 +294,3 @@ output {
 ```
 > - [cacert 配置说明](https://www.elastic.co/guide/en/logstash/6.2/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-cacert)
 > - [ssl 配置说明](https://www.elastic.co/guide/en/logstash/6.2/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-ssl)
-
-> Failed to install template error
