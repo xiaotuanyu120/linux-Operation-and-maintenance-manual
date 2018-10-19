@@ -1,10 +1,10 @@
 ---
-title: elk 1.2.0: elasticsearch index templates
+title: elk 1.0.5: elasticsearch index templates
 date: 2018-08-28 15:09:00
 categories: bigdata/elk
 tags: [elk, elasticsearch, templates]
 ---
-### elk 1.2.0: elasticsearch index templates
+### elk 1.0.5: elasticsearch index templates
 
 ### 1. index templates
 [index templates](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html)是es中的一种模板，当创建index时，根据index templates中指定的index_patterns数组来确定新index应用哪个模板。templates中包含settings、mappings和index_patterns。index templates只会在index创建时被应用，当index已经存在时，修改现存的index templates无法影响该index。

@@ -1,10 +1,10 @@
 ---
-title: elk 1.3.0: elasticsearch mapping
+title: elk 1.0.6: elasticsearch mapping
 date: 2018-08-28 16:07:00
 categories: bigdata/elk
 tags: [elk, elasticsearch, mapping]
 ---
-### elk 1.3.0: elasticsearch mapping
+### elk 1.0.6: elasticsearch mapping
 
 ### 1. mapping
 [mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)是一个定义文档和它包含的fields如何存储和索引的处理过程。例如：  
