@@ -141,8 +141,8 @@ xpack.security.transport.ssl.certificate_authorities: [ "/usr/local/elasticsearc
 # step 5. 如果给PEM文件加了密语，需要将此密语增加到elasticsearch的keystore里面
 /usr/local/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.secure_key_passphrase
 
-# step 6. 重启elasticsearch
-systemctl restart elasticsearch
+# step 6. 重启elasticsearch(!!!暂时先不需要执行，后面完成之后一起重启!!!)
+# systemctl restart elasticsearch
 ```
 
 b. client 与 elasticsearch 之间http的TLS
@@ -233,15 +233,16 @@ elasticsearch.url: "https://192.168.100.68:9200"
 elasticsearch.username: "kibana"
 elasticsearch.password: "kibanapass"
 
-elasticsearch.ssl.certificate: /usr/local/elasticsearch/config/certs/http-client.crt
-elasticsearch.ssl.key: /usr/local/elasticsearch/config/certs/http-client.key
-elasticsearch.ssl.certificateAuthorities: [ "/usr/local/elasticsearch/config/certs/ca.crt" ]
+elasticsearch.ssl.certificate: /usr/local/kibana/config/certs/http-client.crt
+elasticsearch.ssl.key: /usr/local/kibana/config/certs/http-client.key
+elasticsearch.ssl.certificateAuthorities: [ "/usr/local/kibana/config/certs/ca.crt" ]
 elasticsearch.ssl.verificationMode: full
 ```
+> 配置文件中需要的证书文件可以从生成证书的节点上拷贝过来
 
 **step 3. 检验效果**
 - 重启kibana服务
-- 通过浏览器访问kibana（http://localhost:5601/），此时会需要验证登陆
+- 通过浏览器访问kibana(`http://localhost:5601/`)，此时会需要验证登陆
 
 #### 3) 在logstash中安装X-Pack
 **step 1. 在logstash中安装X-Pack**
@@ -265,6 +266,8 @@ xpack.monitoring.elasticsearch.password: logstashpassword
 xpack.monitoring.elasticsearch.ssl.ca: /usr/local/logstash/config/certs/ca.crt
 ```
 > xpack monitoring的配置参考：[es 6.2官方文档](https://www.elastic.co/guide/en/logstash/6.2/configuring-logstash.html)
+
+> 配置文件中需要的证书文件可以从生成证书的节点上拷贝过来
 
 ```
 input {
