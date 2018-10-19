@@ -1,7 +1,7 @@
 ---
 title: elasticsearch 1.1.0: docker installation
 date: 2018-07-14 11:39:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
 ### elasticsearch 1.1.0: docker installation

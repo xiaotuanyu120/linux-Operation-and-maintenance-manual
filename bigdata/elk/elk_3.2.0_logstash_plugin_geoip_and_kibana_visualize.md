@@ -1,7 +1,7 @@
 ---
 title: elk 3.2.0 logstash plugin geoip and kibana visualize
 date: 2018-08-27 16:42:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, logstash, geoip, kibana]
 ---
 ### elk 3.2.0 logstash plugin geoip and kibana visualize
@@ -119,7 +119,7 @@ filter {
     source => "clientip"
   }
 ```
-> geoip中的source选项，是来指定使用什么grok中的什么字段来作为输入源，所以我们必须在grok的匹配中配置一个名为`clientip`的字段。此处的`NGINXWEB`是我自定义的一个grok pattern，感兴趣的可以参照[这篇文章](https://github.com/xiaotuanyu120/linux-Operation-and-maintenance-manual/blob/master/devops/elk/elk_3.1.0_logstash_plugin_grok.md)。
+> geoip中的source选项，是来指定使用什么grok中的什么字段来作为输入源，所以我们必须在grok的匹配中配置一个名为`clientip`的字段。此处的`NGINXWEB`是我自定义的一个grok pattern，感兴趣的可以参照[这篇文章](https://github.com/xiaotuanyu120/linux-Operation-and-maintenance-manual/blob/master/bigdata/elk/elk_3.1.0_logstash_plugin_grok.md)。
 > geoip中还可以配置`database`选项来指定自定义的geoip的地址库，可以买商业版。
 
 需要注意的部分是，index名称部分，要和上面templates中定义的index_patterns中配置的匹配起来

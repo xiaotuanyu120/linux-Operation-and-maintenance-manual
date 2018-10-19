@@ -1,7 +1,7 @@
 ---
 title: elk 1.0.0: elasticsearch concept
 date: 2018-10-11 16:18:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
 ### elk 1.0.0: elasticsearch concept

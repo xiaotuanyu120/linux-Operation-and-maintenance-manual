@@ -1,7 +1,7 @@
 ---
 title: elk 1.2.0: elasticsearch index templates
 date: 2018-08-28 15:09:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch, templates]
 ---
 ### elk 1.2.0: elasticsearch index templates

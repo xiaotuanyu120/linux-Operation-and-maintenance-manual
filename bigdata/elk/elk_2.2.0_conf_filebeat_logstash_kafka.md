@@ -1,7 +1,7 @@
 ---
 title: elk 2.2.0 config kafka with filebeat and logstash
 date: 2018-08-21 09:30:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, kafka, logstash, filebeat]
 ---
 ### elk 2.2.0 config kafka with filebeat and logstash

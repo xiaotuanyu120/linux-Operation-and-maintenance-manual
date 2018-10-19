@@ -1,7 +1,7 @@
 ---
 title: elk 1.0.1: elasticsearch removal of mapping types
 date: 2018-10-15 15:43:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
 ### elk 1.0.1: elasticsearch removal of mapping types

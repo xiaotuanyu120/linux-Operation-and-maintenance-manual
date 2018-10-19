@@ -1,7 +1,7 @@
 ---
 title: elk 1.3.0: elasticsearch mapping
 date: 2018-08-28 16:07:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch, mapping]
 ---
 ### elk 1.3.0: elasticsearch mapping

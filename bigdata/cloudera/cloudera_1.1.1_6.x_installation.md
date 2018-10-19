@@ -1,7 +1,7 @@
 ---
 title: cloudera 1.1.1 生产环境安装实践
 date: 2018-09-25 12:42:00
-categories: bigdata/basic
+categories: bigdata/cloudera
 tags: [hadoop,cloudera]
 ---
 ### cloudera 1.1.1 生产环境安装实践

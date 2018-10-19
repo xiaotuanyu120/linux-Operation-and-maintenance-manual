@@ -1,7 +1,7 @@
 ---
 title: cloudera 1.1.0 简介和安装要求说明
 date: 2018-09-24 11:00:00
-categories: bigdata/basic
+categories: bigdata/cloudera
 tags: [hadoop,cloudera]
 ---
 ### cloudera 1.1.0 简介和安装要求说明

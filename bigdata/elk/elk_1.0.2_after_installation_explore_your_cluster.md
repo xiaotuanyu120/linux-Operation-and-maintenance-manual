@@ -1,10 +1,10 @@
 ---
-title: elk 1.1.1.1: explore you cluster
+title: elk 1.10.2: explore you cluster
 date: 2018-10-16 15:55:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
-### elk 1.1.1.1: explore you cluster
+### elk 1.0.2: explore you cluster
 
 ### REST API
 现在我们已经将我们的节点或者集群运行起来了，接下来是要理解和熟悉如何与其交互了。庆幸的是，elasticsearch提供了一个非常完备和强大的REST API，使其易于交互。使用API可以完成以下事项：

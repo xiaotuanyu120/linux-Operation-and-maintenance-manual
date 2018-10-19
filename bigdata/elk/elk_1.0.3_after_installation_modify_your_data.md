@@ -1,10 +1,10 @@
 ---
-title: elk 1.1.1.2: modify your data
+title: elk 1.0.3: modify your data
 date: 2018-10-17 09:28:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
-### elk 1.1.1.2: modify your data
+### elk 1.0.3: modify your data
 
 ## Modifying Your Data
 Elasticsearch提供几乎实时的数据操作和搜索功能。默认情况下，在执行索引、更新

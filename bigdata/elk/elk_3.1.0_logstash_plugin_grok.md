@@ -1,7 +1,7 @@
 ---
 title: elk 3.1.0 logstash plugin grok
 date: 2018-08-24 21:33:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, logstash, grok]
 ---
 ### elk 3.1.0 logstash plugin grok

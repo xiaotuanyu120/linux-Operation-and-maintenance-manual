@@ -1,7 +1,7 @@
 ---
 title: elk 1.1.1: production installation add xpack
 date: 2018-10-05 10:04:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch, xpack]
 ---
 ### elk 1.1.1: production installation add xpack

@@ -1,10 +1,10 @@
 ---
-title: elk 1.1.1.3: explore your data
+title: elk 1.0.4: explore your data
 date: 2018-10-17 13:10:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, elasticsearch]
 ---
-### elk 1.1.1.3: explore your data
+### elk 1.0.4: explore your data
 
 ## Exploring Your Data
 

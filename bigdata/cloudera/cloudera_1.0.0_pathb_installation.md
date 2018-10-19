@@ -1,7 +1,7 @@
 ---
 title: cloudera 1.0.0 pathB(生产环境-package) 安装
 date: 2017-06-22 11:00:00
-categories: bigdata/basic
+categories: bigdata/cloudera
 tags: [hadoop,cloudera]
 ---
 ### cloudera 1.0.0 pathB(生产环境-package) 安装

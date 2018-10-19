@@ -1,7 +1,7 @@
 ---
 title: elk 2.1.0 logstash config index name with current date
 date: 2018-08-21 09:22:00
-categories: devops/elk
+categories: bigdata/elk
 tags: [elk, logstash]
 ---
 ### elk 2.1.0 logstash config index name with current date
