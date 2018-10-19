@@ -31,7 +31,7 @@ systemctl stop logstash
 
 **step 1 在elasticsearch中安装x-pack插件**
 ``` bash
-bin/elasticsearch-plugin install x-pack
+/usr/local/elasticsearch/bin/elasticsearch-plugin install x-pack
 -> Downloading x-pack from elastic
 [=================================================] 100%  
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -208,7 +208,7 @@ Changed password for user [elastic]
 
 **step 1. 在kibana中安装X-Pack**
 ``` bash
-bin/kibana-plugin install x-pack
+/usr/local/kibana/bin/kibana-plugin install x-pack
 Attempting to transfer from x-pack
 Attempting to transfer from https://artifacts.elastic.co/downloads/kibana-plugins/x-pack/x-pack-6.2.4.zip
 Transferring 264988487 bytes....................
@@ -246,7 +246,7 @@ elasticsearch.ssl.verificationMode: full
 #### 3) 在logstash中安装X-Pack
 **step 1. 在logstash中安装X-Pack**
 ``` bash
-bin/logstash-plugin install x-pack
+/usr/local/logstash/bin/logstash-plugin install x-pack
 Downloading file: https://artifacts.elastic.co/downloads/logstash-plugins/x-pack/x-pack-6.2.4.zip
 Downloading [=============================================================] 100%
 Installing file: /tmp/studtmp-3194fb67c182e5c40490c6236b617a1b83f68ef2ddb9ed2874585ef0ccc0/x-pack-6.2.4.zip
@@ -270,11 +270,11 @@ xpack.monitoring.elasticsearch.ssl.ca: /usr/local/logstash/config/certs/ca.crt
 input {
   redis {
     data_type => "list"
-    key => "filebeat-*"
+    key => "filebeat-midd"
     host => "127.0.0.1"
     port => 6379
     threads => 5
-    password => "123456"
+    password => "my_password"
   }
 }
 filter {

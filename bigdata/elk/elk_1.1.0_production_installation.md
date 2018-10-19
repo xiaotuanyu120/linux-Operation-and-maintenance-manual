@@ -29,6 +29,31 @@ tags: [elk, elasticsearch, filebeat, logstash, kibana, redis]
 #### 1) elasticsearch
 *在elasticsearch节点机器上执行以下命令*
 
+**系统调优**
+``` bash
+# 关闭swap
+sudo swapoff -a
+# 永久关闭需要打开/etc/fstab，注释包含swap关键字那行
+
+# 虚拟内存
+sysctl -w vm.max_map_count=262144
+# 也可以在/etc/sysctl.conf中设置vm.max_map_count算
+```
+如果使用的是systemd来host服务，以下ulimit的三个选项可以在systemd的unitfile里面配置
+``` bash
+# 增大文件句柄
+ulimit -n 65536
+# 或者打开/etc/security/limits.conf，把nofile设置成65536
+
+# 线程数量
+ulimit -u 4096
+# 或者打开/etc/security/limits.conf，把nproc设定为4096
+
+# 内存锁定容量
+ulimit -l unlimited
+# 或者打开/etc/security/limits.conf，把memlock设定为unlimited
+```
+
 **用户**
 ``` bash
 groupadd elasticsearch
@@ -56,7 +81,7 @@ After=network-online.target
 [Service]
 RuntimeDirectory=elasticsearch
 Environment=JAVA_HOME=/usr/java/jdk1.8.0_144
-Environment=JRE_HOME=${JAVA_HOME}/jre
+Environment=JRE_HOME=/usr/java/jdk1.8.0_144/jre
 Environment=ES_HOME=/usr/local/elasticsearch
 Environment=ES_PATH_CONF=/usr/local/elasticsearch/config
 Environment=PID_DIR=/usr/local/elasticsearch/var
@@ -119,6 +144,8 @@ systemctl daemon-reload
 - [SysV init file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/rpm/init.d/elasticsearch)  
 - [elasticsearch systemd unit file](https://github.com/elastic/elasticsearch/blob/master/distribution/packages/src/common/systemd/elasticsearch.service)
 
+> 注意JAVA_HOME换成本地生效的版本，不要照抄。
+
 **配置elasticsearch.yml**
 ``` yaml
 cluster.name: dc-es
@@ -126,10 +153,12 @@ node.name: node-1
 path.data: /home/es-data
 path.logs: /home/es-data
 bootstrap.memory_lock: true
-network.host: 0.0.0.0
+network.host: 192.168.100.68
 http.port: 9200
 ```
 > 当设定bootstrap.memory_lock: true锁定内存地址之后，容易出现错误：`memory locking requested for elasticsearch process but memory is not locked`，解决办法是在`/etc/security/limits.conf`中配置如下`* soft memlock unlimited`和`* hard memlock unlimited`
+
+> `network.host`尽量配置成确定的ip，不要用0.0.0.0
 
 > data和log目录设定好以后，要记得创建并授权给elasticsearch
 ``` bash
@@ -142,91 +171,6 @@ chown -R elasticsearch.elasticsearch /home/es-data
 -Xms16g
 -Xmx16g
 ```
-
-**系统调优**
-``` bash
-# 关闭swap
-sudo swapoff -a
-# 永久关闭需要打开/etc/fstab，注释包含swap关键字那行
-
-# 增大文件句柄
-ulimit -n 65536
-# 或者打开/etc/security/limits.conf，把nofile设置成65536
-
-# 虚拟内存
-sysctl -w vm.max_map_count=262144
-# 也可以在/etc/sysctl.conf中设置vm.max_map_count算
-
-# 线程数量
-ulimit -u 4096
-# 或者打开/etc/security/limits.conf，把nproc设定为4096
-
-# 内存锁定容量
-ulimit -l unlimited
-# 或者打开/etc/security/limits.conf，把memlock设定为unlimited
-```
-> 如果使用的是systemd来host服务，ulimit的三个选项可以在systemd的unitfile里面配置
-
-<!--
-#### 2) 给elasticsearch安装x-pack
-``` bash
-# 1. 安装x-pack
-/usr/local/elasticsearch/bin/elasticsearch-plugin install x-pack
-
-# 2. 让x-pack可以auto index
-# 默认情况下，elasticsearch允许automatic index creation，我们不需要做任何操作
-# 确保没有手动禁用这个配置(elasticsearch.yml)就好，否则就需要启用它，例如下面
-action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*
-```
-
-增强node节点之间的安全性
-``` bash
-# step 1. 生成ca
-/usr/local/elasticsearch/bin/x-pack/certutil ca --pem
-unzip elastic-stack-ca.zip
-# 默认生成了一个ca/ca.key ca/ca.crt，用这个ca可以给集群节点的key签名
-
-# step 2. 给所有节点生成证书
-/usr/local/elasticsearch/bin/x-pack/certutil cert --pem --ca-cert ca/ca.crt --ca-key ca/ca.key --ip 127.0.0.1,192.168.100.68
-unzip certificate-bundle.zip
-# 默认生成了instance/instance.crt  instance/instance.key
-
-# step 3. 拷贝证书到相应的节点
-# 此处我只有一个节点，就mv .p12的证书文件到任意一个指定目录就可以了
-mkdir /usr/local/elasticsearch/config/certs
-cp ca/ca.crt instance/* /usr/local/elasticsearch/config/certs
-# ca.key需要保存好，如果你生成的时候给它配置了密码，也请记录好，以后增加es节点就靠这个文件来生成证书
-
-# step 4. 配置证书到elasticsearch.yml中，增加以下配置
-xpack.security.transport.ssl.enabled: true
-xpack.security.transport.ssl.verification_mode: certificate
-xpack.security.transport.ssl.key: /usr/local/elasticsearch/config/certs/instance.key
-xpack.security.transport.ssl.certificate: /usr/local/elasticsearch/config/certs/instance.crt
-xpack.security.transport.ssl.certificate_authorities: [ "/usr/local/elasticsearch/config/certs/ca.crt" ]
-```
-
-增强http连接安全性（client -> server）
-``` bash
-# step 0. 确保node节点之间的安全性搞定，并获得了ca和证书
-
-# step 1. 修改配置文件（elasticsearch.yml）
-xpack.security.http.ssl.client_authentication: none
-xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.key:  /usr/local/elasticsearch/config/certs/instance.key  
-xpack.security.http.ssl.certificate: /usr/local/elasticsearch/config/certs/instance.crt
-xpack.security.http.ssl.certificate_authorities: [ "/usr/local/elasticsearch/config/certs/ca.crt" ]
-```
-> [参照链接](https://www.elastic.co/guide/en/elasticsearch/reference/6.2/configuring-tls.html)
-> [xpack.security.http.ssl.client_authentication](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-settings.html)必须要配置，不然会报错`did not find a SSLContext for [SSLConfiguration ...`。
-
-给内置用户增加密码
-``` bash
-/usr/local/elasticsearch/bin/x-pack/setup-passwords interactive
-# 会依次让你设定已下三个用户的密码
-# elastic,kibana,logstash_system
-```
-> 密码可以随便设定，例如elastic123
--->
 
 #### 3) 安装kibana
 *以下命令在kibana节点服务器上执行*
@@ -271,28 +215,6 @@ server.port: 5601
 server.host: "0.0.0.0"
 elasticsearch.url: "http://127.0.0.1:9200"
 ```
-<!--
-**配置kibana.yml**
-``` yaml
-server.port: 5601
-server.host: "0.0.0.0"
-elasticsearch.url: "https://127.0.0.1:9200"
-elasticsearch.username: "kibana"
-elasticsearch.password: "kibana123"
-```
-
-#### 4) 给kibana安装x-pack
-``` bash
-# step 1. 安装x-pack
-/usr/local/kibana/bin/kibana-plugin install x-pack
-
-# step 2. 修改kibana.yml配置
-elasticsearch.ssl.certificate: /usr/local/elasticsearch/config/certs/instance.crt
-elasticsearch.ssl.key: /usr/local/elasticsearch/config/certs/instance.key
-elasticsearch.ssl.certificateAuthorities: [ "/usr/local/elasticsearch/config/certs/ca.crt" ]
-elasticsearch.ssl.verificationMode: certificate
-```
--->
 
 #### 5) 安装logstash
 *以下命令在logstash节点服务器上执行*
@@ -417,7 +339,7 @@ path.logs: /home/logstash/logs
 input {
     redis {
         data_type => "list"
-        key => "filebeat-*"
+        key => "filebeat-midd"
         host => "192.168.86.138"
         port => 6379
         threads => 5
@@ -441,44 +363,6 @@ output {
 
 > logstash中的input部分，redis的key是不可以模糊匹配的，只能写唯一值。 但是比较奇怪的是，好多中文甚至是英文文档里面，他们的配置举例里面都是带wildcard的类似于`test-*`这种写法，针对这种情况，我在elasticsearch的官方讨论区里面找到了一个elasticsearch团队的成员的确切回答，这边只能写唯一值(warkolm
 Mark Walkom Elastic Team Member May 24:I believe you can only input a single key there.)，链接在[这里:elasticsearch的讨论区](https://discuss.elastic.co/t/redis-input-wildcard-key-seems-not-working/132962)，还有[这里:谷歌讨论组](https://groups.google.com/forum/#!msg/logstash-users/GWNx5OFd5XQ/tTHrAmjshRgJ)
-
-<!--
-```
-input {
-    redis {
-        data_type => "list"
-        key => "filebeat-*"
-        host => "192.168.86.138"
-        port => 6379
-        threads => 5
-        password => "my_password"
-    }
-}
-filter {
-
-}
-output {
-  elasticsearch {
-    hosts => ["192.168.100.68:9200"]
-    index => "%{[fields][service]}"
-    user => logstash_system
-    password => logstash_system123
-  }
-}
-```
--->
-
-<!--
-#### 6) install x-pack for logstash
-``` bash
-# step 1. install plugin x-pack
-/usr/local/logstash/bin/logstash-plugin install x-pack
-
-# step 2. config logstash.yml
-xpack.monitoring.elasticsearch.username: logstash_system
-xpack.monitoring.elasticsearch.password: logstashpassword
-```
--->
 
 #### 7) 安装filebeat
 **安装**
