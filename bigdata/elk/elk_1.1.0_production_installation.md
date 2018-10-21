@@ -150,8 +150,8 @@ systemctl daemon-reload
 ``` yaml
 cluster.name: dc-es
 node.name: node-1
-path.data: /home/es-data
-path.logs: /home/es-data
+path.data: /home/es-data/data
+path.logs: /home/es-data/logs
 bootstrap.memory_lock: true
 network.host: 192.168.100.68
 http.port: 9200
@@ -162,7 +162,7 @@ http.port: 9200
 
 > data和log目录设定好以后，要记得创建并授权给elasticsearch
 ``` bash
-mkdir -p /home/es-data
+mkdir -p /home/es-data/{data,logs}
 chown -R elasticsearch.elasticsearch /home/es-data
 ```
 
@@ -215,6 +215,7 @@ server.port: 5601
 server.host: "0.0.0.0"
 elasticsearch.url: "http://127.0.0.1:9200"
 ```
+> 注意`server.host`改成指定ip，`elasticsearch.url`指定elasticsearch的服务ip。
 
 #### 5) 安装logstash
 *以下命令在logstash节点服务器上执行*
