@@ -1,10 +1,10 @@
 ---
-title: nginx: 6.1.0 获取真实客户端ip
+title: nginx: 4.1.1 theory 获取真实客户端ip
 date: 2017-09-20 17:47:00
-categories: linux/lnmp
+categories: service/nginx
 tags: [nginx]
 ---
-### nginx: 6.1.0 获取真实客户端ip
+### nginx: 4.1.1 theory 获取真实客户端ip
 
 ---
 

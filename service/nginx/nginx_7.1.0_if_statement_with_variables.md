@@ -1,7 +1,7 @@
 ---
 title: nginx: 7.1.0 if语句、参数变量、自定义header变量
 date: 2018-07-26 09:15:00
-categories: linux/lnmp
+categories: service/nginx
 tags: [nginx]
 ---
 ### nginx: 7.1.0 if语句、参数变量、自定义header变量

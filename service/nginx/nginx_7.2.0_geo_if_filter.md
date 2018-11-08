@@ -1,7 +1,7 @@
 ---
 title: nginx: 7.2.0 if语句、参数变量、geoip
 date: 2018-07-26 17:16:00
-categories: linux/lnmp
+categories: service/nginx
 tags: [nginx,geo]
 ---
 ### nginx: 7.2.0 if语句、参数变量、geoip

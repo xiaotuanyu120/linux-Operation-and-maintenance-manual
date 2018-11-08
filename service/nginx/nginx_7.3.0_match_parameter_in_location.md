@@ -1,7 +1,7 @@
 ---
 title: nginx: 7.3.0 在location里面匹配parameters
 date: 2018-07-30 11:07:00
-categories: linux/lnmp
+categories: service/nginx
 tags: [nginx]
 ---
 ### nginx: 7.3.0 在location里面匹配parameters
