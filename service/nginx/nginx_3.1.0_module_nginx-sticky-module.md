@@ -12,7 +12,7 @@ tags: [nginx]
 这里牵扯到了负载均衡中会话保持的知识。这里的sticky是基于cookie来将同一个用户的请求sticky到同一个后端服务的方法。
 > 关于会话保持，可以参照:
 - [F5中的cookie粘连](https://github.com/xiaotuanyu120/linux-Operation-and-maintenance-manual/blob/master/service/proxy/loadbalance_1.1.0_F5_cookie_persistence.md)
-- [](https://github.com/xiaotuanyu120/linux-Operation-and-maintenance-manual/blob/master/java/tomcat/tomcat_5.1.2_session_sharing_by_using_redis.md)
+- [tomcat使用redis做会话共享](https://github.com/xiaotuanyu120/linux-Operation-and-maintenance-manual/blob/master/java/tomcat/tomcat_5.1.2_session_sharing_by_using_redis.md)
 
 ### 1. nginx自带的sticky模块
 nginx社区版是不包含sticky模块的，只有nginx企业版(nginx plus)才包含这个模块。
