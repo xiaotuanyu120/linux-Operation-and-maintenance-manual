@@ -1,4 +1,3 @@
-
 ---
 title: nginx: 2.1.5 configuration proxy_pass with URI
 date: 2018-11-08 15:15:00
